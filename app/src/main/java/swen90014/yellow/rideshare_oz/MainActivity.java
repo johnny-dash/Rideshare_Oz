@@ -34,7 +34,7 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Make sure we have a mUsername
+        // Make sure we have a mUsername 
         setupUsername();
 
         setTitle("Chatting as " + mUsername);
