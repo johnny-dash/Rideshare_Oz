@@ -1,12 +1,14 @@
-package swen90014.yellow.rideshare_oz;
+package au.org.ridesharingoz.rideshare_oz.Chat;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
-import swen90014.yellow.rideshare_oz.R;
 import com.firebase.client.Query;
+
+import au.org.ridesharingoz.rideshare_oz.FirebaseListAdapter;
+import au.org.ridesharingoz.rideshare_oz.R;
 
 /**
  * @author greg

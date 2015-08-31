@@ -1,4 +1,4 @@
-package swen90014.yellow.rideshare_oz;
+package au.org.ridesharingoz.rideshare_oz.Chat;
 
 /**
  * @author greg

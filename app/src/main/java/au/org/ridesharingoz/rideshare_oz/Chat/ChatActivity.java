@@ -1,4 +1,4 @@
-package swen90014.yellow.rideshare_oz;
+package au.org.ridesharingoz.rideshare_oz.Chat;
 
 import android.app.ListActivity;
 import android.content.SharedPreferences;
@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import swen90014.yellow.rideshare_oz.R;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -20,7 +19,9 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.Random;
 
-public class MainActivity extends ListActivity {
+import au.org.ridesharingoz.rideshare_oz.R;
+
+public class ChatActivity extends ListActivity {
 
     private static final String FIREBASE_URL = "https://flickering-inferno-6814.firebaseio.com/";
 
@@ -34,7 +35,7 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Make sure we have a mUsername 
+        // Make sure we have a mUsername
         setupUsername();
 
         setTitle("Chatting as " + mUsername);
@@ -85,9 +86,9 @@ public class MainActivity extends ListActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean connected = (Boolean) dataSnapshot.getValue();
                 if (connected) {
-                    Toast.makeText(MainActivity.this, "Connected to Firebase", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "Connected to Firebase", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Disconnected from Firebase", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "Disconnected from Firebase", Toast.LENGTH_SHORT).show();
                 }
             }
 
