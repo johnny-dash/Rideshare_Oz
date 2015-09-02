@@ -77,6 +77,11 @@ public class MainActivity extends ActionBarActivity  {
      ***************************************/
     private Button mAnonymousLoginButton;
 
+    /* *************************************
+     *               Sign IN             *
+    ***************************************/
+    private  Button mRegisterButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +112,19 @@ public class MainActivity extends ActionBarActivity  {
                 loginWithPassword();
             }
         });
+
+        /* *************************************
+         *               Sign IN             *
+         ***************************************/
+        mRegisterButton = (Button) findViewById((R.id.Sign_in));
+        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myintent = new Intent(MainActivity.this,SigninActivity.class);
+                MainActivity.this.startActivity(myintent);
+            }
+        });
+
 
         /* *************************************
          *              ANONYMOUSLY            *
@@ -330,4 +348,6 @@ public class MainActivity extends ActionBarActivity  {
         mAuthProgressDialog.show();
         mFirebaseRef.authAnonymously(new AuthResultHandler("anonymous"));
     }
+
+
 }

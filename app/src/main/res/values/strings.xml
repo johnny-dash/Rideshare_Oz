@@ -12,5 +12,8 @@
     <string name="login_with_password">Login with Password</string>
     <string name="login_anonymously">Login Anonymously</string>
     <string name="title_activity_maps">Booking</string>
+    <string name="title_activity_signin">SigninActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

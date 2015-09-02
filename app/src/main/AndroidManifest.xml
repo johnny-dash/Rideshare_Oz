@@ -58,6 +58,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="au.org.ridesharingoz.rideshare_oz.MainActivity" />
         </activity>
+        <activity
+            android:name=".SigninActivity"
+            android:label="@string/title_activity_signin" >
+        </activity>
     </application>
 
 </manifest>
