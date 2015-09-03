@@ -77,6 +77,8 @@ public class SigninActivity extends AppCompatActivity {
             mFirebaseRef.child("User").push().setValue(user);
             username_ET.setText("");
             password_ET.setText("");
+            finish();
+
         }
 
     }
