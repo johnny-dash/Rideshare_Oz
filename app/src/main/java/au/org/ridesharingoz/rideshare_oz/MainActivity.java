@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -42,8 +44,6 @@ public class MainActivity extends ActionBarActivity  {
     /* *************************************
      *              GENERAL                *
      ***************************************/
-    /* TextView that is used to display information about the logged in user */
-    private TextView mLoggedInStatusTextView;
 
     /* A dialog that is presented until the Firebase authentication finished. */
     private ProgressDialog mAuthProgressDialog;
@@ -70,12 +70,8 @@ public class MainActivity extends ActionBarActivity  {
     /* *************************************
      *              PASSWORD               *
      ***************************************/
+    private Button mPasswordRegisterButton;
     private Button mPasswordLoginButton;
-
-    /* *************************************
-     *            ANONYMOUSLY              *
-     ***************************************/
-    private Button mAnonymousLoginButton;
 
     /* *************************************
      *               Sign IN             *
@@ -105,43 +101,40 @@ public class MainActivity extends ActionBarActivity  {
         /* *************************************
          *               PASSWORD              *
          ***************************************/
-        mPasswordLoginButton = (Button) findViewById(R.id.login_with_password);
+
+        mPasswordRegisterButton = (Button) findViewById(R.id.btn_register);
+        mPasswordRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                EditText emailAddress_ET = (EditText) findViewById(R.id.email_address);
+                final String emailAddress = emailAddress_ET.getText().toString();
+
+                EditText password_ET = (EditText) findViewById(R.id.password);
+                final String password = password_ET.getText().toString();
+
+                registerWithPassword(emailAddress, password);
+            }
+        });
+
+        mPasswordLoginButton = (Button) findViewById(R.id.btn_login);
         mPasswordLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginWithPassword();
-            }
-        });
 
-        /* *************************************
-         *               Sign IN             *
-         ***************************************/
-        mRegisterButton = (Button) findViewById((R.id.Sign_in));
-        mRegisterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myintent = new Intent(MainActivity.this,SigninActivity.class);
-                MainActivity.this.startActivity(myintent);
-            }
-        });
+                EditText emailAddress_ET = (EditText) findViewById(R.id.email_address);
+                final String emailAddress = emailAddress_ET.getText().toString();
 
+                EditText password_ET = (EditText) findViewById(R.id.password);
+                final String password = password_ET.getText().toString();
 
-        /* *************************************
-         *              ANONYMOUSLY            *
-         ***************************************/
-        /* Load and setup the anonymous login button */
-        mAnonymousLoginButton = (Button) findViewById(R.id.login_anonymously);
-        mAnonymousLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loginAnonymously();
+                loginWithPassword(emailAddress, password);
             }
         });
 
         /* *************************************
          *               GENERAL               *
          ***************************************/
-        mLoggedInStatusTextView = (TextView) findViewById(R.id.login_status);
 
         /* Create the Firebase ref that is used for all authentication with Firebase */
         mFirebaseRef = new Firebase(getResources().getString(R.string.firebase_url));
@@ -248,10 +241,6 @@ public class MainActivity extends ActionBarActivity  {
     private void setAuthenticatedUser(AuthData authData) {
         if (authData != null) {
             /* Hide all the login buttons */
-            mFacebookLoginButton.setVisibility(View.GONE);
-            mPasswordLoginButton.setVisibility(View.GONE);
-            mAnonymousLoginButton.setVisibility(View.GONE);
-            mLoggedInStatusTextView.setVisibility(View.VISIBLE);
             /* show a provider specific status text */
             String name = null;
             if (authData.getProvider().equals("facebook")) {
@@ -263,14 +252,13 @@ public class MainActivity extends ActionBarActivity  {
                 Log.e(TAG, "Invalid provider: " + authData.getProvider());
             }
             if (name != null) {
-                mLoggedInStatusTextView.setText("Logged in as " + name + " (" + authData.getProvider() + ")");
+                Toast.makeText(getApplicationContext(), "Logged in as " + name + " (" + authData.getProvider() + ")",
+                        Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, MapsActivity.class);
+                startActivity(intent);
             }
         } else {
             /* No authenticated user show all the login buttons */
-            mFacebookLoginButton.setVisibility(View.VISIBLE);
-            mPasswordLoginButton.setVisibility(View.VISIBLE);
-            mAnonymousLoginButton.setVisibility(View.VISIBLE);
-            mLoggedInStatusTextView.setVisibility(View.GONE);
         }
         this.mAuthData = authData;
         /* invalidate options menu to hide/show the logout button */
@@ -335,19 +323,37 @@ public class MainActivity extends ActionBarActivity  {
      *              PASSWORD              *
      **************************************
      */
-    public void loginWithPassword() {
-        mAuthProgressDialog.show();
-        mFirebaseRef.authWithPassword("test@firebaseuser.com", "test1234", new AuthResultHandler("password"));
-    }
+    public void registerWithPassword(String emailAddress, String password) {
 
-    /* ************************************
-     *             ANONYMOUSLY            *
-     **************************************
-     */
-    private void loginAnonymously() {
-        mAuthProgressDialog.show();
-        mFirebaseRef.authAnonymously(new AuthResultHandler("anonymous"));
-    }
+        Log.v(TAG, "Attempting to register with email address: " + emailAddress);
 
+        mFirebaseRef.createUser(emailAddress, password, new Firebase.ValueResultHandler<Map<String, Object>>() {
+            @Override
+            public void onSuccess(Map<String, Object> result) {
+                Toast.makeText(getApplicationContext(), "Successfully created user account with uid: " + result.get("uid"),
+                        Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                Toast.makeText(getApplicationContext(), firebaseError.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void loginWithPassword(String emailAddress, String password) {
+        mFirebaseRef.authWithPassword(emailAddress, password, new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                Toast.makeText(getApplicationContext(), "User ID: " + authData.getUid() + ", Provider: " + authData.getProvider(),
+                        Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                Toast.makeText(getApplicationContext(), firebaseError.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
 }

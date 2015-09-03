@@ -14,6 +14,10 @@
     <string name="title_activity_maps">Booking</string>
     <string name="title_activity_signin">SigninActivity</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="or">or</string>
+    <string name="email_address">Email address</string>
+    <string name="password">Password</string>
+    <string name="login">Log in</string>
+    <string name="register">Register</string>
 
 </resources>
