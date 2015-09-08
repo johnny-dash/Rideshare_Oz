@@ -11,7 +11,7 @@ import com.firebase.client.Firebase;
  * @author mimming
  * @since 12/17/14
  */
-public class LoginDemoApplication extends Application {
+public class FirebaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();

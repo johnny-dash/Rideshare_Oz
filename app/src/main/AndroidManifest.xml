@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".LoginDemoApplication"
+        android:name=".FirebaseApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@drawable/firebase_logo"
