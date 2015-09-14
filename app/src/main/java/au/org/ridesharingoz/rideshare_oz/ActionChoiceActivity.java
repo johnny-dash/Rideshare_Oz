@@ -3,15 +3,11 @@ package au.org.ridesharingoz.rideshare_oz;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
 
-
-
-/**
- * Created by Ocunidee on 14/09/2015.
- */
-public class ActionChoiceActivity extends Activity {
+public class ActionChoiceActivity extends FirebaseActivity {
 
     private Button joingroup = null;
     private Button search = null;
@@ -42,7 +38,7 @@ public class ActionChoiceActivity extends Activity {
                     intent = new Intent(ActionChoiceActivity.this, JoinGroupActivity.class);
                     break;
                 case R.id.button_searchride:
-                    intent = new Intent(ActionChoiceActivity.this, SelectGroup.class);
+                    //intent = new Intent(ActionChoiceActivity.this, SelectGroup.class);
                     break;
                 case R.id.button_offerride:
                     intent = new Intent(ActionChoiceActivity.this, ChooseTypeRideActivity.class);
