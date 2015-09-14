@@ -129,6 +129,7 @@ public class MainActivity extends ActionBarActivity  {
                 final String password = password_ET.getText().toString();
 
                 loginWithPassword(emailAddress, password);
+
             }
         });
 
@@ -254,7 +255,7 @@ public class MainActivity extends ActionBarActivity  {
             if (name != null) {
                 Toast.makeText(getApplicationContext(), "Logged in as " + name + " (" + authData.getProvider() + ")",
                         Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(this, MapsActivity.class);
+                Intent intent = new Intent(this, ActionChoiceActivity.class);
                 startActivity(intent);
             }
         } else {

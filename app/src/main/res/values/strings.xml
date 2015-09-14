@@ -13,6 +13,9 @@
     <string name="login_anonymously">Login Anonymously</string>
     <string name="title_activity_maps">Booking</string>
     <string name="title_activity_signin">SigninActivity</string>
+    <string name="title_activity_actionchoice">ActionChoiceActivity</string>
+    <string name="title_activity_choosetyperide">ChooseTypeRideActivity</string>
+    <string name="title_activity_joingroup">JoinGroupActivity</string>
 
     <string name="or">or</string>
     <string name="email_address">Email address</string>

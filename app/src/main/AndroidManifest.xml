@@ -58,6 +58,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="au.org.ridesharingoz.rideshare_oz.MainActivity" />
         </activity>
+        <activity
+            android:name=".ActionChoiceActivity"
+            android:label="@string/title_activity_actionchoice">
+        </activity>
+        <activity
+            android:name=".ChooseTypeRideActivity"
+            android:label="@string/title_activity_choosetyperide">
+        </activity>
+        <activity
+            android:name=".JoinGroupActivity"
+            android:label="@string/title_activity_joingroup">
+        </activity>
     </application>
 
 </manifest>
