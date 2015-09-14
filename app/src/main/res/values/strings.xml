@@ -22,5 +22,9 @@
     <string name="password">Password</string>
     <string name="login">Log in</string>
     <string name="register">Register</string>
+    <string name="title_activity_oneoff_ride">OneoffRideActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_regular_ride">RegularRideActivity</string>
 
 </resources>

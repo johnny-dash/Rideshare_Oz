@@ -78,6 +78,10 @@ public class MainActivity extends ActionBarActivity  {
     ***************************************/
     private  Button mRegisterButton;
 
+    /* *************************************
+     *               Test           *
+    ***************************************/
+    private Button mtestbutton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +134,17 @@ public class MainActivity extends ActionBarActivity  {
 
                 loginWithPassword(emailAddress, password);
 
+            }
+        });
+        /* *************************************
+         *               GENERAL               *
+         ***************************************/
+        mtestbutton = (Button) findViewById(R.id.test);
+        mtestbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, OneoffRideActivity.class);
+                startActivity(intent);
             }
         });
 
