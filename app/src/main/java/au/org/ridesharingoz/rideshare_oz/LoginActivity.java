@@ -67,6 +67,10 @@ public class LoginActivity extends FirebaseActivity  {
     ***************************************/
     private  Button mRegisterButton;
 
+    /* *************************************
+     *               Test           *
+    ***************************************/
+    private Button mtestbutton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +125,6 @@ public class LoginActivity extends FirebaseActivity  {
 
             }
         });
-
         /* *************************************
          *               GENERAL               *
          ***************************************/
