@@ -18,7 +18,7 @@ public class ChooseTypeRideActivity extends FirebaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choosetyperide);
 
-        oneoff = (Button) findViewById(R.id.button_oneoff);
+        oneoff = (Button) findViewById(R.id.button_oneoff); //I'm a cool button
         regular = (Button) findViewById(R.id.button_regular);
 
         oneoff.setOnClickListener(new View.OnClickListener() {
