@@ -41,7 +41,7 @@ public class ActionChoiceActivity extends FirebaseActivity {
                     //intent = new Intent(ActionChoiceActivity.this, SelectGroup.class);
                     break;
                 case R.id.button_offerride:
-                    //intent = new Intent(ActionChoiceActivity.this, ChooseTypeRideActivity.class);
+                    intent = new Intent(ActionChoiceActivity.this, ChooseTypeRideActivity.class);
                     break;
             }
             startActivity(intent);
