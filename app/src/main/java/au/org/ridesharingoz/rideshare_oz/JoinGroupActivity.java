@@ -1,11 +1,9 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.Activity;
+import android.support.v7.app.ActionBarActivity;
 
-/**
- * Created by Ocunidee on 14/09/2015.
- */
-public class JoinGroupActivity extends Activity {
+public class JoinGroupActivity extends FirebaseActivity {
 
 
 }

@@ -16,6 +16,8 @@
     <string name="title_activity_actionchoice">ActionChoiceActivity</string>
     <string name="title_activity_choosetyperide">ChooseTypeRideActivity</string>
     <string name="title_activity_joingroup">JoinGroupActivity</string>
+    <string name="title_activity_oneoffride">OneOffRideActivity</string>
+    <string name="title_activity_regularride">RegularRideActivity</string>
 
     <string name="or">or</string>
     <string name="email_address">Email address</string>
