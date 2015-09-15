@@ -59,20 +59,12 @@
                 android:value=".LoginActivity" />
         </activity>
         <activity
-            android:name=".OneoffRideActivity"
-            android:label="@string/title_activity_oneoff_ride" >
-        </activity>
-        <activity
             android:name=".RegularRideActivity"
-            android:label="@string/title_activity_regular_ride" >
+            android:label="@string/title_activity_regularride" >
         </activity>
         <activity
             android:name=".OneOffRideActivity"
-            android:label="@string/title_activity_oneoffride">
-        </activity>
-        <activity
-            android:name=".RegularRideActivity"
-            android:label="@string/title_activity_regularride">
+            android:label="@string/title_activity_one_off_ride" >
         </activity>
     </application>
 

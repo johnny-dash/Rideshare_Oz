@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +17,7 @@ import java.util.Locale;
 
 import au.org.ridesharingoz.rideshare_oz.R;
 
-public class OneoffRideActivity extends AppCompatActivity {
-
+public class OneOffRideActivity extends AppCompatActivity {
     EditText editdate;
 
     EditText edittime;
@@ -73,7 +71,7 @@ public class OneoffRideActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_oneoff_ride);
+        setContentView(R.layout.activity_one_off_ride);
 
         editdate = (EditText) findViewById(R.id.Date);
         editdate.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +79,7 @@ public class OneoffRideActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(OneoffRideActivity.this, date, myCalendar
+                new DatePickerDialog(OneOffRideActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -91,8 +89,8 @@ public class OneoffRideActivity extends AppCompatActivity {
         edittime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(OneoffRideActivity.this,time,myCalendar.get(Calendar.HOUR_OF_DAY),
-                        myCalendar.get(Calendar.MINUTE),false).show();
+                new TimePickerDialog(OneOffRideActivity.this, time, myCalendar.get(Calendar.HOUR_OF_DAY),
+                        myCalendar.get(Calendar.MINUTE), false).show();
             }
         });
 
@@ -119,6 +117,5 @@ public class OneoffRideActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 }

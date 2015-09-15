@@ -128,18 +128,6 @@ public class LoginActivity extends FirebaseActivity  {
         /* *************************************
          *               GENERAL               *
          ***************************************/
-        mtestbutton = (Button) findViewById(R.id.test);
-        mtestbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, OneoffRideActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        /* *************************************
-         *               GENERAL               *
-         ***************************************/
 
         /* Create the Firebase ref that is used for all authentication with Firebase */
         mFirebaseRef = new Firebase(FIREBASE);
