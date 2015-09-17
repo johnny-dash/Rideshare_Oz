@@ -20,7 +20,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MapsActivity extends FirebaseActivity {
+public class MapsActivity extends FirebaseAuthenticatedActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static final int PERMISSION_REQUEST_LOCATION = 0;

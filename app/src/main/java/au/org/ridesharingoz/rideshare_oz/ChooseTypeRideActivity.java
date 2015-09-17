@@ -7,7 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
 
-public class ChooseTypeRideActivity extends FirebaseActivity {
+public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
 
 
     private Button oneoff = null;

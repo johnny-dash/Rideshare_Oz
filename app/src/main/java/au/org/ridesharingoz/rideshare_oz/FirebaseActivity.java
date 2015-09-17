@@ -59,6 +59,13 @@ public class FirebaseActivity extends ActionBarActivity {
             }
             /* Update authenticated user and show login buttons */
             setAuthenticatedUser(null);
+
+            // Go back to login activity
+            Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(loginIntent);
+            finish();
+            return;
         }
     }
 
@@ -82,7 +89,6 @@ public class FirebaseActivity extends ActionBarActivity {
                 Toast.makeText(getApplicationContext(), "Logged in as " + name + " (" + authData.getProvider() + ")",
                         Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, ActionChoiceActivity.class);
-                intent.putExtra(AUTH_TOKEN_EXTRA, authData.getToken());
                 startActivity(intent);
             }
         } else {
