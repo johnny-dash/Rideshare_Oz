@@ -16,16 +16,16 @@ public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choosetyperide);
 
-        oneoff = (Button) findViewById(R.id.button_oneoff); //I'm a cool button
+        oneoff = (Button) findViewById(R.id.button_oneoff);
         regular = (Button) findViewById(R.id.button_regular);
 
-        oneoff.setOnClickListener(new View.OnClickListener() {
+        /*oneoff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ChooseTypeRideActivity.this, OneRideActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
         regular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
