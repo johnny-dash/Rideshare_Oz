@@ -29,5 +29,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_regular_ride">RegularRideActivity</string>
     <string name="title_activity_one_off_ride">OneOffRideActivity</string>
+    <string name="title_activity_personal_detail">PersonalDetailActivity</string>
 
 </resources>
