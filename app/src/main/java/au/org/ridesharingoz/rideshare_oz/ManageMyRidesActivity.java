@@ -34,17 +34,17 @@ public class ManageMyRidesActivity extends FirebaseAuthenticatedActivity{
         @Override
         public void onClick(View v) {
             Intent intent = null;
-           /* switch (v.getId()) {
-                case R.id.button_joingroup:
-                    intent = new Intent(ManageMyRidesActivity.this, JoinGroupActivity.class);
+            switch (v.getId()) {
+                case R.id.button_joinedrides:
+                    intent = new Intent(ManageMyRidesActivity.this, JoinedRidesActivity.class);
                     break;
-                case R.id.button_searchride:
-                    //intent = new Intent(ActionChoiceActivity.this, SelectGroup.class);
+                case R.id.button_offeredrides:
+                    intent = new Intent(ManageMyRidesActivity.this, OfferedRidesActivity.class);
                     break;
-                case R.id.button_offerride:
-                    intent = new Intent(ActionChoiceActivity.this, ChooseTypeRideActivity.class);
+                case R.id.button_toraterides:
+                    intent = new Intent(ManageMyRidesActivity.this, ToRateRidesActivity.class);
                     break;
-            } */
+            }
             startActivity(intent);
         }
 

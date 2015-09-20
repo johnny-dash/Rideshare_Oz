@@ -113,20 +113,23 @@ public class FirebaseActivity extends ActionBarActivity {
 
     /* displays the user's profile */
     private void displayProfile() {
-        Intent i = new Intent(FirebaseActivity.this, ProfileActivity.class);
-        startActivity(i);
+        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+        startActivity(profileIntent);
+        return;
     }
 
     /* displays the view from which the user can manage his/her ride*/
     private void displayRides() {
-        Intent i = new Intent(FirebaseActivity.this, ManageMyRidesActivity.class);
-        startActivity(i);
+        Intent myRidesIntent = new Intent(getApplicationContext(), ManageMyRidesActivity.class);
+        startActivity(myRidesIntent);
+        return;
     }
 
     /* displays the view from which the user can manage his/her groups */
     private void displayGroups() {
-        Intent i = new Intent(FirebaseActivity.this, ManageMyGroupsActivity.class);
-        startActivity(i);
+        Intent myGroupsIntent = new Intent(getApplicationContext(), ManageMyGroupsActivity.class);
+        startActivity(myGroupsIntent);
+        return;
     }
 
 }
