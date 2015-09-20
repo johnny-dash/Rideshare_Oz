@@ -1,5 +1,9 @@
 package au.org.ridesharingoz.rideshare_oz;
 
+import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.firebase.client.Firebase;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.ValueEventListener;
@@ -12,18 +16,17 @@ import com.firebase.client.Query;
  * Created by Ocunidee on 20/09/2015.
  */
 public class ProfileActivity extends FirebaseAuthenticatedActivity{
-
-  /*  @Override
+/*
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         ListView messagesView = (ListView) findViewById(R.id.messages_list);
 
-        Firebase.setAndroidContext(this);
 
-        Firebase ref = new Firebase("https://flickering-inferno-6814.firebaseio.com/users");
-        mAdapter = new FirebaseListAdapter<User>();
+        Firebase ref = new Firebase("https://flickering-inferno-6814.firebaseio.com");
+       mAdapter = new FirebaseListAdapter<User>();
         @Override
         protected void populateView(View view, ChatMessage chatMessage) {
             ((TextView)view.findViewById(android.R.id.text1)).setText(chatMessage.getName());
@@ -33,7 +36,7 @@ public class ProfileActivity extends FirebaseAuthenticatedActivity{
     setListAdapter(mAdapter);
 
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListen(new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot snapshot) {
             String result = snapshot.getValue() == null ? "is not" : "is";
@@ -43,6 +46,6 @@ public class ProfileActivity extends FirebaseAuthenticatedActivity{
         public void onCancelled(FirebaseError firebaseError) {
             // ignore
         }
-    });
-*/
+    });*/
+
 }
