@@ -41,6 +41,18 @@ public class FirebaseActivity extends ActionBarActivity {
             logout();
             return true;
         }
+        else if (id == R.id.my_profile) {
+            displayProfile();
+            return true;
+        }
+        else if (id == R.id.my_groups) {
+            displayGroups();
+            return true;
+        }
+        else if (id == R.id.my_rides){
+            displayRides();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -97,6 +109,24 @@ public class FirebaseActivity extends ActionBarActivity {
         this.mAuthData = authData;
         /* invalidate options menu to hide/show the logout button */
         supportInvalidateOptionsMenu();
+    }
+
+    /* displays the user's profile */
+    private void displayProfile() {
+        Intent i = new Intent(FirebaseActivity.this, ProfileActivity.class);
+        startActivity(i);
+    }
+
+    /* displays the view from which the user can manage his/her ride*/
+    private void displayRides() {
+        Intent i = new Intent(FirebaseActivity.this, ManageMyRidesActivity.class);
+        startActivity(i);
+    }
+
+    /* displays the view from which the user can manage his/her groups */
+    private void displayGroups() {
+        Intent i = new Intent(FirebaseActivity.this, ManageMyGroupsActivity.class);
+        startActivity(i);
     }
 
 }

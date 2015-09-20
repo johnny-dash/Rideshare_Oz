@@ -2,14 +2,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.firebase.samples.logindemo.MainActivity">
+
+    <!-- My Profile-->
+    <item
+        android:id="@+id/my_profile"
+        android:title="@string/my_profile"
+        android:orderInCategory="2"
+        app:showAsAction="never" />
+
+    <!-- My Groups-->
+    <item
+        android:id="@+id/my_groups"
+        android:title="@string/my_groups"
+        android:orderInCategory="3"
+        app:showAsAction="never" />
+
+    <!-- My Rides-->
+    <item
+        android:id="@+id/my_rides"
+        android:title="@string/my_rides"
+        android:icon="@drawable/car_icon"
+        android:orderInCategory="1"
+        app:showAsAction="ifRoom" />
+
+    <!-- My Profile-->
     <item
         android:id="@+id/action_logout"
         android:title="@string/action_logout"
         android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/my_profile"
-        android:title="My Profile"
-        android:orderInCategory="1"
         app:showAsAction="never" />
 </menu>

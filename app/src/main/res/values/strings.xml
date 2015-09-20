@@ -5,6 +5,9 @@
 
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
+    <string name="my_profile">My Profile</string>
+    <string name="my_rides">My Rides</string>
+    <string name="my_groups">My Groups</string>
 
     <string name="login_with_facebook">Login with Facebook</string>
     <string name="login_with_google">Login with Google+</string>
@@ -18,6 +21,7 @@
     <string name="title_activity_joingroup">JoinGroupActivity</string>
     <string name="title_activity_oneoffride">OneOffRideActivity</string>
     <string name="title_activity_regularride">RegularRideActivity</string>
+
 
     <string name="or">or</string>
     <string name="email_address">Email address</string>
