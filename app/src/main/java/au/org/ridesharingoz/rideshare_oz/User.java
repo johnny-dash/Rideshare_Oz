@@ -1,6 +1,7 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.ServerValue;
 
 import java.util.Map;
 
@@ -11,25 +12,52 @@ public class User {
 
     private String firstName;
     private String lastName;
-    private int licenseNb;
-    private String email;
+    private String licenseNb;
+    private String phoneNb;
     private Map<String, Group> groups;
     private String licenseType;
     private Map<String, Ride> rides;
 
-    Firebase ref = new Firebase("https://flickering-inferno-6814.firebaseio.com/");
+
+
 
     public User() {}
 
-    public User(String firstName, String lastName, String email){
+    public User(String firstName, String lastName, String phoneNb, String licenseNb, String licenseType){
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
+        this.phoneNb = phoneNb;
+        this.licenseNb = licenseNb;
+        this.licenseType = licenseType;
     }
 
 
-    /*Firebase alanRef = ref.child("users").child("alanisawesome");
-    User alan = new User("Alan", "Turing", "aturing@gmail.com");
-    alanRef.setValue(alan);*/
+    public String getFirstName() {
+        return firstName;
+    }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getLicenseNb() {
+        return licenseNb;
+    }
+
+    public String getPhoneNb() {
+        return phoneNb;
+    }
+
+    public Map<String, Group> getGroups() {
+        return groups;
+    }
+
+    public String getLicenseType() {
+        return licenseType;
+    }
+
+    public Map<String, Ride> getRides() {
+        return rides;
+    }
+    
 }

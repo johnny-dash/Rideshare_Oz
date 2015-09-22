@@ -2,7 +2,6 @@ package au.org.ridesharingoz.rideshare_oz;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.firebase.client.Firebase;
 
@@ -28,7 +27,7 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
 
 
         if (false) {
-            Intent loginIntent = new Intent(getApplicationContext(), RegistrationInfomation.class);
+            Intent loginIntent = new Intent(getApplicationContext(), RegistrationInfomationActivity.class);
             startActivity(loginIntent);
             finish();
             return;

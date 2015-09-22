@@ -16,24 +16,24 @@ import com.firebase.client.Query;
  * Created by Ocunidee on 20/09/2015.
  */
 public class ProfileActivity extends FirebaseAuthenticatedActivity{
-/*
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListView messagesView = (ListView) findViewById(R.id.messages_list);
+
+     /*   ListView messagesView = (ListView) findViewById(R.id.messages_list);
 
 
         Firebase ref = new Firebase("https://flickering-inferno-6814.firebaseio.com");
        mAdapter = new FirebaseListAdapter<User>();
-        @Override
+       @Override
         protected void populateView(View view, ChatMessage chatMessage) {
-            ((TextView)view.findViewById(android.R.id.text1)).setText(chatMessage.getName());
+           ((TextView)view.findViewById(android.R.id.text1)).setText(chatMessage.getName());
             ((TextView)view.findViewById(android.R.id.text2)).setText(chatMessage.getMessage());
         }
-    };
-    setListAdapter(mAdapter);
+    };setListAdapter(mAdapter);
 
 
         ref.addValueEventListen(new ValueEventListener() {
@@ -46,6 +46,6 @@ public class ProfileActivity extends FirebaseAuthenticatedActivity{
         public void onCancelled(FirebaseError firebaseError) {
             // ignore
         }
-    });*/
-
+    }); */
+    }
 }
