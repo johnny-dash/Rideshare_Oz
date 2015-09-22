@@ -19,6 +19,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -109,6 +112,13 @@ public class OneRideActivity extends MapsActivity {
         MyAdapter adapter = new MyAdapter(this);
         addresslistview.setAdapter(adapter);
 
+        createOffRide = (Button) findViewById(R.id.Create_Ride);
+        createOffRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dataSubmit();
+            }
+        });
 
         /* *************************************
         *          init of calender            *
@@ -169,16 +179,37 @@ public class OneRideActivity extends MapsActivity {
         return list;
     }
 
+    public void dataSubmit(){
+        Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("birthYear", "1912");
+        alanisawesomeMap.put("fullName", "Alan Turing");
+        Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+        users.put("alanisawesome", alanisawesomeMap);
+
+        mFirebaseRef.child("User").setValue(users, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError != null) {
+                    Toast.makeText(getApplicationContext(),"Data could not be saved. " + firebaseError.getMessage(),Toast.LENGTH_LONG).show();
+                    System.out.println("Data could not be saved. " + firebaseError.getMessage());
+                } else {
+                    Toast.makeText(getApplicationContext(),"Data saved successfully.",Toast.LENGTH_LONG).show();
+                    System.out.println("Data saved successfully.");
+                }
+            }
+
+        });
+        }
 
 
-    //@Override
-    //protected void onListItemClick(ListView l, View v, int position, long id) {
-    //    Log.v("MyListView4-click", (String) mData.get(position).get("Address"));
+                //@Override
+                //protected void onListItemClick(ListView l, View v, int position, long id) {
+                //    Log.v("MyListView4-click", (String) mData.get(position).get("Address"));
 
 //    }
 
 
-    public final class ViewHolder{
+        public final class ViewHolder{
         public TextView Addressname;
         public TextView setTimeView;
         public Button addTimeButton;
@@ -232,8 +263,8 @@ public class OneRideActivity extends MapsActivity {
                 holder = (ViewHolder)convertView.getTag();
             }
 
-            holder.Addressname.setText((String)mData.get(position).get("Address"));
-            holder.setTimeView.setText((String)mData.get(position).get("Time"));
+            holder.Addressname.setText((String) mData.get(position).get("Address"));
+            holder.setTimeView.setText((String) mData.get(position).get("Time"));
             holder.addTimeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -258,6 +289,7 @@ public class OneRideActivity extends MapsActivity {
             mData.set(position, map);
             notifyDataSetChanged();
         }
+
 
     }
 }

@@ -4,13 +4,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
-public class RegistrationInfomation extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
+
+public class RegistrationInfomation extends FirebaseAuthenticatedActivity {
+
+    Button submit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_infomation);
+
+        submit = (Button) findViewById(R.id.btn_submit);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dataSubmit();
+            }
+        });
     }
 
     @Override
@@ -34,4 +49,15 @@ public class RegistrationInfomation extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void dataSubmit(){
+        Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("birthYear", "1912");
+        alanisawesomeMap.put("fullName", "Alan Turing");
+        Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+        users.put("alanisawesome", alanisawesomeMap);
+
+        mFirebaseRef.setValue(users);
+    }
+
 }

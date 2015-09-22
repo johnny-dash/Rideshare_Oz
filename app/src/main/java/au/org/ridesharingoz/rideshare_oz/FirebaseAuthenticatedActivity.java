@@ -26,6 +26,14 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
             return;
         }
 
+
+        if (false) {
+            Intent loginIntent = new Intent(getApplicationContext(), RegistrationInfomation.class);
+            startActivity(loginIntent);
+            finish();
+            return;
+        }
+
     }
 
 }
