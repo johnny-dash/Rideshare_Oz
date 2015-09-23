@@ -1,10 +1,19 @@
 package au.org.ridesharingoz.rideshare_oz;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class FirebaseAuthenticatedActivity extends FirebaseActivity {
 
@@ -27,12 +36,6 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
         }
 
 
-        if (false) {
-            Intent loginIntent = new Intent(getApplicationContext(), RegistrationInfomation.class);
-            startActivity(loginIntent);
-            finish();
-            return;
-        }
 
     }
 
