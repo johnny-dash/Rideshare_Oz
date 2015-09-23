@@ -9,7 +9,11 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 
 public class FirebaseActivity extends ActionBarActivity {
 
@@ -101,8 +105,28 @@ public class FirebaseActivity extends ActionBarActivity {
                 Toast.makeText(getApplicationContext(), "Logged in as " + name + " (" + authData.getProvider() + ")",
                         Toast.LENGTH_LONG).show();
 
+                Query usernode = mFirebaseRef.child("User");
+                usernode.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.hasChild(mAuthData.getUid())) {
+                            Intent personaldetail = new Intent(getApplicationContext(), RegistrationInfomation.class);
+                            startActivity(personaldetail);
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+                /*
+
                 Intent intent = new Intent(this, ActionChoiceActivity.class);
                 startActivity(intent);
+                */
             }
         } else {
             /* No authenticated user show all the login buttons */

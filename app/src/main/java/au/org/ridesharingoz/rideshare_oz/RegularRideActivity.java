@@ -31,6 +31,11 @@ import java.util.Map;
 
 import au.org.ridesharingoz.rideshare_oz.R;
 
+/**
+ * Created by Johnny on 22/09/2015.
+ *
+ */
+
 public class RegularRideActivity extends MapsActivity {
 
     /* *************************************

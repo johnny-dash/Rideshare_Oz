@@ -30,6 +30,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+
+/**
+ * Created by Johnny on 22/09/2015.
+ *
+ */
+
+
 public class OneRideActivity extends MapsActivity {
 
     /* *************************************
@@ -162,6 +169,13 @@ public class OneRideActivity extends MapsActivity {
     private List<Map<String, Object>> getDate() {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Map<String, Object> map = new HashMap<String, Object>();
+/*        String[] address = new String[100];
+        for (int i =0; i<address.length;i++){
+            map.put("Address",address[i]);
+            map.put("Time","Haven't been set");
+            list.add(map);
+        }
+*/
         map.put("Address", "Unimelb");
         map.put("Time","Haven't been set");
         list.add(map);
@@ -186,14 +200,14 @@ public class OneRideActivity extends MapsActivity {
         Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
         users.put("alanisawesome", alanisawesomeMap);
 
-        mFirebaseRef.child("User").setValue(users, new Firebase.CompletionListener() {
+        mFirebaseRef.child("Ride").push().setValue(users, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError != null) {
-                    Toast.makeText(getApplicationContext(),"Data could not be saved. " + firebaseError.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Data could not be saved. " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                     System.out.println("Data could not be saved. " + firebaseError.getMessage());
                 } else {
-                    Toast.makeText(getApplicationContext(),"Data saved successfully.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Data saved successfully.", Toast.LENGTH_LONG).show();
                     System.out.println("Data saved successfully.");
                 }
             }
@@ -221,7 +235,7 @@ public class OneRideActivity extends MapsActivity {
         TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                myCalendar.set(Calendar.HOUR, hourOfDay);
                 myCalendar.set(Calendar.MINUTE, minute);
                 timeformat(listPosition);
             }
