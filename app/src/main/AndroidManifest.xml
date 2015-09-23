@@ -82,6 +82,14 @@
             android:name=".RegistrationInfomationActivity"
             android:label="@string/title_activity_personal_detail" >
         </activity>
+        <activity
+            android:name=".ManageMyRidesActivity"
+            android:label="@string/title_activity_managemyrides" >
+        </activity>
+        <activity
+            android:name=".ManageMyGroupsActivity"
+            android:label="@string/title_activity_managemygroups" >
+        </activity>
     </application>
 
 </manifest>
