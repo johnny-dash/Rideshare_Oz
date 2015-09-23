@@ -256,6 +256,7 @@ public class LoginActivity extends FirebaseActivity  {
             public void onSuccess(Map<String, Object> result) {
                 Toast.makeText(getApplicationContext(), "Successfully created user account with uid: " + result.get("uid"),
                         Toast.LENGTH_LONG).show();
+
             }
 
             @Override

@@ -79,7 +79,7 @@
             android:label="@string/title_activity_joingroup" >
         </activity>
         <activity
-            android:name=".RegistrationInfomation"
+            android:name=".RegistrationInfomationActivity"
             android:label="@string/title_activity_personal_detail" >
         </activity>
     </application>
