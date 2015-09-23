@@ -104,30 +104,28 @@ public class FirebaseActivity extends ActionBarActivity {
             if (name != null) {
                 Toast.makeText(getApplicationContext(), "Logged in as " + name + " (" + authData.getProvider() + ")",
                         Toast.LENGTH_LONG).show();
-
-                Query usernode = mFirebaseRef.child("User");
-                usernode.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.hasChild(mAuthData.getUid())) {
-                            Intent personaldetail = new Intent(getApplicationContext(), RegistrationInfomation.class);
-                            startActivity(personaldetail);
-
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
-                /*
-
-                Intent intent = new Intent(this, ActionChoiceActivity.class);
-                startActivity(intent);
-                */
             }
+
+
+            Query usernode = mFirebaseRef.child("users");
+            usernode.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChild(mAuthData.getUid())) {
+                        Intent personaldetail = new Intent(getApplicationContext(), RegistrationInfomationActivity.class);
+                        startActivity(personaldetail);
+                    } else {
+                        Intent personaldetail = new Intent(getApplicationContext(), ActionChoiceActivity.class);
+                        startActivity(personaldetail);
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                }
+            });
+
+
         } else {
             /* No authenticated user show all the login buttons */
         }
