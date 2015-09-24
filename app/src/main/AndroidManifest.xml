@@ -110,6 +110,10 @@
             android:name=".ToRateRidesActivity"
             android:label="@string/title_activity_to_rate_rides" >
         </activity>
+        <activity
+            android:name=".SearchRideActivity"
+            android:label="@string/title_activity_search_ride" >
+        </activity>
     </application>
 
 </manifest>
