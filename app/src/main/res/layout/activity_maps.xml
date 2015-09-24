@@ -6,12 +6,26 @@
     android:orientation="vertical"
     tools:context="au.org.ridesharingoz.rideshare_oz.MapsActivity">
 
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPostalAddress"
-        android:hint="@string/address_hint" />
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/address"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPostalAddress"
+            android:layout_gravity="bottom"
+            android:hint="@string/address_hint" />
+
+        <Button
+            android:id="@+id/address_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:text="@string/go"/>
+
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
