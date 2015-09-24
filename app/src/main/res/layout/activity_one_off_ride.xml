@@ -60,34 +60,20 @@
 
     </LinearLayout>
 
-    <RadioGroup
-        android:layout_width="351dp"
-        android:layout_height="52dp"
-        android:orientation="horizontal"
-        android:id="@+id/OneoffTypeRadioGroup">
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Going to"
-            android:id="@+id/oGoingto"
-            android:checked="false"
-            android:layout_weight="0.46" />
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Leaving from"
-            android:id="@+id/oLeavingfrom"
-            android:checked="false"
-            android:layout_weight="0.39" />
-    </RadioGroup>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Address:"
+        android:id="@+id/textView20"
+        android:layout_weight="0.12" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="216dp"
         android:id="@+id/AddressList"
-        android:layout_weight="0.74" />
+        android:layout_weight="0.84" />
 
     <Button
         android:layout_width="fill_parent"

@@ -45,5 +45,8 @@
     <string name="title_activity_personal_detail">PersonalDetailActivity</string>
     <string name="title_activity_managemyrides">ManageMyRidesActivity</string>
     <string name="title_activity_managemygroups">ManageMyGroupsActivity</string>
+    <string name="title_activity_search_ride">SearchRideActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

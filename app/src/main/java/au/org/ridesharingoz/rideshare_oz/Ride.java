@@ -10,15 +10,34 @@ import java.util.Map;
  *
  */
 public class Ride {
+    private String RideID;
     private String DriverID;
-    private String[] passenger;
+    private Map<String,String> passenger;
     private int seatNum;
-    private Date date;
-    private List<Pin> pins;
+    private String date;
+    //private Map<String,Integer> pins;
 
-    public Ride(String DriverID){
+    public Ride(){}
+
+    public Ride(String RideID,String DriverID, int seatNum, String date){
+        this.RideID = RideID;
+        this.DriverID = DriverID;
+        //this.passenger = passenger;
+        this.seatNum = seatNum;
+        this.date =date;
+        //this.pins = pins;
 
     }
+
+    public String getRideID(){return RideID;}
+
+    public String getDriverID(){return DriverID;}
+
+    public Map<String,String> getPassenger() {return passenger;}
+
+    public int getSeatNum(){return seatNum;}
+
+    public String getDate() {return date;}
 
 
 }
