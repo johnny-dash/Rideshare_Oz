@@ -16,12 +16,18 @@
     <string name="login_anonymously">Login Anonymously</string>
     <string name="title_activity_maps">Booking</string>
     <string name="title_activity_signin">SigninActivity</string>
-    <string name="title_activity_actionchoice">ActionChoiceActivity</string>
-    <string name="title_activity_choosetyperide">ChooseTypeRideActivity</string>
-    <string name="title_activity_joingroup">JoinGroupActivity</string>
-    <string name="title_activity_oneoffride">OneOffRideActivity</string>
-    <string name="title_activity_regularride">RegularRideActivity</string>
-
+    <string name="title_activity_actionchoice">Choose an action</string>
+    <string name="title_activity_choosetyperide">Type of rides</string>
+    <string name="title_activity_joingroup">Join a group</string>
+    <string name="title_activity_oneoffride">One-Off Ride</string>
+    <string name="title_activity_regularride">Regular Ride</string>
+    <string name="title_activity_choose_group_event">Choose a Group or Event</string>
+    <string name="title_activity_joined_rides">My joined rides</string>
+    <string name="title_activity_manage_my_rides">Manage my rides</string>
+    <string name="title_activity_manage_my_groups">Manage my groups</string>
+    <string name="title_activity_offered_rides">My offered rides</string>
+    <string name="title_activity_profile">My profile</string>
+    <string name="title_activity_to_rate_rides">Rides to rate</string>
 
     <string name="or">or</string>
     <string name="email_address">Email address</string>

@@ -82,6 +82,34 @@
             android:name=".RegistrationInfomationActivity"
             android:label="@string/title_activity_personal_detail" >
         </activity>
+        <activity
+            android:name=".ChooseGroupEventActivity"
+            android:label="@string/title_activity_choose_group_event" >
+        </activity>
+        <activity
+            android:name=".JoinedRidesActivity"
+            android:label="@string/title_activity_joined_rides" >
+        </activity>
+        <activity
+            android:name=".ManageMyRidesActivity"
+            android:label="@string/title_activity_manage_my_rides" >
+        </activity>
+        <activity
+            android:name=".ManageMyGroupsActivity"
+            android:label="@string/title_activity_manage_my_groups" >
+        </activity>
+        <activity
+            android:name=".OfferedRidesActivity"
+            android:label="@string/title_activity_offered_rides" >
+        </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile" >
+        </activity>
+        <activity
+            android:name=".ToRateRidesActivity"
+            android:label="@string/title_activity_to_rate_rides" >
+        </activity>
     </application>
 
 </manifest>
