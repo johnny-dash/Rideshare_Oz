@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,31 +38,30 @@ import java.util.Map;
  */
 
 
-public class OneRideActivity extends MapsActivity {
+public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
     /* *************************************
     *               GENERAL               *
     ***************************************/
 
-    RadioGroup typRadioGroup;
+
+
+    EditText tx_seatNum;
 
     int listPosition;
 
-    Button createOffRide;
 
-    String type;
+    Button createOffRide;
 
     ListView addresslistview;
 
-    private List<Map<String,Object>> mData;
+    private List<Map<String,String>> mData;
 
 
     /* *************************************
     *          init of calender            *
     ***************************************/
     EditText editdate;
-
-    EditText edittime;
 
     Calendar myCalendar = Calendar.getInstance();
 
@@ -100,19 +100,7 @@ public class OneRideActivity extends MapsActivity {
         /* *************************************
         *               GENERAL               *
         ***************************************/
-        typRadioGroup = (RadioGroup) findViewById(R.id.OneoffTypeRadioGroup);
-        typRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.oGoingto) {
-                    type = "going to";
-                } else if (checkedId == R.id.oLeavingfrom) {
-                    type = "leaving from";
-                } else {
-                    Toast.makeText(OneRideActivity.this, "Please select a type!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        tx_seatNum = (EditText) findViewById(R.id.SeatNum);
 
         mData = getDate();
         addresslistview = (ListView) findViewById(R.id.AddressList);
@@ -123,7 +111,7 @@ public class OneRideActivity extends MapsActivity {
         createOffRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dataSubmit();
+                dataSubmit(mData);
             }
         });
 
@@ -144,9 +132,9 @@ public class OneRideActivity extends MapsActivity {
 
     }
 
-    private List<Map<String, Object>> getDate() {
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        Map<String, Object> map = new HashMap<String, Object>();
+    private List<Map<String, String>> getDate() {
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        Map<String, String> map = new HashMap<String, String>();
 /*        String[] address = new String[100];
         for (int i =0; i<address.length;i++){
             map.put("Address",address[i]);
@@ -155,42 +143,99 @@ public class OneRideActivity extends MapsActivity {
         }
 */
         map.put("Address", "Unimelb");
-        map.put("Time","Haven't been set");
+        map.put("Time", "Haven't been set");
         list.add(map);
 
-        map = new HashMap<String, Object>();
+        map = new HashMap<String, String>();
         map.put("Address", "604 Swanston street");
-        map.put("Time","Haven't been set");
+        map.put("Time", "Haven't been set");
         list.add(map);
 
-        map = new HashMap<String, Object>();
+        map = new HashMap<String, String>();
         map.put("Address", "St Kilda");
-        map.put("Time","Haven't been set");
+        map.put("Time", "Haven't been set");
         list.add(map);
 
         return list;
     }
 
-    public void dataSubmit(){
-        Map<String, String> alanisawesomeMap = new HashMap<String, String>();
-        alanisawesomeMap.put("birthYear", "1912");
-        alanisawesomeMap.put("fullName", "Alan Turing");
-        Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-        users.put("alanisawesome", alanisawesomeMap);
+    public void dataSubmit(List<Map<String,String>> mData){
 
-        mFirebaseRef.child("Ride").push().setValue(users, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError != null) {
-                    Toast.makeText(getApplicationContext(), "Data could not be saved. " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                    System.out.println("Data could not be saved. " + firebaseError.getMessage());
-                } else {
-                    Toast.makeText(getApplicationContext(), "Data saved successfully.", Toast.LENGTH_LONG).show();
-                    System.out.println("Data saved successfully.");
+        //重复性检查，错误输入，少输入检查数据重写
+        String DriverID = mAuthData.getUid();
+        Firebase RideRef = mFirebaseRef.child("Ride");
+        Firebase PinRef = mFirebaseRef.child("Pins");
+
+
+        /* *************************************
+        *          Store of Ride              *
+        ***************************************/
+        String seatNum = tx_seatNum.getText().toString();
+        String date = editdate.getText().toString();
+
+        Boolean seatNumcheck = seatNum.isEmpty();
+        Boolean datecheck = date.isEmpty();
+
+        if (!seatNumcheck&&!datecheck){
+            Ride new_ride = new Ride("1",DriverID,Integer.parseInt(seatNum),date);
+            RideRef.push().setValue(new_ride, new Firebase.CompletionListener() {
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if (firebaseError != null) {
+                        Toast.makeText(getApplicationContext(), "Data could not be saved. " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                        System.out.println("Data could not be saved. " + firebaseError.getMessage());
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Data saved successfully.", Toast.LENGTH_LONG).show();
+                        System.out.println("Ride saved successfully.");
+                    }
+                }
+
+            });
+        }
+
+        /* *************************************
+        *          Store of pins              *
+        ***************************************/
+
+        String time ="";
+        String address ="";
+        for (Map<String,String> map : mData){
+
+            for (Map.Entry<String,String> entry: map.entrySet()){
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if(key == "Address"){
+                    address = value;
+                }
+                if (key == "Time"){
+                    time = value;
                 }
             }
+            boolean Timecheck = time.isEmpty();
+            boolean addresscheck = address.isEmpty();
 
-        });
+            if (!Timecheck&&!addresscheck){
+                Pin pin = new Pin("1",23.333,67.222,address,time,date);
+
+                PinRef.push().setValue(pin, new Firebase.CompletionListener() {
+                    @Override
+                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                        if (firebaseError != null) {
+                            Toast.makeText(getApplicationContext(), "Data could not be saved. " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                            System.out.println("Data could not be saved. " + firebaseError.getMessage());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Data saved successfully.", Toast.LENGTH_LONG).show();
+                            System.out.println("Pins saved successfully.");
+                        }
+                    }
+
+                });
+            }
+
+        }
+
+
+
         }
 
 
@@ -230,7 +275,7 @@ public class OneRideActivity extends MapsActivity {
         }
 
         @Override
-        public Object getItem(int arg0) {
+        public String getItem(int arg0) {
             return null;
         }
 
@@ -275,7 +320,7 @@ public class OneRideActivity extends MapsActivity {
 
             String myFormat = "hh:mm"; //In which you need put here
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, String> map = new HashMap<String, String>();
             map.put("Time", sdf.format(myCalendar.getTime()));
             map.put("Address", mData.get(position).get("Address"));
             mData.set(position, map);

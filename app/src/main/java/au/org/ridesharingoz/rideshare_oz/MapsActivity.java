@@ -78,7 +78,8 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = null;
-                switch (rideType) {
+                switch (rideType)
+                {
                     case "regular":
                         intent = new Intent(MapsActivity.this, RegularRideActivity.class);
                         break;
