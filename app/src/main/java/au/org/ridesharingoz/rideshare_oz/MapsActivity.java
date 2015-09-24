@@ -2,8 +2,11 @@ package au.org.ridesharingoz.rideshare_oz;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -14,23 +17,60 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FirebaseAuthenticatedActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static final int PERMISSION_REQUEST_LOCATION = 0;
     private View mLayout;
+    private TextView mTextbox;
+
+    public String rideType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Intent intent = getIntent();
+        rideType = intent.getStringExtra("rideType");
+
         setUpMapIfNeeded();
+
+        mTextbox = (TextView) findViewById(R.id.address);
+
+        Button submitButton = (Button) findViewById(R.id.submit);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = null;
+                switch (rideType) {
+                    case "regular":
+                        intent = new Intent(MapsActivity.this, RegularRideActivity.class);
+                        break;
+                    case "oneOff":
+                        intent = new Intent(MapsActivity.this, OneRideActivity.class);
+                        break;
+                }
+                startActivity(intent);
+            }
+
+        });
     }
 
     @Override
@@ -79,11 +119,13 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria               = new Criteria();
         Location location               = null;
+        LatLng locationLatLng           = null;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
             // Location is enabled, request location
             location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            locationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         }
         else {
@@ -93,18 +135,36 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
 
         }
 
-        // We have a location, move the map to that location
-        if (location != null)
-        {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(location.getLatitude(), location.getLongitude()), 13));
+        // If we weren't able to get the current location, set to Melbourne
+        if (locationLatLng == null) {
+            locationLatLng = new LatLng(-37.8136111, 144.9630556);
         }
 
-        // Or, if we weren't able to get the current location, set to Melbourne
-        else {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(-37.8136111, 144.9630556), 13));
-        }
+        // Move the camera and add marker
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 13));
+        mMap.addMarker(new MarkerOptions().position(locationLatLng)
+                .title("Set address")
+                .snippet("Please move the marker if needed.")
+                .draggable(true));
+
+        // Get geocoder stuff
+        final Geocoder geocoder;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        // Update the address box as camera is moved
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                LatLng target = mMap.getCameraPosition().target;
+                List<Address> addresses;
+                try {
+                    addresses = geocoder.getFromLocation(target.latitude, target.longitude, 1);
+                    mTextbox.setText(addresses.get(0).getAddressLine(0));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
     }
 
