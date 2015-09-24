@@ -18,6 +18,7 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="address_hint">Jump to an address</string>
     <string name="submit">Submit</string>
+    <string name="go">Go</string>
 
     <string name="title_activity_signin">SigninActivity</string>
     <string name="title_activity_actionchoice">Choose an action</string>

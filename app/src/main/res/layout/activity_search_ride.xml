@@ -64,7 +64,7 @@
         android:layout_width="351dp"
         android:layout_height="52dp"
         android:orientation="horizontal"
-        android:id="@+id/OneoffTypeRadioGroup">
+        android:id="@+id/SearchTypeRadioGroup">
 
         <RadioButton
             android:layout_width="wrap_content"

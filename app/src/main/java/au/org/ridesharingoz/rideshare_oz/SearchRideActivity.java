@@ -1,22 +1,33 @@
 package au.org.ridesharingoz.rideshare_oz;
 
+import android.location.Address;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+import android.location.Geocoder;
 
-import au.org.ridesharingoz.rideshare_oz.R;
 
-public class SearchRideActivity extends MapsActivity {
+import java.io.IOException;
+import java.util.List;
+
+
+public class SearchRideActivity extends FirebaseAuthenticatedActivity {
+
+    double[] location = new double[2];
 
     RadioGroup typRadioGroup;
 
     EditText searchdate;
     EditText searchtime;
     EditText searchaddress;
+
+    Button btn_searchRide;
 
     String type;
 
@@ -30,17 +41,25 @@ public class SearchRideActivity extends MapsActivity {
         searchtime = (EditText) findViewById(R.id.search_time);
         searchaddress = (EditText) findViewById(R.id.search_address);
 
-        typRadioGroup = (RadioGroup) findViewById(R.id.OneoffTypeRadioGroup);
+        typRadioGroup = (RadioGroup) findViewById(R.id.SearchTypeRadioGroup);
         typRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.oGoingto) {
+                if (checkedId == R.id.sGoingto) {
                     type = "going to";
-                } else if (checkedId == R.id.oLeavingfrom) {
+                } else if (checkedId == R.id.sLeavingfrom) {
                     type = "leaving from";
                 } else {
                     Toast.makeText(SearchRideActivity.this, "Please select a type!", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        btn_searchRide = (Button) findViewById(R.id.btn_search);
+        btn_searchRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchRide();
             }
         });
     }
@@ -68,9 +87,28 @@ public class SearchRideActivity extends MapsActivity {
     }
 
     public void searchRide(){
-        
+        String address = searchaddress.getText().toString();
+        location = getLocationFromAddress(address);
+
+        Toast.makeText(getApplicationContext(),"Latitude: "+location[0]+"Longitude:"+location[1],Toast.LENGTH_SHORT).show();
     }
 
+    public double[] getLocationFromAddress(String strAddress) {
+        double[] latitudeandlongtitude = new double[2];
+        Geocoder coder = new Geocoder(this);
+        List<Address> address;
 
+        try {
+            address = coder.getFromLocationName(strAddress, 5);
+            Address location = address.get(0);
+            latitudeandlongtitude[0] = location.getLatitude();
+            latitudeandlongtitude[1] = location.getLongitude();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  latitudeandlongtitude;
+    }
 
 }

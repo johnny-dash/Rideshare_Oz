@@ -14,21 +14,30 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +46,12 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static final int PERMISSION_REQUEST_LOCATION = 0;
     private View mLayout;
-    private TextView mTextbox;
+
+    private EditText mTextbox;
+    private Button addressButton;
+    private Geocoder geocoder;
+
+    private Spinner spinner;
 
     public String rideType;
 
@@ -49,9 +63,14 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         Intent intent = getIntent();
         rideType = intent.getStringExtra("rideType");
 
-        setUpMapIfNeeded();
+        mTextbox = (EditText) findViewById(R.id.address);
 
-        mTextbox = (TextView) findViewById(R.id.address);
+        // Set up spinner
+        String colors[] = {"Set as pick-up address", "Set as destination address", "Delete marker"};
+        spinner = new Spinner(this);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, colors);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinner.setAdapter(spinnerArrayAdapter);
 
         Button submitButton = (Button) findViewById(R.id.submit);
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -68,10 +87,27 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                         intent = new Intent(MapsActivity.this, OneRideActivity.class);
                         break;
                 }
+                //Pin[] pins = {new Pin(), new Pin()};
+                //intent.putExtra("pins", pins);
                 startActivity(intent);
             }
 
         });
+
+        addressButton = (Button) findViewById(R.id.address_submit);
+        addressButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                LatLng location = getLocationFromAddress(mTextbox.getText().toString());
+                if (location != null) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(location));
+                }
+            }
+        });
+
+        setUpMapIfNeeded();
+
     }
 
     @Override
@@ -114,6 +150,10 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+
+        final double DEFAULT_LONGITUDE = -37.8136111;
+        final double DEFAULT_LATITUDE  = 144.9630556;
+
         mMap.setMyLocationEnabled(true);
 
         // Set up the location manager
@@ -138,32 +178,58 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
 
         // If we weren't able to get the current location, set to Melbourne
         if (locationLatLng == null) {
-            locationLatLng = new LatLng(-37.8136111, 144.9630556);
+            locationLatLng = new LatLng(DEFAULT_LONGITUDE, DEFAULT_LATITUDE);
         }
 
         // Move the camera and add marker
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 13));
-        mMap.addMarker(new MarkerOptions().position(locationLatLng)
+        /*mMap.addMarker(new MarkerOptions().position(locationLatLng)
                 .title("Set address")
                 .snippet("Please move the marker if needed.")
-                .draggable(true));
+                .draggable(true));*/
 
         // Get geocoder stuff
-        final Geocoder geocoder;
         geocoder = new Geocoder(this, Locale.getDefault());
 
         // Update the address box as camera is moved
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                LatLng target = mMap.getCameraPosition().target;
-                List<Address> addresses;
-                try {
-                    addresses = geocoder.getFromLocation(target.latitude, target.longitude, 1);
-                    mTextbox.setText(addresses.get(0).getAddressLine(0));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                //updateAddressLabel();
+            }
+        });
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng arg0) {
+                MarkerOptions marker = new MarkerOptions().position(arg0).title("Select type");
+                mMap.addMarker(marker);
+            }
+        });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                updateAddressLabel();
+                return false;
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                spinner.performClick();
+            }
+        });
+
+        mTextbox.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    addressButton.performClick();
+                    return true;
                 }
+                return false;
             }
         });
 
@@ -200,6 +266,41 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
                     PERMISSION_REQUEST_LOCATION);
         }
+    }
+
+    private void updateAddressLabel() {
+        LatLng target = mMap.getCameraPosition().target;
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(target.latitude, target.longitude, 1);
+            mTextbox.setText(addresses.get(0).getAddressLine(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private LatLng getLocationFromAddress(String strAddress) {
+
+        Log.v("address", "Looking up address: " + strAddress);
+        List<Address> address;
+
+        try {
+            address = geocoder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+            Address location = address.get(0);
+            location.getLatitude();
+            location.getLongitude();
+
+            return new LatLng(location.getLatitude(), location.getLongitude());
+        } catch (IOException|IndexOutOfBoundsException e) {
+            e.printStackTrace();
+
+            Toast.makeText(getApplicationContext(), "Unable to locate address",
+                    Toast.LENGTH_LONG).show();
+        }
+        return null;
     }
 
 }
