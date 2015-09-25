@@ -1,7 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.firebase.samples.logindemo.MainActivity">
+    tools:context="com.firebase.samples.logindemo.MainActivity"
+    android:id="@+id/mennubarnubar">
 
 
     <!-- My Profile-->
