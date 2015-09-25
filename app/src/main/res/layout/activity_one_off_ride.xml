@@ -16,7 +16,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Ride Information"
         android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30dp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -28,7 +29,8 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Number of seats:"
-            android:id="@+id/textView2" />
+            android:id="@+id/textView2"
+            android:layout_marginBottom="30dp" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -49,14 +51,20 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Date:"
-            android:id="@+id/textView3" />
+            android:id="@+id/textView3"
+            android:layout_marginBottom="30dp" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="date"
             android:ems="10"
-            android:id="@+id/Date" />
+            android:id="@+id/Date"
+            android:linksClickable="false"
+            android:contextClickable="false"
+            android:editable="false"
+            android:hint="@string/clickForAgenda"
+            android:layout_marginLeft="10dp" />
 
     </LinearLayout>
 
@@ -70,7 +78,7 @@
         android:layout_weight="0.12" />
 
     <ListView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="216dp"
         android:id="@+id/AddressList"
         android:layout_weight="0.84" />

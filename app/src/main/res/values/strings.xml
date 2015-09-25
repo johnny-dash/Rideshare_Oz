@@ -49,5 +49,6 @@
     <string name="title_activity_search_ride">SearchRideActivity</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="clickForAgenda">Click for Agenda</string>
 
 </resources>

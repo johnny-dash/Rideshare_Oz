@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.firebase.samples.logindemo.MainActivity">
 
+
     <!-- My Profile-->
     <item
         android:id="@+id/my_profile"
