@@ -22,14 +22,13 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
     Button goToMap;  //TODO link this activity to the map to set a pin
     EditText groupNameText;
     EditText groupDescriptionText;
-    EditText groupOwnerText;
     RadioGroup radioCategoryGroup;
     RadioButton radioCategoryButton;
     RadioGroup radioGroupTypeGroup;
     RadioButton radioGroupTypeButton;
     int PIN_REQUEST = 1;
-    Pin fixedPointAddress = null;
-    String pinID;
+    Pin fixedPin = null;
+    String pinID = null;
 
 
     @Override
@@ -44,6 +43,10 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
         radioGroupTypeGroup = (RadioGroup) findViewById(R.id.groupTypeRadioGroup);
         radioCategoryGroup = (RadioGroup) findViewById(R.id.categoryRadioGroup);
 
+        /* *************************************
+        *          Submit button listener      *
+        ***************************************/
+
         goToMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,6 +54,11 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
                 startActivityForResult(getPinFromMap, PIN_REQUEST);
             }
         });
+
+
+        /* *************************************
+        *      Go To Map  button listener      *
+        ***************************************/
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +68,9 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
         });
     }
 
+        /* *************************************
+        *    Create Group and Pin on submit    *
+        ***************************************/
 
     public void dataSubmit() {
 
@@ -71,10 +82,10 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
         String groupCategory;
         Boolean privateGroup;
 
-
         boolean emptyN = isEmptyEditText(groupName, groupNameText);
         boolean emptyD = isEmptyEditText(groupDescription, groupDescriptionText);
 
+        //get the radioButton chosen for group type
         int selectedType = radioGroupTypeGroup.getCheckedRadioButtonId();
         radioGroupTypeButton = (RadioButton) findViewById(selectedType);
         if (selectedType != -1) {
@@ -83,13 +94,19 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
             } else privateGroup = false;
         } else privateGroup = null;
 
-        int selectedCategory = radioGroupTypeGroup.getCheckedRadioButtonId();
+        // get the radioButton chosen for
+        int selectedCategory = radioCategoryGroup.getCheckedRadioButtonId();
         radioCategoryButton = (RadioButton) findViewById(selectedCategory);
-        if (selectedType != -1) {
-            groupCategory = radioGroupTypeButton.getText().toString();
+        if (selectedCategory != -1) {
+            groupCategory = radioCategoryButton.getText().toString();
         } else groupCategory = null;
 
-        if (!emptyN & !emptyD & privateGroup != null & groupCategory != null & fixedPointAddress != null) { //Data validation
+        //Data validation then pin and group creation in firebase
+        if (!emptyN & !emptyD & privateGroup != null & groupCategory != null & fixedPin != null) {
+            Firebase pinsRef = mFirebaseRef.child("pins");
+            Firebase uniqueID = pinsRef.push();
+            uniqueID.setValue(fixedPin);
+            pinID = uniqueID.getKey();
             Group group = new Group(groupName, groupDescription, groupCategory, pinID, privateGroup);
             group.setGroupOwner(uid);
             groupsRef.push().setValue(group);
@@ -98,11 +115,11 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
             startActivity(intent);
         }
         else {
-            Toast.makeText(getApplicationContext(), "Group cannot be created.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Group cannot be created. Missing data.", Toast.LENGTH_LONG).show();
         }
     }
 
-
+    //checks if text data has been entered
     private boolean isEmptyEditText(String editTextString, EditText editText) {
         if (TextUtils.isEmpty(editTextString)) {
             editText.setError("You need to fill this field");
@@ -110,11 +127,12 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
         } else return false;
     }
 
+    //gets pin data back from the MapsActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PIN_REQUEST) {
             if (resultCode == RESULT_OK) {
-                Pin fixedPin = (Pin) data.getSerializableExtra("pin");
+                fixedPin = (Pin) data.getSerializableExtra("pin");
             }
         }
 

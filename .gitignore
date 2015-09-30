@@ -4,4 +4,7 @@
 .DS_Store
 /build
 /captures
-
+/RideShare-OZ-Yellow.iml
+/app/app.iml
+/.idea/modules.xml
+/.gradle/2.4/taskArtifacts/cache.properties

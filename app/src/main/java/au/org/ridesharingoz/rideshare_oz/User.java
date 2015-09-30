@@ -18,6 +18,9 @@ public class User {
     private String licenseType;
     private Map<String, Ride> rides;
     private Map<String, Boolean> groupOwned;
+    private int driverRating;
+    private int nbdriverRatings;
+    private int pasengerRating;
 
 
 
