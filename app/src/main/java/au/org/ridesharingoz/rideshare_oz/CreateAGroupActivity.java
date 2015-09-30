@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
@@ -28,6 +29,7 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
     RadioButton radioGroupTypeButton;
     int PIN_REQUEST = 1;
     FixedPin fixedPointAddress = null;
+    String pinID;
 
 
     @Override
@@ -87,14 +89,18 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
             groupCategory = radioGroupTypeButton.getText().toString();
         } else groupCategory = null;
 
-/*        if (!emptyN & !emptyD & privateGroup != null & groupCategory != null & fixedPointAddress != null) { //Data validation
+        if (!emptyN & !emptyD & privateGroup != null & groupCategory != null & fixedPointAddress != null) { //Data validation
             Group group = new Group(groupName, groupDescription, groupCategory, pinID, privateGroup);
             group.setGroupOwner(uid);
             groupsRef.push().setValue(group);
+            Toast.makeText(getApplicationContext(), "Group created successfully.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getApplicationContext(), ManageMyGroupsActivity.class);
             startActivity(intent);
-        } */
-    } 
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Group cannot be created.", Toast.LENGTH_LONG).show();
+        }
+    }
 
 
     private boolean isEmptyEditText(String editTextString, EditText editText) {
@@ -104,14 +110,15 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
         } else return false;
     }
 
-/*    @Override
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == REQUEST_CANCELED) {
-            // code to handle cancelled state
-        } else if (requestCode == PIN_REQUEST) {
-            FixedPin fixedPointAddress = new FixedPin();
+        if (requestCode == PIN_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                FixedPin fixedPin = (FixedPin) data.getSerializableExtra("pin");
+            }
         }
 
-    } */
+
+    }
 
 }

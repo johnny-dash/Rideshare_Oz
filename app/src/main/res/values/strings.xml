@@ -8,6 +8,7 @@
     <string name="my_profile">My Profile</string>
     <string name="my_rides">My Rides</string>
     <string name="my_groups">My Groups</string>
+    <string name="home">Home</string>
 
     <string name="login_with_facebook">Login with Facebook</string>
     <string name="login_with_google">Login with Google+</string>

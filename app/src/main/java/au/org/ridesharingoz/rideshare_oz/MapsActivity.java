@@ -1,6 +1,8 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -55,6 +57,9 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
 
     public String rideType;
 
+    private ComponentName calledForResult = getCallingActivity();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,18 +83,26 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = null;
-                switch (rideType)
-                {
-                    case "regular":
-                        intent = new Intent(MapsActivity.this, RegularRideActivity.class);
-                        break;
-                    case "oneOff":
-                        intent = new Intent(MapsActivity.this, OneRideActivity.class);
-                        break;
+                if (calledForResult == null) {
+                    switch (rideType) {
+                        case "regular":
+                            intent = new Intent(MapsActivity.this, RegularRideActivity.class);
+                            break;
+                        case "oneOff":
+                            intent = new Intent(MapsActivity.this, OneRideActivity.class);
+                            break;
+                    }
+
+                    //Pin[] pins = {new Pin(), new Pin()};
+                    //intent.putExtra("pins", pins);
+                    startActivity(intent);
                 }
-                //Pin[] pins = {new Pin(), new Pin()};
-                //intent.putExtra("pins", pins);
-                startActivity(intent);
+                else {
+                    FixedPin fixedPin = new FixedPin();
+                    intent.putExtra("pin",fixedPin);
+                    setResult(RESULT_OK,intent);
+                    finish();
+                }
             }
 
         });

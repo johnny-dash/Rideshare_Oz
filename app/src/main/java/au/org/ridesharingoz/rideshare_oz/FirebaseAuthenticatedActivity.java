@@ -61,6 +61,10 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
             displayProfile();
             return true;
         }
+        else if (id == R.id.home) {
+            displayHome();
+            return true;
+        }
         else if (id == R.id.my_groups) {
             displayGroups();
             return true;
@@ -114,6 +118,13 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
     private void displayGroups() {
         Intent myGroupsIntent = new Intent(getApplicationContext(), ManageMyGroupsActivity.class);
         startActivity(myGroupsIntent);
+        finish();
+    }
+
+    /* displays the home view */
+    private void displayHome() {
+        Intent homeIntent = new Intent(getApplicationContext(), ActionChoiceActivity.class);
+        startActivity(homeIntent);
         finish();
     }
 

@@ -10,21 +10,17 @@ import android.widget.Button;
  */
 public class ManageMyGroupsActivity extends FirebaseAuthenticatedActivity{
 
-    private Button createagroup = null;
-    private Button joinedgroups = null;
-    private Button ownedgroups = null;
+    private Button createagroup;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_my_rides);
+        setContentView(R.layout.activity_manage_my_groups);
 
         createagroup = (Button) findViewById(R.id.button_createagroup);
 
 
         createagroup.setOnClickListener(buttonListener);
-        joinedgroups.setOnClickListener(buttonListener);
-        ownedgroups.setOnClickListener(buttonListener);
     }
 
 

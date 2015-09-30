@@ -1,9 +1,11 @@
 package au.org.ridesharingoz.rideshare_oz;
 
+import java.io.Serializable;
+
 /**
  * Created by Ocunidee on 30/09/2015.
  */
-public class FixedPin {
+public class FixedPin implements Serializable {
 
     private double longitude;
     private double latitude;
