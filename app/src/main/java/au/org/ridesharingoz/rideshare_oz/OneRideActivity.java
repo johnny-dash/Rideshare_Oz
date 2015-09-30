@@ -3,6 +3,7 @@ package au.org.ridesharingoz.rideshare_oz;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,7 +45,8 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
     *               GENERAL               *
     ***************************************/
 
-
+    //ArrayList<Pin> mappins;
+    Pin[] pins;
 
     EditText tx_seatNum;
 
@@ -97,6 +99,12 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         setContentView(R.layout.activity_one_off_ride);
 
         /* *************************************
+        *               Read pins              *
+        ***************************************/
+
+        Intent intent = getIntent();
+        pins = (Pin[]) intent.getSerializableExtra("pins");
+        /* *************************************
         *               GENERAL               *
         ***************************************/
         tx_seatNum = (EditText) findViewById(R.id.SeatNum);
@@ -134,13 +142,13 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
     private List<Map<String, String>> getDate() {
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         Map<String, String> map = new HashMap<String, String>();
-/*        String[] address = new String[100];
-        for (int i =0; i<address.length;i++){
-            map.put("Address",address[i]);
+        //String[] address = new String[100];
+        for (int i =0; i<pins.length;i++){
+            map.put("Address",String.valueOf(pins[i].getLatitude()));
             map.put("Time","Haven't been set");
             list.add(map);
         }
-*/
+/*
         map.put("Address", "Unimelb");
         map.put("Time", "Haven't been set");
         list.add(map);
@@ -154,7 +162,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         map.put("Address", "St Kilda");
         map.put("Time", "Haven't been set");
         list.add(map);
-
+*/
         return list;
     }
 
@@ -162,8 +170,8 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
         //重复性检查，错误输入，少输入检查数据重写
         String DriverID = mAuthData.getUid();
-        Firebase RideRef = mFirebaseRef.child("Ride");
-        Firebase PinRef = mFirebaseRef.child("Pins");
+        Firebase RideRef = mFirebaseRef.child("ride");
+        Firebase PinRef = mFirebaseRef.child("pins");
 
 
         /* *************************************

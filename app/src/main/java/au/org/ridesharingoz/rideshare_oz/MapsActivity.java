@@ -93,8 +93,8 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                             break;
                     }
 
-                    //Pin[] pins = {new Pin(), new Pin()};
-                    //intent.putExtra("pins", pins);
+                    Pin[] pins = {new Pin(), new Pin()};
+                    intent.putExtra("pins", pins);
                     startActivity(intent);
                 }
                 else {

@@ -1,12 +1,13 @@
 package au.org.ridesharingoz.rideshare_oz;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.util.Date;
 
 /**
  * Created by Johnny Mao on 15/9/23.
  */
-public class Pin {
+public class Pin implements Serializable {
     private String RideID;
     private double longitude;
     private double latitude;
