@@ -15,7 +15,7 @@
     <string name="login_with_password">Login with Password</string>
     <string name="login_anonymously">Login Anonymously</string>
 
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_maps">Map</string>
     <string name="address_hint">Jump to an address</string>
     <string name="submit">Submit</string>
     <string name="go">Go</string>
@@ -39,14 +39,15 @@
     <string name="password">Password</string>
     <string name="login">Log in</string>
     <string name="register">Register</string>
-    <string name="title_activity_oneoff_ride">OneoffRideActivity</string>
+    <string name="title_activity_oneoff_ride">Create a one-off ride</string>
 
-    <string name="title_activity_regular_ride">RegularRideActivity</string>
-    <string name="title_activity_one_off_ride">OneOffRideActivity</string>
-    <string name="title_activity_personal_detail">PersonalDetailActivity</string>
-    <string name="title_activity_managemyrides">ManageMyRidesActivity</string>
-    <string name="title_activity_managemygroups">ManageMyGroupsActivity</string>
-    <string name="title_activity_search_ride">SearchRideActivity</string>
+    <string name="title_activity_regular_ride">Create a regular ride</string>
+    <string name="title_activity_one_off_ride">Create a one-off ride</string>
+    <string name="title_activity_personal_detail">Personal details</string>
+    <string name="title_activity_managemyrides">Manage My Rides</string>
+    <string name="title_activity_managemygroups">Manage My Groups Activity</string>
+    <string name="title_activity_search_ride">Search Rides</string>
+    <string name="title_activity_create_a_group">Create a group</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="clickForAgenda">Click for Agenda</string>

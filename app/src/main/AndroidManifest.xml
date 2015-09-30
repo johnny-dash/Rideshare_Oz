@@ -111,8 +111,12 @@
             android:label="@string/title_activity_to_rate_rides" >
         </activity>
         <activity
-            android:name=".SearchRideActivity"
-            android:label="@string/title_activity_search_ride" >
+        android:name=".SearchRideActivity"
+        android:label="@string/title_activity_search_ride" >
+        </activity>
+        <activity
+            android:name=".CreateAGroupActivity"
+            android:label="@string/title_activity_create_a_group" >
         </activity>
     </application>
 

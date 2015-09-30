@@ -17,6 +17,7 @@ public class User {
     private Map<String, Group> groups;
     private String licenseType;
     private Map<String, Ride> rides;
+    private Map<String, Boolean> groupOwned;
 
 
 
@@ -59,5 +60,40 @@ public class User {
     public Map<String, Ride> getRides() {
         return rides;
     }
-    
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setLicenseNb(String licenseNb) {
+        this.licenseNb = licenseNb;
+    }
+
+    public void setPhoneNb(String phoneNb) {
+        this.phoneNb = phoneNb;
+    }
+
+    public void setLicenseType(String licenseType) {
+        this.licenseType = licenseType;
+    }
+
+    public void setGroups(Map<String, Group> groups) {
+        this.groups = groups;
+    }
+
+    public void setRides(Map<String, Ride> rides) {
+        this.rides = rides;
+    }
+
+    public Map<String, Boolean> getGroupOwned() {
+        return groupOwned;
+    }
+
+    public void setGroupOwned(Map<String, Boolean> groupOwned) {
+        this.groupOwned = groupOwned;
+    }
 }
