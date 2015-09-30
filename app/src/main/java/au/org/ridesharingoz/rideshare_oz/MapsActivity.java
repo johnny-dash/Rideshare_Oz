@@ -247,7 +247,6 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                 return false;
             }
         });
-
     }
 
     /**
