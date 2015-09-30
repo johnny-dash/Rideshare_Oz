@@ -8,6 +8,9 @@ import java.util.Date;
  * Created by Johnny Mao on 15/9/23.
  */
 public class Pin implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private String RideID;
     private double longitude;
     private double latitude;
@@ -39,6 +42,6 @@ public class Pin implements Serializable {
 
     public String getDate() {return date;}
 
-    
+
 
 }
