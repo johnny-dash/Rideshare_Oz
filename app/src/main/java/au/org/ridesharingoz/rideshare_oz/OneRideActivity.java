@@ -46,7 +46,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
     ***************************************/
 
     //ArrayList<Pin> mappins;
-    Pin[] pins;
+    ArrayList<Pin> pins;
 
     EditText tx_seatNum;
 
@@ -103,7 +103,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         ***************************************/
 
         Intent intent = getIntent();
-        pins = (Pin[]) intent.getSerializableExtra("pins");
+        pins = (ArrayList<Pin>) intent.getSerializableExtra("pins");
         /* *************************************
         *               GENERAL               *
         ***************************************/
@@ -143,8 +143,8 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         Map<String, String> map = new HashMap<String, String>();
         //String[] address = new String[100];
-        for (int i =0; i<pins.length;i++){
-            map.put("Address",String.valueOf(pins[i].getLatitude()));
+        for (Pin pin:pins){
+            map.put("Address",String.valueOf(pin.getLatitude()));
             map.put("Time","Haven't been set");
             list.add(map);
         }
