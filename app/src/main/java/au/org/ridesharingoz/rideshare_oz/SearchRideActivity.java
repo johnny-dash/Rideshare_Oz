@@ -13,6 +13,10 @@ import android.widget.Toast;
 import android.location.Geocoder;
 
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -22,6 +26,9 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
     double[] location = new double[2];
 
     RadioGroup typRadioGroup;
+
+    Pin[] pins;
+    int index = 0;
 
     EditText searchdate;
     EditText searchtime;
@@ -90,6 +97,23 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
         String address = searchaddress.getText().toString();
         location = getLocationFromAddress(address);
 
+
+        mFirebaseRef.child("pins").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot pinsSnapshot:dataSnapshot.getChildren()){
+                    if (pinsSnapshot.child("date").getValue() == searchdate.getText().toString())
+                    pins[index]  = pinsSnapshot.getValue(Pin.class);
+                    Toast.makeText(getApplicationContext(),"I get:"+pins[index],Toast.LENGTH_SHORT).show();
+                    index ++;
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
         Toast.makeText(getApplicationContext(),"Latitude: "+location[0]+"Longitude:"+location[1],Toast.LENGTH_SHORT).show();
     }
 

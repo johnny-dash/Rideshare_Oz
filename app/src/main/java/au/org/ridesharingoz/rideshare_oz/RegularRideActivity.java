@@ -36,14 +36,13 @@ import au.org.ridesharingoz.rideshare_oz.R;
  *
  */
 
-public class RegularRideActivity extends MapsActivity {
+public class RegularRideActivity extends FirebaseAuthenticatedActivity {
 
     /* *************************************
     *               GENERAL               *
     ***************************************/
 
     RadioGroup daysRadioGroup;
-    RadioGroup typRadioGroup;
 
     ListView addresslistview;
 
@@ -55,7 +54,7 @@ public class RegularRideActivity extends MapsActivity {
     CheckBox Saturday;
     CheckBox Sunday;
 
-    Button createOffRide;
+    Button createRegularRide;
 
     String trye;
     int listPosition;
@@ -65,13 +64,13 @@ public class RegularRideActivity extends MapsActivity {
     /* *************************************
     *          init of calender            *
     ***************************************/
-    EditText editdate;
+    EditText startdate;
 
-    EditText edittime;
+    EditText enddate;
 
     Calendar myCalendar = Calendar.getInstance();
 
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+    DatePickerDialog.OnDateSetListener cal_startdate = new DatePickerDialog.OnDateSetListener() {
 
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -80,38 +79,40 @@ public class RegularRideActivity extends MapsActivity {
             myCalendar.set(Calendar.YEAR, year);
             myCalendar.set(Calendar.MONTH, monthOfYear);
             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            dateformat();
+            startdateformat();
         }
 
     };
 
-    TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener(){
+    DatePickerDialog.OnDateSetListener cal_enddate = new DatePickerDialog.OnDateSetListener() {
+
         @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute){
-            myCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
-            myCalendar.set(Calendar.MINUTE, minute);
-            timeformat();
-
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            // TODO Auto-generated method stub
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            enddateformat();
         }
+
     };
 
-    private void dateformat() {
+   private void startdateformat() {
 
         String myFormat = "MM/dd/yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-        editdate.setText(sdf.format(myCalendar.getTime()));
+        startdate.setText(sdf.format(myCalendar.getTime()));
     }
 
-    private void timeformat() {
+    private void enddateformat() {
 
-        String myFormat = "hh:mm"; //In which you need put here
+        String myFormat = "MM/dd/yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-        edittime.setText(sdf.format(myCalendar.getTime()));
+        enddate.setText(sdf.format(myCalendar.getTime()));
     }
-
-
 
 
 
@@ -123,6 +124,13 @@ public class RegularRideActivity extends MapsActivity {
         /* *************************************
         *               GENERAL               *
         ***************************************/
+        createRegularRide = (Button) findViewById(R.id.Create_regRide);
+        createRegularRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Datasubmit();
+            }
+        });
 
         mData = getDate();
         addresslistview = (ListView) findViewById(R.id.RAddressList);
@@ -131,27 +139,30 @@ public class RegularRideActivity extends MapsActivity {
         /* *************************************
         *          init of calender            *
         ***************************************/
-        editdate = (EditText) findViewById(R.id.Date);
-        editdate.setOnClickListener(new View.OnClickListener() {
+        startdate = (EditText) findViewById(R.id.StartDate);
+        startdate.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(RegularRideActivity.this, date, myCalendar
+                new DatePickerDialog(RegularRideActivity.this, cal_startdate, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-/*
-        edittime = (EditText) findViewById(R.id.Time);
-        edittime.setOnClickListener(new View.OnClickListener() {
+
+        enddate = (EditText) findViewById(R.id.EndDate);
+        enddate.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(RegularRideActivity.this,time,myCalendar.get(Calendar.HOUR_OF_DAY),
-                        myCalendar.get(Calendar.MINUTE),false).show();
+                // TODO Auto-generated method stub
+                new DatePickerDialog(RegularRideActivity.this, cal_enddate, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-*/
+
     }
 
     private List<Map<String, Object>> getDate() {
@@ -257,4 +268,8 @@ public class RegularRideActivity extends MapsActivity {
 
     }
 
+
+    public void Datasubmit(){
+
+    }
 }

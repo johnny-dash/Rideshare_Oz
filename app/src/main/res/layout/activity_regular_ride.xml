@@ -141,32 +141,9 @@
         </RadioGroup>
     </HorizontalScrollView>
 
-    <RadioGroup
-        android:layout_width="351dp"
-        android:layout_height="52dp"
-        android:orientation="horizontal"
-        android:id="@+id/RegularRidetypeRadioGroup">
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Leaving from"
-            android:id="@+id/Leavingfrom"
-            android:checked="false"
-            android:layout_weight="0.39" />
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Going to"
-            android:id="@+id/Goingto"
-            android:checked="false"
-            android:layout_weight="0.46" />
-    </RadioGroup>
-
         <ListView
         android:layout_width="match_parent"
-        android:layout_height="244dp"
+        android:layout_height="299dp"
         android:id="@+id/RAddressList"
         android:layout_gravity="center_horizontal" />
 

@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MapsActivity extends FirebaseAuthenticatedActivity {
 
@@ -57,8 +58,7 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
 
     public String rideType;
 
-    private ComponentName calledForResult = getCallingActivity();
-
+    ArrayList<Pin> pins = new ArrayList<Pin>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,25 +83,27 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = null;
-                if (calledForResult == null) {
+                if (rideType != null) {
                     switch (rideType) {
                         case "regular":
                             intent = new Intent(MapsActivity.this, RegularRideActivity.class);
                             break;
-                        case "oneOff":
+
+                        default:
                             intent = new Intent(MapsActivity.this, OneRideActivity.class);
                             break;
                     }
-
-                    //Pin[] pins = {new Pin(), new Pin()};
-                    //intent.putExtra("pins", pins);
+                    intent.putExtra("pins", pins);
                     startActivity(intent);
                 }
                 else {
-                    FixedPin fixedPin = new FixedPin();
-                    intent.putExtra("pin",fixedPin);
-                    setResult(RESULT_OK,intent);
-                    finish();
+                    // Group creation
+                    if (!pins.isEmpty()) {
+                        intent = new Intent(MapsActivity.this, CreateAGroupActivity.class);
+                        intent.putExtra("pin", pins.get(0));
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
                 }
             }
 
@@ -215,8 +217,8 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0) {
-                MarkerOptions marker = new MarkerOptions().position(arg0).title("Select type");
-                mMap.addMarker(marker);
+                Marker marker = mMap.addMarker(new MarkerOptions().position(arg0).title("Select type"));
+                pins.add(new Pin(null, marker.getPosition().longitude, marker.getPosition().latitude, null, null, null));
             }
         });
 
@@ -245,7 +247,6 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                 return false;
             }
         });
-
     }
 
     /**
@@ -286,7 +287,9 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         List<Address> addresses;
         try {
             addresses = geocoder.getFromLocation(target.latitude, target.longitude, 1);
-            mTextbox.setText(addresses.get(0).getAddressLine(0));
+            mTextbox.setText(addresses.get(0).getAddressLine(0) +
+                    " " + addresses.get(0).getAddressLine(1) +
+                    " " + addresses.get(0).getAddressLine(2));
         } catch (IOException e) {
             e.printStackTrace();
         }

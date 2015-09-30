@@ -28,7 +28,7 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
     RadioGroup radioGroupTypeGroup;
     RadioButton radioGroupTypeButton;
     int PIN_REQUEST = 1;
-    FixedPin fixedPointAddress = null;
+    Pin fixedPointAddress = null;
     String pinID;
 
 
@@ -114,7 +114,7 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PIN_REQUEST) {
             if (resultCode == RESULT_OK) {
-                FixedPin fixedPin = (FixedPin) data.getSerializableExtra("pin");
+                Pin fixedPin = (Pin) data.getSerializableExtra("pin");
             }
         }
 
