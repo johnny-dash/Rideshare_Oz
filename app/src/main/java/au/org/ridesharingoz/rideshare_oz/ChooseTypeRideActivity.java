@@ -24,9 +24,8 @@ public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
         oneoff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(ChooseTypeRideActivity.this, MapsActivity.class);
-                //intent.putExtra("rideType", "oneOff");
-                Intent intent = new Intent(ChooseTypeRideActivity.this, OneRideActivity.class);
+                Intent intent = new Intent(ChooseTypeRideActivity.this, MapsActivity.class);
+                intent.putExtra("rideType", "oneOff");
                 startActivity(intent);
             }
         });
