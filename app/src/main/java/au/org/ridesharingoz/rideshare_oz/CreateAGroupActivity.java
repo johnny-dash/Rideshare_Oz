@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Ocunidee on 30/09/2015.
  */
@@ -101,7 +104,7 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
             groupCategory = radioCategoryButton.getText().toString();
         } else groupCategory = null;
 
-        //Data validation then pin and group creation in firebase
+        //Data validation then pin and group creation in firebase and update of owner
         if (!emptyN & !emptyD & privateGroup != null & groupCategory != null & fixedPin != null) {
             Firebase pinsRef = mFirebaseRef.child("pins");
             Firebase uniqueID = pinsRef.push();
@@ -109,7 +112,13 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
             pinID = uniqueID.getKey();
             Group group = new Group(groupName, groupDescription, groupCategory, pinID, privateGroup);
             group.setGroupOwner(uid);
-            groupsRef.push().setValue(group);
+            Firebase groupUniqueID = groupsRef.push();
+            groupUniqueID.setValue(group);
+            String groupID = groupUniqueID.getKey();
+            Firebase ownerRef = mFirebaseRef.child("users").child(uid).child("groupsOwned");
+            Map<String, Object> groupOwned = new HashMap<>();
+            groupOwned.put(groupID, true);
+            ownerRef.updateChildren(groupOwned);
             Toast.makeText(getApplicationContext(), "Group created successfully.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getApplicationContext(), ManageMyGroupsActivity.class);
             startActivity(intent);

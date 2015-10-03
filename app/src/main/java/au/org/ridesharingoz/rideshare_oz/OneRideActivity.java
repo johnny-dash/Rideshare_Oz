@@ -170,7 +170,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
         //重复性检查，错误输入，少输入检查数据重写
         String DriverID = mAuthData.getUid();
-        Firebase RideRef = mFirebaseRef.child("ride");
+        Firebase RideRef = mFirebaseRef.child("rides");
         Firebase PinRef = mFirebaseRef.child("pins");
 
 
@@ -184,7 +184,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         Boolean datecheck = date.isEmpty();
 
         if (!seatNumcheck&&!datecheck){
-            Ride new_ride = new Ride("1",DriverID,Integer.parseInt(seatNum),date);
+            Ride new_ride = new Ride(DriverID,Integer.parseInt(seatNum),date);
             RideRef.push().setValue(new_ride, new Firebase.CompletionListener() {
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
