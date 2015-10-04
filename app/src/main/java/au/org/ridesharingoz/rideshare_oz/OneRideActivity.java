@@ -142,13 +142,13 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
     private List<Map<String, String>> getDate() {
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         Map<String, String> map = new HashMap<String, String>();
-        //String[] address = new String[100];
+    /*
         for (Pin pin:pins){
-            map.put("Address",String.valueOf(pin.getLatitude()));
+            map.put("Address",String.valueOf(pin.getlatitude()));
             map.put("Time","Haven't been set");
             list.add(map);
         }
-/*
+*/
         map.put("Address", "Unimelb");
         map.put("Time", "Haven't been set");
         list.add(map);
@@ -162,7 +162,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         map.put("Address", "St Kilda");
         map.put("Time", "Haven't been set");
         list.add(map);
-*/
+
         return list;
     }
 

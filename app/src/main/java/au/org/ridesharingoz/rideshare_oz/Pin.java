@@ -1,8 +1,7 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import java.io.Serializable;
-import java.sql.Time;
-import java.util.Date;
+
 
 /**
  * Created by Johnny Mao on 15/9/23.
@@ -11,7 +10,7 @@ public class Pin implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String RideID;
+    private String rideID;
     private double longitude;
     private double latitude;
     private String address;
@@ -21,27 +20,25 @@ public class Pin implements Serializable {
 
     public Pin() {}
 
-    public Pin(String RideID,double longtitude,double latitude,String address,String time,String date){
-        this.RideID = RideID;
-        this.longitude = longtitude;
+    public Pin(String RideID,double longitude,double latitude,String address,String time,String date){
+        this.rideID = RideID;
+        this.longitude = longitude;
         this.latitude = latitude;
         this.address = address;
         this.time = time;
         this.date = date;
     }
 
-    public String getRideID() {return RideID;}
+    public String getaddress() {return address;}
 
-    public double getLongtitude() {return longitude;}
+    public String getdate() {return date;}
 
-    public double getLatitude() {return latitude;}
+    public double getlatitude() {return latitude;}
 
-    public String getAddress() {return address;}
+    public double getlongitude() {return longitude;}
 
-    public String getTime() {return time;}
+    public String getrideID() {return rideID;}
 
-    public String getDate() {return date;}
-
-
+    public String gettime() {return time;}
 
 }

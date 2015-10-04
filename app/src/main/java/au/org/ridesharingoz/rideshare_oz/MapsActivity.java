@@ -181,7 +181,9 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
 
             // Location is enabled, request location
             location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-            locationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            if (location != null) {
+                locationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            }
 
         }
         else {
