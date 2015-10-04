@@ -14,10 +14,12 @@ public class User {
     private String lastName;
     private String licenseNb;
     private String phoneNb;
-    private Map<String, Group> groups;
+    private Map<String, Boolean> groupsJoined;
     private String licenseType;
-    private Map<String, Ride> rides;
-    private Map<String, Boolean> groupOwned;
+    private Map<String, Boolean> ridesJoined;
+    private Map<String, Boolean> ridesOffered;
+    private Map<String, Boolean> groupsOwned;
+
 
 
 
@@ -32,68 +34,75 @@ public class User {
         this.licenseType = licenseType;
     }
 
-
     public String getFirstName() {
         return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getLicenseNb() {
-        return licenseNb;
-    }
-
-    public String getPhoneNb() {
-        return phoneNb;
-    }
-
-    public Map<String, Group> getGroups() {
-        return groups;
-    }
-
-    public String getLicenseType() {
-        return licenseType;
-    }
-
-    public Map<String, Ride> getRides() {
-        return rides;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getLicenseNb() {
+        return licenseNb;
     }
 
     public void setLicenseNb(String licenseNb) {
         this.licenseNb = licenseNb;
     }
 
+    public String getPhoneNb() {
+        return phoneNb;
+    }
+
     public void setPhoneNb(String phoneNb) {
         this.phoneNb = phoneNb;
+    }
+
+    public Map<String, Boolean> getGroupsJoined() {
+        return groupsJoined;
+    }
+
+    public void setGroupsJoined(Map<String, Boolean> groupsJoined) {
+        this.groupsJoined = groupsJoined;
+    }
+
+    public String getLicenseType() {
+        return licenseType;
     }
 
     public void setLicenseType(String licenseType) {
         this.licenseType = licenseType;
     }
 
-    public void setGroups(Map<String, Group> groups) {
-        this.groups = groups;
+    public Map<String, Boolean> getRidesJoined() {
+        return ridesJoined;
     }
 
-    public void setRides(Map<String, Ride> rides) {
-        this.rides = rides;
+    public void setRidesJoined(Map<String, Boolean> ridesJoined) {
+        this.ridesJoined = ridesJoined;
     }
 
-    public Map<String, Boolean> getGroupOwned() {
-        return groupOwned;
+    public Map<String, Boolean> getRidesOffered() {
+        return ridesOffered;
     }
 
-    public void setGroupOwned(Map<String, Boolean> groupOwned) {
-        this.groupOwned = groupOwned;
+    public void setRidesOffered(Map<String, Boolean> ridesOffered) {
+        this.ridesOffered = ridesOffered;
+    }
+
+    public Map<String, Boolean> getGroupsOwned() {
+        return groupsOwned;
+    }
+
+    public void setGroupsOwned(Map<String, Boolean> groupsOwned) {
+        this.groupsOwned = groupsOwned;
     }
 }
