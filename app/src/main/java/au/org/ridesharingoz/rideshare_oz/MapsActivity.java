@@ -220,7 +220,14 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onMapClick(LatLng arg0) {
                 Marker marker = mMap.addMarker(new MarkerOptions().position(arg0).title("Select type"));
-                pins.add(new Pin(null, marker.getPosition().longitude, marker.getPosition().latitude, null, null, null));
+                pins.add(new Pin(
+                        null,
+                        marker.getPosition().longitude,
+                        marker.getPosition().latitude,
+                        getAddressFromLatLng(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)),
+                        null,
+                        null
+                ));
             }
         });
 
@@ -286,15 +293,20 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
 
     private void updateAddressLabel() {
         LatLng target = mMap.getCameraPosition().target;
+        mTextbox.setText(getAddressFromLatLng(target));
+    }
+
+    private String getAddressFromLatLng(LatLng target) {
         List<Address> addresses;
         try {
             addresses = geocoder.getFromLocation(target.latitude, target.longitude, 1);
-            mTextbox.setText(addresses.get(0).getAddressLine(0) +
+            return addresses.get(0).getAddressLine(0) +
                     " " + addresses.get(0).getAddressLine(1) +
-                    " " + addresses.get(0).getAddressLine(2));
+                    " " + addresses.get(0).getAddressLine(2);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return "";
     }
 
     private LatLng getLocationFromAddress(String strAddress) {
