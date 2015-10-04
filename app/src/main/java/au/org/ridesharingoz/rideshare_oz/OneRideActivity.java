@@ -172,6 +172,8 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         String DriverID = mAuthData.getUid();
         Firebase RideRef = mFirebaseRef.child("rides");
         Firebase PinRef = mFirebaseRef.child("pins");
+        String rideID = "";
+
 
 
         /* *************************************
@@ -185,7 +187,9 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
         if (!seatNumcheck&&!datecheck){
             Ride new_ride = new Ride(DriverID,Integer.parseInt(seatNum),date);
-            RideRef.push().setValue(new_ride, new Firebase.CompletionListener() {
+            Firebase rideUniqueID = RideRef.push();
+            rideID = rideUniqueID.getKey();
+            rideUniqueID.setValue(new_ride, new Firebase.CompletionListener() {
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if (firebaseError != null) {
@@ -221,8 +225,9 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
             boolean Timecheck = time.isEmpty();
             boolean addresscheck = address.isEmpty();
 
+
             if (!Timecheck&&!addresscheck){
-                Pin pin = new Pin("1",23.333,67.222,address,time,date);
+                Pin pin = new Pin(rideID,23.333,67.222,address,time,date);
 
                 PinRef.push().setValue(pin, new Firebase.CompletionListener() {
                     @Override
