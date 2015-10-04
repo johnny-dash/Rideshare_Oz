@@ -52,6 +52,9 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
     int listPosition;
 
+    double latitude[] = new double[100];
+    double longitude[] = new double[100];
+
 
     Button createOffRide;
 
@@ -141,14 +144,21 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
     private List<Map<String, String>> getDate() {
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        Map<String, String> map = new HashMap<String, String>();
-    /*
+        //Map<String, String> map = new HashMap<String, String>();
+        int index = 0;
+
         for (Pin pin:pins){
-            map.put("Address",String.valueOf(pin.getlatitude()));
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("Address",String.valueOf(pin.getaddress()));
             map.put("Time","Haven't been set");
+            latitude[index] = pin.getlatitude();
+            longitude[index] = pin.getlongitude();
+            //System.out.println(latitude[index]);
+            //System.out.println(longitude[index]);
+            index++;
             list.add(map);
         }
-*/
+/*
         map.put("Address", "Unimelb");
         map.put("Time", "Haven't been set");
         list.add(map);
@@ -162,7 +172,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         map.put("Address", "St Kilda");
         map.put("Time", "Haven't been set");
         list.add(map);
-
+*/
         return list;
     }
 
@@ -193,10 +203,10 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if (firebaseError != null) {
-                        Toast.makeText(getApplicationContext(), "Data could not be saved. " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Ride could not be saved. " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                         System.out.println("Data could not be saved. " + firebaseError.getMessage());
                     } else {
-                        Toast.makeText(getApplicationContext(), "Data saved successfully.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Ride create successfully.", Toast.LENGTH_LONG).show();
                         System.out.println("Ride saved successfully.");
                     }
                 }
@@ -210,6 +220,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
         String time ="";
         String address ="";
+        int index = 0;
         for (Map<String,String> map : mData){
 
             for (Map.Entry<String,String> entry: map.entrySet()){
@@ -227,23 +238,30 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
 
             if (!Timecheck&&!addresscheck){
-                Pin pin = new Pin(rideID,23.333,67.222,address,time,date);
+                Pin pin = new Pin(rideID,longitude[index],latitude[index],address,time,date);
 
                 PinRef.push().setValue(pin, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                         if (firebaseError != null) {
-                            Toast.makeText(getApplicationContext(), "Data could not be saved. " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), "Data could not be saved. " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                             System.out.println("Data could not be saved. " + firebaseError.getMessage());
                         } else {
-                            Toast.makeText(getApplicationContext(), "Data saved successfully.", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), "Data saved successfully.", Toast.LENGTH_LONG).show();
                             System.out.println("Pins saved successfully.");
                         }
                     }
 
                 });
             }
+            //System.out.println(index);
+            //System.out.println(longitude[index]);
+            //System.out.println(latitude[index]);
+            index=index+1;
 
+            Intent intent = new Intent(OneRideActivity.this,ActionChoiceActivity.class);
+            startActivity(intent);
+            finish();
         }
 
 
@@ -258,7 +276,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 //    }
 
 
-        public final class ViewHolder{
+    public final class ViewHolder{
         public TextView Addressname;
         public TextView setTimeView;
         public Button addTimeButton;

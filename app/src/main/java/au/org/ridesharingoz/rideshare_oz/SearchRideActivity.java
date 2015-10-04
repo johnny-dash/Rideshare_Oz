@@ -1,6 +1,7 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.location.Address;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,20 +29,23 @@ import java.util.Locale;
 
 public class SearchRideActivity extends FirebaseAuthenticatedActivity {
 
-    double[] location = new double[2];
-    int pinswewant =1000;
-
     RadioGroup typRadioGroup;
 
-    Pin[] pins = new Pin[100];
-    Pin pin;
+    Pin searchpin;
+
+    Pin[] pins = new Pin[1000];
+    Pin[] LocationcheckedPin = new Pin[1000];
+    Pin[] TimecheckedPin = new Pin[1000];
     int index = 0;
+
+    int PIN_REQUEST = 1;
 
     EditText searchdate;
     EditText searchtime;
-    EditText searchaddress;
+
 
     Button btn_searchRide;
+    Button btn_gotomap;
 
     String type;
 
@@ -93,7 +97,7 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
 
 
         searchtime = (EditText) findViewById(R.id.search_time);
-        searchaddress = (EditText) findViewById(R.id.search_address);
+
 
         typRadioGroup = (RadioGroup) findViewById(R.id.SearchTypeRadioGroup);
         typRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -106,6 +110,15 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
                 } else {
                     Toast.makeText(SearchRideActivity.this, "Please select a type!", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        btn_gotomap = (Button) findViewById(R.id.btn_gotomap);
+        btn_gotomap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent getPinFromMap = new Intent(SearchRideActivity.this, MapsActivity.class);
+                startActivityForResult(getPinFromMap, PIN_REQUEST);
             }
         });
 
@@ -143,8 +156,6 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
     }
 
     public void searchRide(){
-        String address = searchaddress.getText().toString();
-        //location = getLocationFromAddress(address);
 
 
         mFirebaseRef.child("pins").addValueEventListener(new ValueEventListener() {
@@ -155,12 +166,9 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
 
                     if (pinsSnapshot.child("date").getValue().toString().equals(searchdate.getText().toString())) {
                         pins[index] = pinsSnapshot.getValue(Pin.class);
+                        System.out.println(pins[index].getaddress());
                         index++;
-                        System.out.println("Pin has searched!");
                     }
-                }
-                if(pins[0] != null){
-                    Toast.makeText(getApplicationContext(), "I get:" + pins[0].getaddress(), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -169,42 +177,51 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
 
             }
         });
+        System.out.println(pins.length);
+/*
+
+
+            LocationcheckedPin = checkLocation(pins);
+            for(int i = 0;i<LocationcheckedPin.length;i++){
+                //Toast.makeText(getApplicationContext(), "pins: "+pins[i], Toast.LENGTH_SHORT).show();
+                System.out.println(LocationcheckedPin[i]);
+            }
+*/
+            //Toast.makeText(getApplicationContext(), "There is no pin match, Please try other condition.", Toast.LENGTH_SHORT).show();
 
         //Toast.makeText(getApplicationContext(),"Latitude: "+location[0]+"Longitude:"+location[1],Toast.LENGTH_SHORT).show();
     }
 
-    public double[] getLocationFromAddress(String strAddress) {
-        double[] latitudeandlongtitude = new double[2];
-        Geocoder coder = new Geocoder(this);
-        List<Address> address;
 
-        try {
-            address = coder.getFromLocationName(strAddress, 5);
-            Address location = address.get(0);
-            latitudeandlongtitude[0] = location.getLatitude();
-            latitudeandlongtitude[1] = location.getLongitude();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return  latitudeandlongtitude;
-    }
-    public Pin[] checkLocation(Pin[] pins,double[] location){
+    public Pin[] checkLocation(Pin[] pins){
         Pin[] checkedpins = new Pin[1000];
         int n = 0;
+        System.out.println(pins[0].getlatitude());
+        /*
         for(int i = 0;i<pins.length;i++){
-            if(pins[i].getlatitude()>=location[0]-0.001 & pins[i].getlatitude()<=location[0]+0.001){
-                if(pins[i].getlongitude()>=location[1]-0.01 & pins[i].getlongitude()<=location[1]+0.01){
+            if(pins[i].getlatitude()>=searchpin.getlatitude()-0.001 & pins[i].getlatitude()<=searchpin.getlatitude()+0.001){
+                if(pins[i].getlongitude()>=searchpin.getlongitude()-0.001 & pins[i].getlongitude()<=searchpin.getlongitude()+0.001){
                     checkedpins[n] = pins[i];
                     n++;
                 }
             }
         }
+        */
         return checkedpins;
     }
 
     public Pin[] checkTime(Pin[] pins,String time){
         return pins;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PIN_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                searchpin = (Pin) data.getSerializableExtra("pin");
+            }
+        }
+
+
     }
 }
