@@ -3,37 +3,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    tools:context="au.org.ridesharingoz.rideshare_oz.JoinGroupActivity">
+    android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="match_parent"
+
+    <ImageButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Description:"
-        android:id="@+id/GroupDescriptionTitle" />
+        android:layout_margin="8dp"
+        android:background="@drawable/add_icon"
+        android:id="@+id/addButton" />
 
-    <TextView
+    <LinearLayout
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical"
+        android:paddingLeft="0px"
+        android:paddingRight="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/GroupDescription" />
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Fixed point you can share ride to and from:"
-        android:id="@+id/GroupFixedPointTitle" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/groupToJoinName" />
 
+        </RelativeLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginTop="4dp"
+            android:id="@+id/groupToJoinDescription" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/FixedPointAddress" />
+            android:text="To and from:"
+            android:id="@+id/GroupFixedPointTitle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/groupToJoinFixedPointAddress" />
+
+    </LinearLayout>
+
 
 </LinearLayout>
 

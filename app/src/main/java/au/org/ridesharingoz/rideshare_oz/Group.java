@@ -1,5 +1,6 @@
 package au.org.ridesharingoz.rideshare_oz;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,7 +12,7 @@ public class Group {
     private String groupDescription;
     private String groupOwner;
     private String pinID;
-    private Map<String, Boolean> event;
+    private Map<String, Boolean> events;
     private String category;
     private Boolean privateGroup;
 
@@ -23,6 +24,8 @@ public class Group {
         this.category= category;
         this.pinID=pinID;
         this.privateGroup=privateGroup;
+        this.groupOwner="";
+        this.events= new HashMap<>();
     }
 
     public String getGroupDescription() {
@@ -41,8 +44,8 @@ public class Group {
         return pinID;
     }
 
-    public Map<String, Boolean> getEvent() {
-        return event;
+    public Map<String, Boolean> getEvents() {
+        return events;
     }
 
     public void setGroupName(String groupName) {
@@ -61,7 +64,23 @@ public class Group {
         this.pinID = pinID;
     }
 
-    public void setEvent(Map<String, Boolean> event) {
-        this.event = event;
+    public void setEvents(Map<String, Boolean> events) {
+        this.events = events;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Boolean getPrivateGroup() {
+        return privateGroup;
+    }
+
+    public void setPrivateGroup(Boolean privateGroup) {
+        this.privateGroup = privateGroup;
     }
 }

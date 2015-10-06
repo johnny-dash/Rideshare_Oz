@@ -22,7 +22,7 @@ import java.util.Map;
 public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
 
     Button submit;
-    Button goToMap;  //TODO link this activity to the map to set a pin
+    Button goToMap;
     EditText groupNameText;
     EditText groupDescriptionText;
     RadioGroup radioCategoryGroup;
@@ -47,7 +47,7 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
         radioCategoryGroup = (RadioGroup) findViewById(R.id.categoryRadioGroup);
 
         /* *************************************
-        *          Submit button listener      *
+        *          Go to Map button listener      *
         ***************************************/
 
         goToMap.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +60,7 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
 
 
         /* *************************************
-        *      Go To Map  button listener      *
+        *      Submit  button listener      *
         ***************************************/
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +119,8 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
             Map<String, Object> groupOwned = new HashMap<>();
             groupOwned.put(groupID, true);
             ownerRef.updateChildren(groupOwned);
+            Firebase joinRef = mFirebaseRef.child("users").child(uid).child("groupsJoined");
+            joinRef.updateChildren(groupOwned);
             Toast.makeText(getApplicationContext(), "Group created successfully.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getApplicationContext(), ManageMyGroupsActivity.class);
             startActivity(intent);
