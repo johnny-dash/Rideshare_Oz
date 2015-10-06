@@ -1,6 +1,8 @@
 package au.org.ridesharingoz.rideshare_oz;
 
+import android.app.Activity;
 import android.app.ExpandableListActivity;
+import android.app.usage.UsageEvents;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.BaseExpandableListAdapter;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -23,100 +29,206 @@ import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
+
 import au.org.ridesharingoz.rideshare_oz.R;
 
 public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
-    protected String noEvent = "Create a private ride !";
+    protected String noEvent = "Create a normal ride !";
+    private ExpandableListView expandList;
+    private InfoDetailsAdapter adapter;
+    private Activity activity;
+    private ArrayList<String> groupList;
+    private ArrayList<ArrayList<String>> eventList;
+    private ArrayList<ArrayList<String>> eventIDList;
+    private ArrayList<String> eIDLists;
+    private ArrayList<String> eNames;
+    private int numberOfEvents;
+    private ArrayList<Integer> endPoint;
+    private int eCounter;
+    private int endCounter;
 
-    ExpandableListView mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_group_event);
 
-        mView = (ExpandableListView) findViewById(R.id.el_list);
-        final MyAdapter myAdapter = new MyAdapter();
-        mView.setAdapter(myAdapter);
-        mView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            /**
-             * child click method
-             */
-            @SuppressWarnings("unchecked")
-            @Override
-            public boolean onChildClick(
-                    ExpandableListView parent,
-                    View v,
-                    int groupPosition,
-                    int childPosition,
-                    long id) {
-                // get group data
-                Object Group = myAdapter.getGroup(groupPosition);
 
-                // get event data
-                String childMap = (String) myAdapter.getChild(
-                        groupPosition,
-                        childPosition);
+        Firebase groupRef = new Firebase("https://flickering-inferno-6814.firebaseio.com/groups");
+        groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        groupList = new ArrayList<String>();
+                                                        eventIDList = new ArrayList<ArrayList<String>>();
+                                                        eNames = new ArrayList<String>();
+                                                        eventList = new ArrayList<ArrayList<String>>();
 
-                if (childMap.toString().equals(noEvent)) {
-                    // Create a normal ride ---> Choose type
-                    Intent GroupAndEvent1 = new Intent(ChooseGroupEventActivity.this, ChooseTypeRideActivity.class);
-                    Bundle bundle1 = new Bundle();
-                    bundle1.putString("Group", myAdapter.getGroup(groupPosition).toString());
-                    bundle1.putString("Event", childMap.toString());
-                    GroupAndEvent1.putExtras(bundle1);
-                    startActivity(GroupAndEvent1);
-                } else {
+                                                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                                            Group group = postSnapshot.getValue(Group.class);
+                                                            groupList.add(group.getGroupName());
+                                                            // get HashMap < eventName, eventDate >
+                                                            Map<String, Boolean> eventInfo = new HashMap<String, Boolean>();
+                                                            final ArrayList<String> e = new ArrayList<String>();
+                                                            if (postSnapshot.hasChild("events")) {
 
-                    //Choose an event ---> Directly go to map, choose pick-up points
-                    Intent GroupAndEvent2 = new Intent(ChooseGroupEventActivity.this, MapsActivity.class);
-                    Bundle bundle2 = new Bundle();
-                    bundle2.putString("Group", myAdapter.getGroup(groupPosition).toString());
-                    bundle2.putString("Event", childMap.toString());
-                    GroupAndEvent2.putExtras(bundle2);
-                    startActivity(GroupAndEvent2);
-                }
+                                                                eventInfo = group.getEvents();
+                                                                //e contains all eventIDs in one group
 
-                // output log
-                Log.d("SampleActivity", "Group: " + Group);
-                Log.d("SampleActivity", "Event: " + childMap);
 
-                return false;
-            }
+                                                                for (Map.Entry<String, Boolean> entry : eventInfo.entrySet()) {
+                                                                    e.add(entry.getKey().toString());
+                                                                }
+                                                                eventIDList.add(e);
+                                                            } else {
+                                                                e.add("empty");
+                                                                eventIDList.add(e);
 
-        });
+                                                            }
+
+                                                        }
+                                                        endCounter = 0;
+                                                        eCounter = 0;
+                                                        endPoint = new ArrayList<Integer>();
+
+                                                        //for each list in eventIDList, get eventNames
+                                                        for (int i = 0; i < eventIDList.size(); i++) {
+                                                            //get eventName for each event
+
+                                                            eIDLists = eventIDList.get(i);
+
+                                                            if (!eIDLists.get(0).equals("empty")) {
+                                                                for (int j = 0; j < eIDLists.size(); j++) {
+                                                                    numberOfEvents++;
+
+                                                                    Firebase eventName = new Firebase("https://flickering-inferno-6814.firebaseio.com/events/" + eIDLists.get(j));
+                                                                    eventName.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                            eCounter += 1;
+                                                                            Event event = dataSnapshot.getValue(Event.class);
+                                                                            String eName = (String) event.getEventName();
+                                                                            String eDate = (String) event.getEventDate();
+                                                                            eNames.add("Event: " + eName + " | " + "Date:" + eDate);
+                                                                            if (eCounter == endPoint.get(endCounter)) {
+                                                                                eNames.add(noEvent);
+                                                                                eventList.add(eNames);
+                                                                                eNames = new ArrayList<String>();
+                                                                                endCounter += 1;
+
+                                                                            }
+                                                                            if (eCounter == numberOfEvents) {
+                                                                                adapter = new InfoDetailsAdapter(ChooseGroupEventActivity.this, groupList, eventList);
+                                                                                expandList.setAdapter(adapter);
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onCancelled(FirebaseError firebaseError) {
+                                                                            System.out.println("The read failed: " + firebaseError.getMessage());
+                                                                        }
+                                                                    });
+                                                                }
+                                                            } else {
+                                                                eNames.add(noEvent);
+                                                                eventList.add(eNames);
+                                                                eNames = new ArrayList<String>();
+                                                            }
+                                                            endPoint.add(numberOfEvents);
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(FirebaseError firebaseError) {
+                                                        System.out.println("The read failed: " + firebaseError.getMessage());
+                                                    }
+                                                }
+
+        );
+
+        activity = this;
+        expandList = (ExpandableListView)
+
+                findViewById(R.id.el_list);
+
+
+        expandList.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
+
+                                           {
+                                               /**
+                                                * child click method
+                                                */
+                                               @SuppressWarnings("unchecked")
+                                               @Override
+                                               public boolean onChildClick(
+                                                       ExpandableListView parent,
+                                                       View v,
+                                                       int groupPosition,
+                                                       int childPosition,
+                                                       long id) {
+                                                   // get group data
+                                                   Object Group = adapter.getGroup(groupPosition);
+
+                                                   // get event data
+                                                   String childMap = (String) adapter.getChild(
+                                                           groupPosition,
+                                                           childPosition);
+
+                                                   if (childMap.toString().equals(noEvent)) {
+                                                       // Create a normal ride ---> Choose type
+                                                       Intent GroupAndEvent1 = new Intent(ChooseGroupEventActivity.this, ChooseTypeRideActivity.class);
+                                                       Bundle bundle1 = new Bundle();
+                                                       bundle1.putString("Group", adapter.getGroup(groupPosition).toString());
+                                                       bundle1.putString("Event", childMap.toString());
+                                                       GroupAndEvent1.putExtras(bundle1);
+                                                       startActivity(GroupAndEvent1);
+                                                   } else {
+                                                       int startIndex = childMap.indexOf(" ");
+                                                       int endIndex = childMap.indexOf(" |");
+                                                       String eventName = childMap.substring(startIndex + 1, endIndex);
+                                                       System.out.print(eventName);
+                                                       //Choose an event ---> Directly go to map, choose pick-up points
+                                                       Intent GroupAndEvent2 = new Intent(ChooseGroupEventActivity.this, MapsActivity.class);
+                                                       Bundle bundle2 = new Bundle();
+                                                       bundle2.putString("Group", adapter.getGroup(groupPosition).toString());
+                                                       bundle2.putString("Event", eventName);
+                                                       GroupAndEvent2.putExtras(bundle2);
+                                                       startActivity(GroupAndEvent2);
+                                                   }
+
+                                                   // output log
+                                                   Log.d("SampleActivity", "Group: " + Group);
+                                                   Log.d("SampleActivity", "Event: " + childMap);
+
+                                                   return false;
+                                               }
+
+                                           }
+
+        );
+
 
     }
 
-    class MyAdapter extends BaseExpandableListAdapter {
-        /*
+    public class InfoDetailsAdapter extends BaseExpandableListAdapter {
 
 
-                     SHOULE GET DATA FROM FIREBASE
+        Activity activity;
+        List<String> groupList;
+        ArrayList<ArrayList<String>> eventList;
 
-                     IF THERE IS NO EVENT In ONE GROUP, CHOOSE " Create a private ride !"
-
-                     SEND GROUP NAME( STRING )  AND EVENT NAME ( STRING ) TO NEXT ACTIVITY
-
-                     NEXT ACTIVITY SHOULD DECIDE THE FIX POINT ACCORDING TO THESE
-
-
-
-         */
-
-        //set groups ***TEST DATA***
-        private String[] generalsTypes = new String[]{"The University of Melbourne", "Group 2", "Group 3", "Group 4", "Group 5"};
-        //set events ** TEST DATA ***
-        private String[][] generals = new String[][]{
-                {"Event 1", "Event 2", noEvent},
-                {"Event 1", "Event 2", "Event 3", noEvent},
-                {"Event 1", noEvent},
-                {noEvent},
-                {"Event1", "Event2", noEvent}
-
-
-        };
-
+        public InfoDetailsAdapter(Activity a, List<String> groupList,
+                                  ArrayList<ArrayList<String>> eventList) {
+            activity = a;
+            this.groupList = groupList;
+            this.eventList = eventList;
+        }
 
         //getTextView
         TextView getTextView() {
@@ -133,22 +245,22 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
 
         @Override
         public int getGroupCount() {
-            return generalsTypes.length;
+            return groupList.size();
         }
 
         @Override
         public int getChildrenCount(int groupPosition) {
-            return generals[groupPosition].length;
+            return eventList.get(groupPosition).size();
         }
 
         @Override
         public Object getGroup(int groupPosition) {
-            return generalsTypes[groupPosition];
+            return groupList.get(groupPosition);
         }
 
         @Override
         public Object getChild(int groupPosition, int childPosition) {
-            return generals[groupPosition][childPosition];
+            return eventList.get(groupPosition).get(childPosition);
         }
 
         @Override
