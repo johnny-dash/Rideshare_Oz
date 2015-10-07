@@ -1,57 +1,153 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.Activity;
-import android.app.ExpandableListActivity;
-import android.app.usage.UsageEvents;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.BaseExpandableListAdapter;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
-
-import au.org.ridesharingoz.rideshare_oz.R;
 
 public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
     protected String noEvent = "Create a normal ride !";
     private ExpandableListView expandList;
     private InfoDetailsAdapter adapter;
     private Activity activity;
+    private Map<String, Boolean> groupIDmap;
+    private ArrayList<String> groupIDList;
     private ArrayList<String> groupList;
+    private Map<String, Boolean> eventIDmap;
     private ArrayList<ArrayList<String>> eventList;
-    private ArrayList<ArrayList<String>> eventIDList;
-    private ArrayList<String> eIDLists;
+    private ArrayList<Map<String, Boolean>> eventIDList = new ArrayList<Map<String, Boolean>>();
     private ArrayList<String> eNames;
     private int numberOfEvents;
     private ArrayList<Integer> endPoint;
     private int eCounter;
     private int endCounter;
+    private int count1 = 1;
+    private int count2 = 2;
+    private int count3 = 3;
+
+
+    private void createData() {
+
+        Query usernode = mFirebaseRef.child("users").child("f241c0fa-7f37-404c-8a58-4ad6a8f555cd");
+        usernode.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                count1 -= 1;
+                count2 -= 2;
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    // get groupID List
+                    groupIDmap = (Map<String, Boolean>) dataSnapshot.child("groupsJoined").getValue();
+
+                    System.out.println(groupIDmap);
+                    count1 += 1;
+                    System.out.println("count1: " + count1);
+                }
+
+                groupIDList = new ArrayList<String>();
+                for (Map.Entry<String, Boolean> entry : groupIDmap.entrySet()) {
+                    groupIDList.add(entry.getKey().toString());
+                    System.out.println(groupIDList);
+
+                    groupList = new ArrayList<String>();
+
+                    Query groupnode = mFirebaseRef.child("groups").child(entry.getKey());
+                    groupnode.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            count2 += 1;
+                            System.out.println("count2: " + count2);
+
+                            groupList.add((String) dataSnapshot.child("groupName").getValue());
+                            System.out.println(groupList);
+                            eventIDmap = (Map<String, Boolean>) dataSnapshot.child("events").getValue();
+                            eventIDList.add(eventIDmap);
+                            eventList = new ArrayList<ArrayList<String>>();
+
+                            eNames = new ArrayList<String>();
+                            eCounter = 0;
+                            for (Map.Entry<String, Boolean> entry : eventIDmap.entrySet()) {
+
+
+                                Query pinnode = mFirebaseRef.child("events").child(entry.getKey());
+                                pinnode.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                                        eNames.add(dataSnapshot.child("eventName").getValue() + " | " + dataSnapshot.child("eventDate").getValue());
+                                        count3 += 1;
+
+                                        System.out.println("count3: " + count3);
+                                        System.out.println("Final count: " + count1 + " " + count2 + " " + count3);
+
+                                        System.out.println(eventIDmap);
+                                        if (eNames.size() == eventIDList.get(eCounter).size()) {
+                                            eNames.add(noEvent);
+                                            eventList.add(eNames);
+                                            eNames = new ArrayList<String>();
+                                            eCounter += 1;
+                                            System.out.println("eventList id : " + eventList);
+                                        }
+
+
+                                        if (count2 == count3) {
+
+
+                                            adapter = new InfoDetailsAdapter(ChooseGroupEventActivity.this, groupList, eventList);
+                                            expandList.setAdapter(adapter);
+
+                                        }
+                                    }
+
+
+                                    @Override
+                                    public void onCancelled(FirebaseError firebaseError) {
+                                        System.out.println("The read at pinnode failed: " + firebaseError.getMessage());
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                            System.out.println("The read at usergroupnode failed: " + firebaseError.getMessage());
+                        }
+                    });
+
+                    System.out.println(eventList);
+                }
+                count3 -= 3;
+            }
+
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read at usernode failed: " + firebaseError.getMessage());
+            }
+        });
+
+    }
 
 
     @Override
@@ -59,99 +155,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_group_event);
 
-
-        Firebase groupRef = new Firebase("https://flickering-inferno-6814.firebaseio.com/groups");
-        groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        groupList = new ArrayList<String>();
-                                                        eventIDList = new ArrayList<ArrayList<String>>();
-                                                        eNames = new ArrayList<String>();
-                                                        eventList = new ArrayList<ArrayList<String>>();
-
-                                                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                                            Group group = postSnapshot.getValue(Group.class);
-                                                            groupList.add(group.getGroupName());
-                                                            // get HashMap < eventName, eventDate >
-                                                            Map<String, Boolean> eventInfo = new HashMap<String, Boolean>();
-                                                            final ArrayList<String> e = new ArrayList<String>();
-                                                            if (postSnapshot.hasChild("events")) {
-
-                                                                eventInfo = group.getEvents();
-                                                                //e contains all eventIDs in one group
-
-
-                                                                for (Map.Entry<String, Boolean> entry : eventInfo.entrySet()) {
-                                                                    e.add(entry.getKey().toString());
-                                                                }
-                                                                eventIDList.add(e);
-                                                            } else {
-                                                                e.add("empty");
-                                                                eventIDList.add(e);
-
-                                                            }
-
-                                                        }
-                                                        endCounter = 0;
-                                                        eCounter = 0;
-                                                        endPoint = new ArrayList<Integer>();
-
-                                                        //for each list in eventIDList, get eventNames
-                                                        for (int i = 0; i < eventIDList.size(); i++) {
-                                                            //get eventName for each event
-
-                                                            eIDLists = eventIDList.get(i);
-
-                                                            if (!eIDLists.get(0).equals("empty")) {
-                                                                for (int j = 0; j < eIDLists.size(); j++) {
-                                                                    numberOfEvents++;
-
-                                                                    Firebase eventName = new Firebase("https://flickering-inferno-6814.firebaseio.com/events/" + eIDLists.get(j));
-                                                                    eventName.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                        @Override
-                                                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                                                            eCounter += 1;
-                                                                            Event event = dataSnapshot.getValue(Event.class);
-                                                                            String eName = (String) event.getEventName();
-                                                                            String eDate = (String) event.getEventDate();
-                                                                            eNames.add("Event: " + eName + " | " + "Date:" + eDate);
-                                                                            if (eCounter == endPoint.get(endCounter)) {
-                                                                                eNames.add(noEvent);
-                                                                                eventList.add(eNames);
-                                                                                eNames = new ArrayList<String>();
-                                                                                endCounter += 1;
-
-                                                                            }
-                                                                            if (eCounter == numberOfEvents) {
-                                                                                adapter = new InfoDetailsAdapter(ChooseGroupEventActivity.this, groupList, eventList);
-                                                                                expandList.setAdapter(adapter);
-                                                                            }
-                                                                        }
-
-                                                                        @Override
-                                                                        public void onCancelled(FirebaseError firebaseError) {
-                                                                            System.out.println("The read failed: " + firebaseError.getMessage());
-                                                                        }
-                                                                    });
-                                                                }
-                                                            } else {
-                                                                eNames.add(noEvent);
-                                                                eventList.add(eNames);
-                                                                eNames = new ArrayList<String>();
-                                                            }
-                                                            endPoint.add(numberOfEvents);
-                                                        }
-
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(FirebaseError firebaseError) {
-                                                        System.out.println("The read failed: " + firebaseError.getMessage());
-                                                    }
-                                                }
-
-        );
-
+        createData();
         activity = this;
         expandList = (ExpandableListView)
 
