@@ -2,6 +2,7 @@ package au.org.ridesharingoz.rideshare_oz;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
     private int count1 = 1;
     private int count2 = 2;
     private int count3 = 3;
-    List<Map<String,String>> data;
+    List<Map<String,Object>> data;
     Context thisContext = this;
 
     @Override
@@ -44,9 +45,9 @@ public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
 
 
     public void createData() {
-        final List<Map<String,String>> list = new ArrayList<Map<String,String>>();
-        Query usernode = mFirebaseRef.child("groups");
-        usernode.addListenerForSingleValueEvent(new ValueEventListener() {
+        final List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+        Query groupnode = mFirebaseRef.child("groups");
+        groupnode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 count1 -= 1;
@@ -58,84 +59,86 @@ public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
                     map.put("groupDescription", group.getGroupDescription());
                     map.put("fixedPoint", group.getPinID());
                     map.put("groupID", postSnapshot.getKey());
+                    map.put("privateGroup", group.getPrivateGroup());
                     list.add(map);
-                    System.out.println(group.getGroupName());
-                    count1 +=1;
-                    System.out.println( "count1: " + count1);
+                    count1 += 1;
+                    System.out.println("count1: " + count1);
                 }
 
                 final List<String> groupsAlreadyJoined = new ArrayList();
-                final Iterator<Map<String, String>> mapIterator = list.iterator();
+                final Iterator<Map<String, Object>> mapIterator = list.iterator();
                 while (mapIterator.hasNext()) {
-                    final Map<String, String> map = mapIterator.next();
+                    final Map<String, Object> map = mapIterator.next();
                     String user = mAuthData.getUid();
-                    final String groupID = map.get("groupID");
-                    final String pinID = (String) map.get("fixedPoint");
-
+                    final String groupID = (String) map.get("groupID");
+                    final String pinID =  (String) map.get("fixedPoint");
 
                     Query usergroupnode = mFirebaseRef.child("users").child(user).child("groupsJoined");
                     usergroupnode.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            count2 +=1;
-                            System.out.println( "count2: " + count2);
+                            count2 += 1;
+                            System.out.println("count2: " + count2);
                             if (dataSnapshot.hasChild(groupID)) {
                                 groupsAlreadyJoined.add(groupID);
                             }
-                             Query pinnode = mFirebaseRef.child("pins").child(pinID).child("address");
-                             pinnode.addListenerForSingleValueEvent(new ValueEventListener() {
-                             @Override
-                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                 String pinAddress = (String) dataSnapshot.getValue();
-                                 map.put("fixedPoint", pinAddress);
-                                 System.out.println(pinAddress);
-                                 count3 +=1;
-                                 System.out.println( "count3: " + count3);
-                                 System.out.println("Final count: "+ count1 + " "+ count2 + " " + count3);
+                            Query pinnode = mFirebaseRef.child("fixedpins").child(pinID).child("address");
+                            pinnode.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String pinAddress = (String) dataSnapshot.getValue();
+                                    map.put("fixedPoint", pinAddress);
+                                    count3 += 1;
+                                    System.out.println("count3: " + count3);
+                                    System.out.println("Final count: " + count1 + " " + count2 + " " + count3);
 
-                                 if (count1 == count2 & count1 == count3) {
-                                     System.out.println("When do I get in here?");
-                                     data = list;
-                                     adapter = new SimpleAdapter(thisContext, (List<Map<String, String>>) data,
-                                             R.layout.listview_joingroup_itemdetails, new String[] { "groupName", "groupDescription", "fixedPoint" },
-                                             new int[] { R.id.groupToJoinName, R.id.groupToJoinDescription, R.id.groupToJoinFixedPointAddress }){
+                                    if (count1 == count2 & count1 == count3) {
+                                        System.out.println("When do I get in here?");
+                                        data = list;
+                                        adapter = new SimpleAdapter(thisContext, (List<Map<String, Object>>) data,
+                                                R.layout.listview_joingroup_itemdetails, new String[]{"groupName", "groupDescription", "fixedPoint"},
+                                                new int[]{R.id.groupToJoinName, R.id.groupToJoinDescription, R.id.groupToJoinFixedPointAddress}) {
 
-                                                 @Override
-                                                 public View getView (int position, View convertView, ViewGroup parent)
-                                                 {
-                                                     View v = super.getView(position, convertView, parent);
+                                            @Override
+                                            public View getView(int position, View convertView, ViewGroup parent) {
+                                                View v = super.getView(position, convertView, parent);
 
-                                                     ImageButton b=(ImageButton)v.findViewById(R.id.addButton);
-                                                     Map<String, String> group = ((Map<String, String>) getItem(position));
-                                                     final String groupName = group.get("groupName");
-                                                     final String groupID = group.get("groupID");
-                                                     b.setOnClickListener(new View.OnClickListener() {
+                                                final ImageButton b = (ImageButton) v.findViewById(R.id.addButton);
+                                                Map<String, String> group = ((Map<String, String>) getItem(position));
+                                                final String groupName = group.get("groupName");
+                                                final String groupID = group.get("groupID");
+                                                b.setOnClickListener(new View.OnClickListener() {
 
-                                                         @Override
-                                                         public void onClick(View arg0) {
-                                                             if (groupsAlreadyJoined.contains(groupID)) {
-                                                                 Toast.makeText(getApplicationContext(), "You are already a member of the group: " + groupName, Toast.LENGTH_SHORT).show();
-                                                             } else {
-                                                                 joinGroup(groupID);
-                                                                 Toast.makeText(getApplicationContext(), "You have joined the group: " + groupName, Toast.LENGTH_SHORT).show();
-                                                             }
-                                                         }
-                                                     });
-                                                     return v;
-                                                 }
+                                                    @Override
+                                                    public void onClick(View arg0) {
+                                                        if (groupsAlreadyJoined.contains(groupID)) {
+                                                            Toast.makeText(getApplicationContext(), "You are already a member of the group: " + groupName, Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            if ((boolean)map.get("privateGroup")) {
+                                                                sendJoinRequest(groupID);
+                                                                Toast.makeText(getApplicationContext(), "A request to join has been sent to the group owner of: " + groupName, Toast.LENGTH_SHORT).show();
+                                                            } else {
+                                                                joinGroup(groupID);
+                                                                Toast.makeText(getApplicationContext(), "You have joined the group: " + groupName, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                                return v;
+                                            }
 
-                                             };
-                                            mListView.setAdapter(adapter);
+                                        };
+                                        mListView.setAdapter(adapter);
 
-                                 }
-                             }
+                                    }
+                                }
 
 
-                                 @Override
-                                 public void onCancelled(FirebaseError firebaseError) {
-                                     System.out.println("The read at pinnode failed: " + firebaseError.getMessage());
-                                 }
-                             });
+                                @Override
+                                public void onCancelled(FirebaseError firebaseError) {
+                                    System.out.println("The read at pinnode failed: " + firebaseError.getMessage());
+                                }
+                            });
 
                         }
 
@@ -145,7 +148,6 @@ public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
                         }
                     });
 
-                    System.out.println(list.toString());
                 }
 
                 count3 -= 3;
@@ -169,6 +171,14 @@ public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
         newJoinedGroup.put(groupID, true);
         Firebase usergroupnode = mFirebaseRef.child("users").child(user).child("groupsJoined");
         usergroupnode.updateChildren(newJoinedGroup);
+    }
+
+    private void sendJoinRequest(String groupID){
+        String user = mAuthData.getUid();
+        Map<String, Object> joinRequest = new HashMap<>();
+        joinRequest.put(user, true);
+        Firebase grouprequestnode = mFirebaseRef.child("groups").child(groupID).child("pendingJoinRequests");
+        grouprequestnode.updateChildren(joinRequest);
     }
 
 

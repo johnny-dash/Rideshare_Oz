@@ -106,12 +106,15 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
 
         //Data validation then pin and group creation in firebase and update of owner
         if (!emptyN & !emptyD & privateGroup != null & groupCategory != null & fixedPin != null) {
-            Firebase pinsRef = mFirebaseRef.child("pins");
+            Firebase pinsRef = mFirebaseRef.child("fixedpins");
             Firebase uniqueID = pinsRef.push();
             uniqueID.setValue(fixedPin);
             pinID = uniqueID.getKey();
             Group group = new Group(groupName, groupDescription, groupCategory, pinID, privateGroup);
             group.setGroupOwner(uid);
+            Map<String, Boolean> events = new HashMap<>();
+            events.put("Normal ride", true);
+            group.setEvents(events);
             Firebase groupUniqueID = groupsRef.push();
             groupUniqueID.setValue(group);
             String groupID = groupUniqueID.getKey();

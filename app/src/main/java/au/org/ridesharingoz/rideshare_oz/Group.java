@@ -15,6 +15,7 @@ public class Group {
     private Map<String, Boolean> events;
     private String category;
     private Boolean privateGroup;
+    private Map<String, Boolean> pendingJoinRequests;
 
     public Group(){}
 
@@ -26,6 +27,15 @@ public class Group {
         this.privateGroup=privateGroup;
         this.groupOwner="";
         this.events= new HashMap<>();
+        this.pendingJoinRequests = new HashMap<>();
+    }
+
+    public Map<String, Boolean> getPendingJoinRequests() {
+        return pendingJoinRequests;
+    }
+
+    public void setPendingJoinRequests(Map<String, Boolean> pendingJoinRequests) {
+        this.pendingJoinRequests = pendingJoinRequests;
     }
 
     public String getGroupDescription() {

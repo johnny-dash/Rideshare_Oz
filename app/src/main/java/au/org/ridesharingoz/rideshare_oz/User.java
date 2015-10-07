@@ -105,4 +105,6 @@ public class User {
     public void setGroupsOwned(Map<String, Boolean> groupsOwned) {
         this.groupsOwned = groupsOwned;
     }
+
+
 }
