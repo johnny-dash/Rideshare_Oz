@@ -22,7 +22,7 @@ import java.util.Locale;
 
 import au.org.ridesharingoz.rideshare_oz.R;
 
-public class CreateEventActivity extends AppCompatActivity {
+public class CreateEventActivity extends FirebaseAuthenticatedActivity {
 
     private Button create_event_button;
     private ListView groupList;
@@ -76,13 +76,7 @@ public class CreateEventActivity extends AppCompatActivity {
         Date = (TextView)findViewById(R.id.textView25);
         EventName = (TextView) findViewById(R.id.editEventName);
         editEventName = (EditText)findViewById(R.id.editEventName);
-        groupList = (ListView) findViewById(R.id.groupList);
 
-        // Dummy data for groups
-        data = new ArrayList<String>();
-        data.add("group 1");
-        data.add("group 2");
-        data.add("group 3");
 
         editDate = (EditText) findViewById(R.id.editDate);
         editDate.setOnClickListener(new View.OnClickListener() {
