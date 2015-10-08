@@ -1,9 +1,8 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.location.Address;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,19 +11,26 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TimePicker;
 import android.widget.Toast;
-import android.location.Geocoder;
+
 
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
-import java.io.IOException;
+
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 
 
 public class SearchRideActivity extends FirebaseAuthenticatedActivity {
@@ -33,10 +39,10 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
 
     Pin searchpin;
 
-    Pin[] pins = new Pin[1000];
-    Pin[] LocationcheckedPin = new Pin[1000];
-    Pin[] TimecheckedPin = new Pin[1000];
-    int index = 0;
+    List<Pin> pins = new ArrayList<Pin>();
+    List<Pin> LocationcheckedPin = new ArrayList<Pin>();
+    List<Pin> TimecheckedPin = new ArrayList<Pin>();
+
 
     int PIN_REQUEST = 1;
 
@@ -65,15 +71,30 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
 
     };
 
+    TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener(){
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            myCalendar.set(Calendar.MINUTE, minute);
+            timeformat();
+        }
+    };
 
 
     private void dateformat() {
 
-        String myFormat = "MM/dd/yy"; //In which you need put here
+        String myFormat = "yyyy-MM-dd"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         searchdate.setText(sdf.format(myCalendar.getTime()));
     }
+
+    private void timeformat(){
+        String myFormat = "HH:mm";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+        searchtime.setText(sdf.format(myCalendar.getTime()));
+    }
+
 
 
     @Override
@@ -94,9 +115,14 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
             }
         });
 
-
-
         searchtime = (EditText) findViewById(R.id.search_time);
+        searchtime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new TimePickerDialog(SearchRideActivity.this,time,myCalendar.get(Calendar.HOUR_OF_DAY),myCalendar.get(Calendar.MINUTE),true).show();
+            }
+        });
+
 
 
         typRadioGroup = (RadioGroup) findViewById(R.id.SearchTypeRadioGroup);
@@ -158,17 +184,17 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
     public void searchRide(){
 
 
+        //Query myquery = mFirebaseRef.child("pins").orderByChild("timestamp").startAt(start.getTime()).endAt(end.getTime());
+
         mFirebaseRef.child("pins").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot pinsSnapshot : dataSnapshot.getChildren()) {
 
-                    if (pinsSnapshot.child("date").getValue().toString().equals(searchdate.getText().toString())) {
-                        pins[index] = pinsSnapshot.getValue(Pin.class);
-                        System.out.println(pins[index].getaddress());
-                        index++;
-                    }
+                    //if (pinsSnapshot.child("date").getValue().toString().equals(searchdate.getText().toString())) {
+                        pins.add(pinsSnapshot.getValue(Pin.class));
+                    //}
                 }
             }
 
@@ -177,41 +203,55 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
 
             }
         });
-        System.out.println(pins.length);
-/*
+
 
 
             LocationcheckedPin = checkLocation(pins);
-            for(int i = 0;i<LocationcheckedPin.length;i++){
+            TimecheckedPin = checkTime(LocationcheckedPin);
+            for(Pin pin:LocationcheckedPin){
                 //Toast.makeText(getApplicationContext(), "pins: "+pins[i], Toast.LENGTH_SHORT).show();
-                System.out.println(LocationcheckedPin[i]);
+                System.out.println("pins have finded: "+pin.getaddress());
             }
-*/
-            //Toast.makeText(getApplicationContext(), "There is no pin match, Please try other condition.", Toast.LENGTH_SHORT).show();
 
-        //Toast.makeText(getApplicationContext(),"Latitude: "+location[0]+"Longitude:"+location[1],Toast.LENGTH_SHORT).show();
+
     }
 
 
-    public Pin[] checkLocation(Pin[] pins){
-        Pin[] checkedpins = new Pin[1000];
-        int n = 0;
-        System.out.println(pins[0].getlatitude());
-        /*
-        for(int i = 0;i<pins.length;i++){
-            if(pins[i].getlatitude()>=searchpin.getlatitude()-0.001 & pins[i].getlatitude()<=searchpin.getlatitude()+0.001){
-                if(pins[i].getlongitude()>=searchpin.getlongitude()-0.001 & pins[i].getlongitude()<=searchpin.getlongitude()+0.001){
-                    checkedpins[n] = pins[i];
-                    n++;
+    public List<Pin> checkLocation(List<Pin> pins){
+
+        List<Pin> checkedpins = new ArrayList<Pin>();
+        System.out.println("target");
+        System.out.println("latitude:"+searchpin.getlatitude()+",longitude:"+ searchpin.getlongitude());
+        for(Pin pin:pins){
+            System.out.println("Result");
+            System.out.println("latitude:"+pin.getlatitude()+",longitude:"+ pin.getlongitude());
+            if(pin.getlatitude()>=searchpin.getlatitude()-0.025 & pin.getlatitude()<=searchpin.getlatitude()+0.025){
+                if(pin.getlongitude()>=searchpin.getlongitude()-0.025 & pin.getlongitude()<=searchpin.getlongitude()+0.025){
+                    checkedpins.add(pin);
+
                 }
             }
         }
-        */
         return checkedpins;
     }
 
-    public Pin[] checkTime(Pin[] pins,String time){
-        return pins;
+    public List<Pin> checkTime(List<Pin> pins) {
+        List<Pin> checkedpins = new ArrayList<Pin>();
+        String date = searchdate.getText().toString();
+        String time = searchtime.getText().toString();
+        try {
+            Date checkdate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " " + time);
+            for (Pin pin : pins) {
+
+                if(Math.abs(pin.getTimestamp().getTime() - checkdate.getTime())/(3600*16) <= 30 ){
+                    checkedpins.add(pin);
+                }
+            }
+
+        }catch (ParseException ex){
+
+        }
+        return checkedpins;
     }
 
     @Override

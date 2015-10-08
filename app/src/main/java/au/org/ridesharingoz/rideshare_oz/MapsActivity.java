@@ -225,7 +225,6 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                         marker.getPosition().longitude,
                         marker.getPosition().latitude,
                         getAddressFromLatLng(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)),
-                        null,
                         null
                 ));
             }

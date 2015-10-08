@@ -1,6 +1,8 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 
 
 /**
@@ -14,24 +16,20 @@ public class Pin implements Serializable {
     private double longitude;
     private double latitude;
     private String address;
-    private String time;
-    private String date;
+    private Timestamp timestamp;
 
 
     public Pin() {}
 
-    public Pin(String RideID,double longitude,double latitude,String address,String time,String date){
+    public Pin(String RideID,double longitude,double latitude,String address,Timestamp datetime){
         this.rideID = RideID;
         this.longitude = longitude;
         this.latitude = latitude;
         this.address = address;
-        this.time = time;
-        this.date = date;
+        this.timestamp = datetime;
     }
 
     public String getaddress() {return address;}
-
-    public String getdate() {return date;}
 
     public double getlatitude() {return latitude;}
 
@@ -39,6 +37,6 @@ public class Pin implements Serializable {
 
     public String getrideID() {return rideID;}
 
-    public String gettime() {return time;}
+    public Timestamp getTimestamp() {return timestamp;}
 
 }
