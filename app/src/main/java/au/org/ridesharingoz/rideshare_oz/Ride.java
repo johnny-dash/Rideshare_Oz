@@ -14,6 +14,7 @@ public class Ride {
     private Map<String,Boolean> passengers;
     private int seatNum;
     private String date;
+    //private String time;
     //private Map<String,Boolean> pins;
 
     public Ride(){}
@@ -22,6 +23,7 @@ public class Ride {
         this.DriverID = DriverID;
         this.seatNum = seatNum;
         this.date =date;
+        //this.time = time;
     }
 
 
