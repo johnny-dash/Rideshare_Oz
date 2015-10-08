@@ -37,18 +37,16 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
     private List<String> data;
     private float asDriver;
     private float asPassenger;
-    private String uID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
+        String uid = getIntent().getStringExtra("uid");
 
-        //Need user ID
-        uID = "13350bdf-9afa-45d4-9a87-35e307973b05";
 
-        Firebase userRef = new Firebase("https://flickering-inferno-6814.firebaseio.com/users/" + uID );
+        Firebase userRef = new Firebase("https://flickering-inferno-6814.firebaseio.com/users/" + uid );
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -99,7 +97,7 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
 
         edit = (Button) findViewById(R.id.edit_profile);
 
-        if(uID.equals(mAuthData.getUid()) ) {
+        if(uid.equals(mAuthData.getUid()) ) {
             edit.setVisibility(View.VISIBLE);
             edit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -114,25 +112,4 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
         }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_view_profile, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

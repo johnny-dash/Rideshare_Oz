@@ -7,6 +7,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
+
 public class ActionChoiceActivity extends FirebaseAuthenticatedActivity {
 
     private Button joingroup = null;
@@ -19,12 +24,30 @@ public class ActionChoiceActivity extends FirebaseAuthenticatedActivity {
         setContentView(R.layout.activity_actionchoice);
 
         joingroup = (Button) findViewById(R.id.button_joingroup);
-        search = (Button) findViewById(R.id.button_searchride);
-        offer = (Button) findViewById(R.id.button_offerride);
+
 
         joingroup.setOnClickListener(buttonListener);
-        search.setOnClickListener(buttonListener);
-        offer.setOnClickListener(buttonListener);
+
+        Query usergroupnode = mFirebaseRef.child("users").child("groupsJoined");
+        usergroupnode.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    search = (Button) findViewById(R.id.button_searchride);
+                    offer = (Button) findViewById(R.id.button_offerride);
+                    search.setVisibility(View.VISIBLE);
+                    offer.setVisibility(View.VISIBLE);
+                    search.setOnClickListener(buttonListener);
+                    offer.setOnClickListener(buttonListener);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+
     }
 
 

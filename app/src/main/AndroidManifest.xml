@@ -119,8 +119,12 @@
             android:label="@string/title_activity_create_a_group" >
         </activity>
         <activity
-            android:name=".CreateAnEventActivity"
+            android:name=".CreateEventActivity"
             android:label="@string/title_activity_create_an_event" >
+        </activity>
+        <activity
+            android:name=".ViewProfileActivity"
+            android:label="@string/title_activity_view_profile" >
         </activity>
     </application>
 

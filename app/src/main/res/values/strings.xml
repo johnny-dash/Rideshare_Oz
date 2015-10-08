@@ -53,7 +53,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="clickForAgenda">Click for Agenda</string>
-    <string name="title_activity_view_profile">ViewProfileActivity</string>
-    <string name="title_activity_create_event">CreateEventActivity</string>
+    <string name="title_activity_view_profile">Profile</string>
+    <string name="title_activity_create_event">Group Management Panel</string>
 
 </resources>

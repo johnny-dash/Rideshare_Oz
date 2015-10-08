@@ -103,6 +103,7 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
     /* displays the user's profile */
     private void displayProfile() {
         Intent profileIntent = new Intent(getApplicationContext(), ViewProfileActivity.class);
+        profileIntent.putExtra("uid", mAuthData.getUid());
         startActivity(profileIntent);
         finish();
     }

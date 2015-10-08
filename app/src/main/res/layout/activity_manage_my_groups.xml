@@ -43,8 +43,9 @@
             android:id="@+id/listGroupsOwned"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="0dip"
+            android:divider="#b5b5b5"
+            android:dividerHeight="1dp"
+            android:listSelector="@drawable/list_selector"
             android:layout_weight="0.4" />
 
         <TextView
@@ -62,8 +63,9 @@
             android:id="@+id/listGroupsJoined"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="0dip"
+            android:divider="#b5b5b5"
+            android:dividerHeight="1dp"
+            android:listSelector="@drawable/list_selector"
             android:layout_weight="0.4"
             android:layout_gravity="top" />
 
