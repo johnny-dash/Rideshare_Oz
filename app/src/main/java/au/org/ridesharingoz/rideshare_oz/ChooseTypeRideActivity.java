@@ -13,10 +13,12 @@ public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
     private Button oneoff = null;
     private Button regular = null;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choosetyperide);
+        final Bundle bundle = getIntent().getExtras();
 
         oneoff = (Button) findViewById(R.id.button_oneoff);
         regular = (Button) findViewById(R.id.button_regular);
@@ -26,15 +28,16 @@ public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ChooseTypeRideActivity.this, MapsActivity.class);
                 intent.putExtra("rideType", "oneOff");
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
         regular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(ChooseTypeRideActivity.this, MapsActivity.class);
-                Intent intent = new Intent(ChooseTypeRideActivity.this, RegularRideActivity.class);
-                //intent.putExtra("rideType", "regular");
+                Intent intent = new Intent(ChooseTypeRideActivity.this, MapsActivity.class);
+                intent.putExtra("rideType", "regular");
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });

@@ -9,8 +9,8 @@
         android:id="@+id/home"
         android:title="@string/home"
         android:icon="@drawable/home_icon"
-        android:orderInCategory="2"
-        app:showAsAction="never" />
+        android:orderInCategory="1"
+        app:showAsAction="ifRoom" />
 
     <!-- My Profile-->
     <item
@@ -32,7 +32,7 @@
         android:id="@+id/my_rides"
         android:title="@string/my_rides"
         android:icon="@drawable/car_icon"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         app:showAsAction="ifRoom" />
 
     <!-- Logout -->

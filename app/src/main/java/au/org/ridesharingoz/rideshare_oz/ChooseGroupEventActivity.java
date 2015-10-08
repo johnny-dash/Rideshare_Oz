@@ -45,6 +45,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
     private int count3 = 3;
 
 
+
     private void createData() {
 
         Query usernode = mFirebaseRef.child("users").child("f241c0fa-7f37-404c-8a58-4ad6a8f555cd");
@@ -154,7 +155,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_group_event);
-
+        final String from = getIntent().getStringExtra("from");
         createData();
         activity = this;
         expandList = (ExpandableListView)
@@ -190,6 +191,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
                                                        Bundle bundle1 = new Bundle();
                                                        bundle1.putString("Group", adapter.getGroup(groupPosition).toString());
                                                        bundle1.putString("Event", childMap.toString());
+                                                       bundle1.putString("from", from);
                                                        GroupAndEvent1.putExtras(bundle1);
                                                        startActivity(GroupAndEvent1);
                                                    } else {
@@ -202,6 +204,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
                                                        Bundle bundle2 = new Bundle();
                                                        bundle2.putString("Group", adapter.getGroup(groupPosition).toString());
                                                        bundle2.putString("Event", eventName);
+                                                       bundle2.putString("from", from);
                                                        GroupAndEvent2.putExtras(bundle2);
                                                        startActivity(GroupAndEvent2);
                                                    }

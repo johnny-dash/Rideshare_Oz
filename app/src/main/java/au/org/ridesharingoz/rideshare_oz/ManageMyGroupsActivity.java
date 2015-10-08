@@ -140,7 +140,7 @@ public class ManageMyGroupsActivity extends FirebaseAuthenticatedActivity{
 
                                                             @Override
                                                             public void onClick(View arg0) {
-                                                                Intent intent = new Intent(ManageMyGroupsActivity.this, CreateAnEventActivity.class);
+                                                                Intent intent = new Intent(ManageMyGroupsActivity.this, CreateEventActivity.class);
                                                                 intent.putExtra("groupID", groupID);
                                                                 startActivity(intent);
                                                             }
