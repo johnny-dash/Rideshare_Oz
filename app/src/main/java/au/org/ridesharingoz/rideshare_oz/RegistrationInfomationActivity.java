@@ -31,13 +31,14 @@ public class RegistrationInfomationActivity extends FirebaseAuthenticatedActivit
     EditText licenseNbText;
     RadioGroup radioLicenseTypeGroup;
     RadioButton radioLicenseTypeButton;
+    String callingActivity;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_infomation);
-
+        callingActivity = getIntent().getStringExtra("from");
         submit = (Button) findViewById(R.id.btn_submit);
         fNameText = (EditText)findViewById(R.id.editFirstName);
         lNameText = (EditText)findViewById(R.id.editLastName);
@@ -80,8 +81,15 @@ public class RegistrationInfomationActivity extends FirebaseAuthenticatedActivit
         if (!emptyF & !emptyL & !emptyP) {
             User user = new User(firstName, lastName, phoneNumber, licenseNumber, licenseType);
             userRef.setValue(user);
-            Intent intent = new Intent(getApplicationContext(), ActionChoiceActivity.class);
-            startActivity(intent);
+            if (callingActivity.equals("registration")){
+                Intent intent = new Intent(getApplicationContext(), JoinGroupActivity.class);
+                startActivity(intent);
+            }
+            else {
+                Intent intent = new Intent(getApplicationContext(), ActionChoiceActivity.class);
+                startActivity(intent);
+            }
+
         }
     }
 

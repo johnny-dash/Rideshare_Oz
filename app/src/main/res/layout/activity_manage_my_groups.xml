@@ -4,26 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Manage your groups"
-            android:id="@+id/textView23"
-            android:layout_gravity="center_horizontal" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Manage your groups"
+        android:id="@+id/textView23"
+        android:layout_gravity="center_horizontal" />
 
-        <Button
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create a group"
         android:id="@+id/button_createagroup"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:layout_weight="1">
 
 
         <TextView
@@ -52,16 +55,17 @@
             android:id="@+id/textView22"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="3dp"
-            android:shadowColor="#8294a1ae" />
+            android:shadowColor="#8294a1ae"
+            android:layout_gravity="top" />
 
         <ListView
             android:id="@+id/listGroupsJoined"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:divider="@null"
             android:dividerHeight="0dip"
-            android:layout_weight="0.4" />
+            android:layout_weight="0.4"
+            android:layout_gravity="top" />
 
 
     </LinearLayout>

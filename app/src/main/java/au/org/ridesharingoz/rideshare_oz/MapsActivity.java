@@ -64,6 +64,7 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        final Bundle bundle = getIntent().getExtras();
 
         Intent intent = getIntent();
         rideType = intent.getStringExtra("rideType");
@@ -94,6 +95,7 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                             break;
                     }
                     intent.putExtra("pins", pins);
+                    intent.putExtras(bundle);
                     startActivity(intent);
                 }
                 else {
