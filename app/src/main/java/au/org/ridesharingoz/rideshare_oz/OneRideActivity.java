@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,7 +13,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -23,10 +20,12 @@ import android.widget.Toast;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-import java.sql.Time;
+
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -87,7 +86,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
     private void dateformat() {
 
-        String myFormat = "MM/dd/yy"; //In which you need put here
+        String myFormat = "yyyy-MM-dd"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         editdate.setText(sdf.format(myCalendar.getTime()));
@@ -158,21 +157,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
             index++;
             list.add(map);
         }
-/*
-        map.put("Address", "Unimelb");
-        map.put("Time", "Haven't been set");
-        list.add(map);
 
-        map = new HashMap<String, String>();
-        map.put("Address", "604 Swanston street");
-        map.put("Time", "Haven't been set");
-        list.add(map);
-
-        map = new HashMap<String, String>();
-        map.put("Address", "St Kilda");
-        map.put("Time", "Haven't been set");
-        list.add(map);
-*/
         return list;
     }
 
@@ -235,10 +220,10 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
             }
             boolean Timecheck = time.isEmpty();
             boolean addresscheck = address.isEmpty();
-
-
+            String datetime = date+" "+time+":00.00";
+            Timestamp myts =  Timestamp.valueOf(datetime);
             if (!Timecheck&&!addresscheck){
-                Pin pin = new Pin(rideID,longitude[index],latitude[index],address,time,date);
+                Pin pin = new Pin(rideID,longitude[index],latitude[index],address,myts);
 
                 PinRef.push().setValue(pin, new Firebase.CompletionListener() {
                     @Override
@@ -254,9 +239,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
                 });
             }
-            //System.out.println(index);
-            //System.out.println(longitude[index]);
-            //System.out.println(latitude[index]);
+
             index=index+1;
 
             Intent intent = new Intent(OneRideActivity.this,ActionChoiceActivity.class);
@@ -336,7 +319,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
                 @Override
                 public void onClick(View v) {
                     new TimePickerDialog(OneRideActivity.this, time, myCalendar.get(Calendar.HOUR_OF_DAY),
-                            myCalendar.get(Calendar.MINUTE), false).show();
+                            myCalendar.get(Calendar.MINUTE), true).show();
                     listPosition = position;
 
                 }
@@ -348,7 +331,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
         private void timeformat(int position) {
 
-            String myFormat = "hh:mm"; //In which you need put here
+            String myFormat = "HH:mm"; //In which you need put here
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             Map<String, String> map = new HashMap<String, String>();
             map.put("Time", sdf.format(myCalendar.getTime()));
