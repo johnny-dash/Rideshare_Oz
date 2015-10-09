@@ -28,7 +28,7 @@ public class ActionChoiceActivity extends FirebaseAuthenticatedActivity {
 
         joingroup.setOnClickListener(buttonListener);
 
-        Query usergroupnode = mFirebaseRef.child("users").child("groupsJoined");
+        Query usergroupnode = mFirebaseRef.child("users").child(mAuthData.getUid()).child("groupsJoined");
         usergroupnode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

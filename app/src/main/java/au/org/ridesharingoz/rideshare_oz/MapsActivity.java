@@ -101,7 +101,13 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                 else {
                     // Group creation
                     if (!pins.isEmpty()) {
-                        intent = new Intent(MapsActivity.this, CreateAGroupActivity.class);
+                        String callingActivity = getIntent().getStringExtra("from");
+                        if (callingActivity.equals("CreateEventActivity")){
+                            intent = new Intent(MapsActivity.this, CreateEventActivity.class);
+                        }
+                        else {
+                            intent = new Intent(MapsActivity.this, CreateAGroupActivity.class);
+                        }
                         intent.putExtra("pin", pins.get(0));
                         setResult(RESULT_OK, intent);
                         finish();

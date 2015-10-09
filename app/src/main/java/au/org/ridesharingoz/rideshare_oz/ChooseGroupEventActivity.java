@@ -96,7 +96,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
                                     public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                                        eNames.add(dataSnapshot.child("eventName").getValue() + " | " + dataSnapshot.child("eventDate").getValue());
+                                        eNames.add(dataSnapshot.child("eventName").getValue() + " | " + dataSnapshot.child("eventStartDate").getValue());
                                         count3 += 1;
 
                                         System.out.println("count3: " + count3);

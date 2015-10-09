@@ -5,22 +5,55 @@
     android:layout_height="match_parent">
 
 
-    <TextView
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Manage your groups"
-        android:id="@+id/textView23"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Manage " />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/groupName"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create an event"
-        android:id="@+id/button_createagroup"
+        android:id="@+id/button_createEvent"
         android:layout_gravity="right"
         android:layout_marginRight="10dp" />
+<!--
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Number of members: " />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Number of members: "
+            android:id="@+id/numberOfMembers" />
+
+    </LinearLayout>
+-->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -38,12 +71,34 @@
             android:shadowColor="#8294a1ae" />
 
         <ListView
-            android:id="@+id/listGroupsOwned"
+            android:id="@+id/listGroupsEvents"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:divider="#b5b5b5"
             android:dividerHeight="1dp"
+            android:layout_weight="0.35"
             android:listSelector="@drawable/list_selector"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Requests to join the group"
+            android:id="@+id/textView22"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="3dp"
+            android:shadowColor="#8294a1ae"
+            android:layout_gravity="top" />
+
+        <ListView
+            android:id="@+id/listGroupsRequests"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="#b5b5b5"
+            android:dividerHeight="1dp"
+            android:listSelector="@drawable/list_selector"
+            android:layout_weight="0.35"
+            android:layout_gravity="top" />
 
 
     </LinearLayout>
