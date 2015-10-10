@@ -17,16 +17,23 @@ public class Pin implements Serializable {
     private double latitude;
     private String address;
     private Timestamp timestamp;
+    private String group;
+    private String event;
+    private String type;
 
 
     public Pin() {}
 
-    public Pin(String RideID,double longitude,double latitude,String address,Timestamp datetime){
+    public Pin(String RideID,double longitude,double latitude,String address,Timestamp datetime, String group, String event, String type){
         this.rideID = RideID;
         this.longitude = longitude;
         this.latitude = latitude;
         this.address = address;
         this.timestamp = datetime;
+        this.group = group;
+        this.event = event;
+        this.type = type;
+
     }
 
     public String getaddress() {return address;}
@@ -38,5 +45,11 @@ public class Pin implements Serializable {
     public String getrideID() {return rideID;}
 
     public Timestamp getTimestamp() {return timestamp;}
+
+    public String getGroup() {return  group;}
+
+    public String getEvent() {return event;}
+
+    public String getType() {return type;}
 
 }

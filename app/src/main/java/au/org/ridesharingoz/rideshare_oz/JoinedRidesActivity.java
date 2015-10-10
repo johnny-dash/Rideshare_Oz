@@ -25,7 +25,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
     List<Ride> Ridelist;
 
     ListView ridelistview;
-
+//d
 
     @Override
     protected void onCreate(Bundle savedInstanceState){

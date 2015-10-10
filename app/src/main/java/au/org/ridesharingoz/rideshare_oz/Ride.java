@@ -10,28 +10,45 @@ import java.util.Map;
  *
  */
 public class Ride {
-    private String DriverID;
+    private String date;
+    private String time;
+    private String driverID;
     private Map<String,Boolean> passengers;
     private int seatNum;
-    private String date;
+    private String group;
+    private String event;
+    private String type;
+
     //private String time;
     //private Map<String,Boolean> pins;
 
     public Ride(){}
 
-    public Ride(String DriverID, int seatNum, String date){
-        this.DriverID = DriverID;
+    public Ride(String driverID, int seatNum, String date, String time,String group, String event, String type){
+        this.driverID = driverID;
         this.seatNum = seatNum;
         this.date =date;
+        this.time = time;
+        this.group = group;
+        this.event = event;
+        this.type = type;
         //this.time = time;
     }
 
+    public String getDate() {return date;}
 
-    public String getDriverID(){return DriverID;}
+    public String getTime() {return time;}
+
+    public String getdriverID(){return driverID;}
 
     public int getSeatNum(){return seatNum;}
 
-    public String getDate() {return date;}
+    public String getGroup(){return group;}
+
+    public String getEvent(){return event;}
+
+    public String getType(){return type;}
+
 
     public Map<String, Boolean> getPassengers() {
         return passengers;

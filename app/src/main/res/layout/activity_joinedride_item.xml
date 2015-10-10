@@ -88,14 +88,6 @@
             android:id="@+id/TimeInfo" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Driver Information:"
-        android:id="@+id/textView31"
-        android:layout_weight="0.07" />
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
