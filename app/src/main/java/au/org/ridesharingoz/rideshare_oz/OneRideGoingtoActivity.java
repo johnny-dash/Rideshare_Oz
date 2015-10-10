@@ -25,7 +25,6 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,7 +37,7 @@ import java.util.Map;
  */
 
 
-public class OneRideActivity extends FirebaseAuthenticatedActivity {
+public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
     /* *************************************
     *               GENERAL               *
@@ -53,6 +52,10 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
     double latitude[] = new double[100];
     double longitude[] = new double[100];
+
+    String groupname;
+    String eventname;
+    String type;
 
 
     Button createOffRide;
@@ -99,6 +102,13 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_off_ride);
+        final Bundle bundle = getIntent().getExtras();
+
+        if (bundle!= null){
+            groupname = bundle.getString("Group");
+            eventname = bundle.getString("Event");
+            type = "goingto";
+        }
 
         /* *************************************
         *               Read pins              *
@@ -133,7 +143,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(OneRideActivity.this, date, myCalendar
+                new DatePickerDialog(OneRideGoingtoActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -143,8 +153,12 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
     private List<Map<String, String>> getDate() {
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        //Map<String, String> map = new HashMap<String, String>();
+
         int index = 0;
+        if (type.equals("leaving")){
+            pins.remove(0);
+        }
+
 
         for (Pin pin:pins){
             Map<String, String> map = new HashMap<String, String>();
@@ -152,8 +166,6 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
             map.put("Time","Haven't been set");
             latitude[index] = pin.getlatitude();
             longitude[index] = pin.getlongitude();
-            //System.out.println(latitude[index]);
-            //System.out.println(longitude[index]);
             index++;
             list.add(map);
         }
@@ -181,7 +193,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         Boolean datecheck = date.isEmpty();
 
         if (!seatNumcheck&&!datecheck){
-            Ride new_ride = new Ride(DriverID,Integer.parseInt(seatNum),date);
+            Ride new_ride = new Ride(DriverID,Integer.parseInt(seatNum),date,groupname,eventname,type);
             Firebase rideUniqueID = RideRef.push();
             rideID = rideUniqueID.getKey();
             rideUniqueID.setValue(new_ride, new Firebase.CompletionListener() {
@@ -223,7 +235,14 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
             String datetime = date+" "+time+":00.00";
             Timestamp myts =  Timestamp.valueOf(datetime);
             if (!Timecheck&&!addresscheck){
-                Pin pin = new Pin(rideID,longitude[index],latitude[index],address,myts);
+                Pin pin = new Pin(rideID,
+                                  longitude[index],
+                                  latitude[index],
+                                  address,
+                                  myts,
+                                  groupname,
+                                  eventname,
+                                  type);
 
                 PinRef.push().setValue(pin, new Firebase.CompletionListener() {
                     @Override
@@ -242,7 +261,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
 
             index=index+1;
 
-            Intent intent = new Intent(OneRideActivity.this,ActionChoiceActivity.class);
+            Intent intent = new Intent(OneRideGoingtoActivity.this,ActionChoiceActivity.class);
             startActivity(intent);
             finish();
         }
@@ -318,7 +337,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
             holder.addTimeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new TimePickerDialog(OneRideActivity.this, time, myCalendar.get(Calendar.HOUR_OF_DAY),
+                    new TimePickerDialog(OneRideGoingtoActivity.this, time, myCalendar.get(Calendar.HOUR_OF_DAY),
                             myCalendar.get(Calendar.MINUTE), true).show();
                     listPosition = position;
 

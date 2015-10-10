@@ -1,8 +1,10 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,56 +13,33 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import au.org.ridesharingoz.rideshare_oz.R;
 
-public class CreateEventActivity extends AppCompatActivity {
+public class CreateEventActivity extends FirebaseAuthenticatedActivity {
 
-    private Button create_event_button;
-    private ListView groupList;
-    private TextView EventName;
-    private TextView Date;
-    private EditText editDate;
-    private EditText editEventName;
-    private String eventName;
-    private ArrayList<String> data;
-    /* *************************************
-      *          init of calender            *
-      ***************************************/
-    EditText editdate;
+    Button submit;
+    Button goToMap;
+    EditText eventNameText;
+    EditText eventDescriptionText;
+    int PIN_REQUEST = 1;
+    Pin fixedPin = null;
+    String pinID = null;
 
-    Calendar myCalendar = Calendar.getInstance();
-
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            dateformat();
-        }
-
-    };
-
-
-
-    private void dateformat() {
-
-        String myFormat = "MM/dd/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-        editdate.setText(sdf.format(myCalendar.getTime()));
-    }
 
 
 
@@ -69,57 +48,95 @@ public class CreateEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-        create_event_button = (Button) findViewById(R.id.create_event_button);
-        groupList = (ListView)findViewById(R.id.groupList);
-        Date = (TextView)findViewById(R.id.textView25);
-        EventName = (TextView) findViewById(R.id.editEventName);
-        editEventName = (EditText)findViewById(R.id.editEventName);
-        groupList = (ListView) findViewById(R.id.groupList);
+        submit = (Button) findViewById(R.id.btn_submit_event);
+        goToMap = (Button) findViewById(R.id.createFixedPointAddressEvent);
+        eventNameText = (EditText) findViewById(R.id.createEventName);
+        eventDescriptionText = (EditText) findViewById(R.id.createEventDescription);
 
-        // Dummy data for groups
-        data = new ArrayList<String>();
-        data.add("group 1");
-        data.add("group 2");
-        data.add("group 3");
 
-        editDate = (EditText) findViewById(R.id.editDate);
-        editDate.setOnClickListener(new View.OnClickListener() {
 
+        /* *************************************
+        *          Go to Map button listener      *
+        ***************************************/
+
+        goToMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                new DatePickerDialog(CreateEventActivity.this, date, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                Intent getPinFromMap = new Intent(CreateEventActivity.this, MapsActivity.class);
+                getPinFromMap.putExtra("from", "CreateEventActivity");
+                startActivityForResult(getPinFromMap, PIN_REQUEST);
             }
         });
 
 
+        /* *************************************
+        *      Submit  button listener      *
+        ***************************************/
 
-
-        groupList.setAdapter(new ArrayAdapter<>(CreateEventActivity.this, android.R.layout.simple_expandable_list_item_1, data));
-
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dataSubmit();
+            }
+        });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_event, menu);
-        return true;
+        /* *************************************
+        *    Create Group and Pin on submit    *
+        ***************************************/
+
+    public void dataSubmit() {
+
+        Firebase groupsRef = mFirebaseRef.child("events");
+
+        String eventName = eventNameText.getText().toString();
+        String eventDescription = eventDescriptionText.getText().toString();
+        //Timestamp eventStartDate = new Timestamp();
+        //Timestamp eventEndDate = new Timestamp();
+
+        boolean emptyN = isEmptyEditText(eventName, eventNameText);
+        boolean emptyD = isEmptyEditText(eventDescription, eventDescriptionText);
+
+
+
+
+        //Data validation then pin and group creation in firebase and update of owner
+        if (!emptyN & !emptyD & fixedPin != null) {
+            Firebase pinsRef = mFirebaseRef.child("fixedpins");
+            Firebase uniqueID = pinsRef.push();
+            uniqueID.setValue(fixedPin);
+            pinID = uniqueID.getKey();
+           // Event event = new Event(eventName, eventDescription, eventStartDate, eventEndDate, pinID);
+            Firebase eventUniqueID = groupsRef.push();
+            //eventUniqueID.setValue(event);
+            String groupID = eventUniqueID.getKey();
+            Toast.makeText(getApplicationContext(), "Event created successfully.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getApplicationContext(), ManageMyGroupsActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Event cannot be created. Missing data.", Toast.LENGTH_LONG).show();
+        }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+    //checks if text data has been entered
+    private boolean isEmptyEditText(String editTextString, EditText editText) {
+        if (TextUtils.isEmpty(editTextString)) {
+            editText.setError("You need to fill this field");
             return true;
+        } else return false;
+    }
+
+    //gets pin data back from the MapsActivity
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PIN_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                fixedPin = (Pin) data.getSerializableExtra("pin");
+            }
         }
 
-        return super.onOptionsItemSelected(item);
+
     }
+
 }

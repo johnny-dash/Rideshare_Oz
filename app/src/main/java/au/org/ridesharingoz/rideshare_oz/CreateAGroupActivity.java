@@ -54,6 +54,7 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onClick(View v) {
                 Intent getPinFromMap = new Intent(CreateAGroupActivity.this, MapsActivity.class);
+                getPinFromMap.putExtra("from","CreateAGroupActivity");
                 startActivityForResult(getPinFromMap, PIN_REQUEST);
             }
         });

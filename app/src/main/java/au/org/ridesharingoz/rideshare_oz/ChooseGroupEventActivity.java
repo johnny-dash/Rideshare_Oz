@@ -48,7 +48,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
 
     private void createData() {
 
-        Query usernode = mFirebaseRef.child("users").child("f241c0fa-7f37-404c-8a58-4ad6a8f555cd");
+        Query usernode = mFirebaseRef.child("users").child(mAuthData.getUid());
         usernode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -96,7 +96,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
                                     public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-                                        eNames.add(dataSnapshot.child("eventName").getValue() + " | " + dataSnapshot.child("eventDate").getValue());
+                                        eNames.add(dataSnapshot.child("eventName").getValue() + " | " + dataSnapshot.child("eventStartDate").getValue());
                                         count3 += 1;
 
                                         System.out.println("count3: " + count3);
@@ -164,7 +164,6 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
 
 
         expandList.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
-
                                            {
                                                /**
                                                 * child click method

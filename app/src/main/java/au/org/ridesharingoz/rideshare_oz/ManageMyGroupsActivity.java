@@ -136,12 +136,14 @@ public class ManageMyGroupsActivity extends FirebaseAuthenticatedActivity{
                                                         final ImageButton b = (ImageButton) v.findViewById(R.id.getDeatilsButton);
                                                         Map<String, String> group = ((Map<String, String>) getItem(position));
                                                         final String groupID = group.get("groupID");
+                                                        final String groupName = group.get("groupName");
                                                         b.setOnClickListener(new View.OnClickListener() {
 
                                                             @Override
                                                             public void onClick(View arg0) {
-                                                                Intent intent = new Intent(ManageMyGroupsActivity.this, CreateEventActivity.class);
+                                                                Intent intent = new Intent(ManageMyGroupsActivity.this, GroupManagementPanelActivity.class);
                                                                 intent.putExtra("groupID", groupID);
+                                                                intent.putExtra("groupName",groupName);
                                                                 startActivity(intent);
                                                             }
                                                         });

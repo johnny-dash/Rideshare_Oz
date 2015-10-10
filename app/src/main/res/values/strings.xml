@@ -49,11 +49,12 @@
     <string name="title_activity_managemygroups">Manage My Groups Activity</string>
     <string name="title_activity_search_ride">Search Rides</string>
     <string name="title_activity_create_a_group">Create a group</string>
-    <string name="title_activity_create_an_event">Create an event</string>
+
 
     <string name="hello_world">Hello world!</string>
     <string name="clickForAgenda">Click for Agenda</string>
-    <string name="title_activity_view_profile">ViewProfileActivity</string>
-    <string name="title_activity_create_event">CreateEventActivity</string>
+    <string name="title_activity_view_profile">Profile</string>
+    <string name="title_activity_create_event">Create an event</string>
+    <string name="title_activity_group_management_panel">Group Management Panel</string>
 
 </resources>

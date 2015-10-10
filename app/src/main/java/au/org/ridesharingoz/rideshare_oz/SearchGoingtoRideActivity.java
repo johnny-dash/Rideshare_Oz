@@ -10,19 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.TimePicker;
-import android.widget.Toast;
-
 
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,16 +28,19 @@ import java.util.Locale;
 
 
 
-public class SearchRideActivity extends FirebaseAuthenticatedActivity {
+public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
 
-    RadioGroup typRadioGroup;
 
     Pin searchpin;
 
     List<Pin> pins = new ArrayList<Pin>();
     List<Pin> LocationcheckedPin = new ArrayList<Pin>();
     List<Pin> TimecheckedPin = new ArrayList<Pin>();
+    List<Pin> GroupcheckedPin = new ArrayList<Pin>();
 
+    String groupname;
+    String eventname;
+    String type;
 
     int PIN_REQUEST = 1;
 
@@ -53,7 +51,7 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
     Button btn_searchRide;
     Button btn_gotomap;
 
-    String type;
+
 
 
     Calendar myCalendar = Calendar.getInstance();
@@ -101,6 +99,14 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_ride);
+        final Bundle bundle = getIntent().getExtras();
+
+        if (bundle!= null){
+            groupname = bundle.getString("Group");
+            eventname = bundle.getString("Event");
+            //type = bundle.getString("type");
+            type = "goingto";
+        }
 
 
         searchdate = (EditText) findViewById(R.id.search_date);
@@ -109,7 +115,7 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(SearchRideActivity.this, date, myCalendar
+                new DatePickerDialog(SearchGoingtoRideActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -119,31 +125,17 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
         searchtime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(SearchRideActivity.this,time,myCalendar.get(Calendar.HOUR_OF_DAY),myCalendar.get(Calendar.MINUTE),true).show();
+                new TimePickerDialog(SearchGoingtoRideActivity.this, time, myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), true).show();
             }
         });
 
 
-
-        typRadioGroup = (RadioGroup) findViewById(R.id.SearchTypeRadioGroup);
-        typRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.sGoingto) {
-                    type = "going to";
-                } else if (checkedId == R.id.sLeavingfrom) {
-                    type = "leaving from";
-                } else {
-                    Toast.makeText(SearchRideActivity.this, "Please select a type!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         btn_gotomap = (Button) findViewById(R.id.btn_gotomap);
         btn_gotomap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent getPinFromMap = new Intent(SearchRideActivity.this, MapsActivity.class);
+                Intent getPinFromMap = new Intent(SearchGoingtoRideActivity.this, MapsActivity.class);
                 startActivityForResult(getPinFromMap, PIN_REQUEST);
             }
         });
@@ -184,17 +176,12 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
     public void searchRide(){
 
 
-        //Query myquery = mFirebaseRef.child("pins").orderByChild("timestamp").startAt(start.getTime()).endAt(end.getTime());
-
         mFirebaseRef.child("pins").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot pinsSnapshot : dataSnapshot.getChildren()) {
-
-                    //if (pinsSnapshot.child("date").getValue().toString().equals(searchdate.getText().toString())) {
                         pins.add(pinsSnapshot.getValue(Pin.class));
-                    //}
                 }
             }
 
@@ -208,6 +195,7 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
 
             LocationcheckedPin = checkLocation(pins);
             TimecheckedPin = checkTime(LocationcheckedPin);
+            GroupcheckedPin = checkGroup(TimecheckedPin);
             for(Pin pin:LocationcheckedPin){
                 //Toast.makeText(getApplicationContext(), "pins: "+pins[i], Toast.LENGTH_SHORT).show();
                 System.out.println("pins have finded: "+pin.getaddress());
@@ -253,6 +241,24 @@ public class SearchRideActivity extends FirebaseAuthenticatedActivity {
         }
         return checkedpins;
     }
+
+    public List<Pin> checkGroup(List<Pin> pins){
+        List<Pin> checkedpins = new ArrayList<Pin>();
+        for (Pin pin:pins){
+            if(pin.getGroup().equals(groupname)){
+                if(eventname!=null){
+                    if(pin.getEvent().equals(eventname)){
+                        checkedpins.add(pin);
+                    }
+                }
+                else {
+                    checkedpins.add(pin);
+                }
+            }
+        }
+        return checkedpins;
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

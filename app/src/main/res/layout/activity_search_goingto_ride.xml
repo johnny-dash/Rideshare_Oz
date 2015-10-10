@@ -5,7 +5,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="au.org.ridesharingoz.rideshare_oz.SearchRideActivity"
+    tools:context="au.org.ridesharingoz.rideshare_oz.SearchGoingtoRideActivity"
     android:weightSum="1">
 
     <TextView
@@ -60,29 +60,6 @@
         android:text="Go to Map!"
         android:id="@+id/btn_gotomap"
         android:layout_weight="0.04" />
-
-    <RadioGroup
-        android:layout_width="351dp"
-        android:layout_height="52dp"
-        android:orientation="horizontal"
-        android:id="@+id/SearchTypeRadioGroup">
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Going to"
-            android:id="@+id/sGoingto"
-            android:checked="false"
-            android:layout_weight="0.46" />
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Leaving from"
-            android:id="@+id/sLeavingfrom"
-            android:checked="false"
-            android:layout_weight="0.39" />
-    </RadioGroup>
 
     <Button
         android:layout_width="fill_parent"

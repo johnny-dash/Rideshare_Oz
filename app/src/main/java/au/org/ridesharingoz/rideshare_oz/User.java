@@ -19,6 +19,7 @@ public class User {
     private Map<String, Boolean> ridesJoined;
     private Map<String, Boolean> ridesOffered;
     private Map<String, Boolean> groupsOwned;
+    private String emailAddress;
 
 
 
@@ -106,5 +107,11 @@ public class User {
         this.groupsOwned = groupsOwned;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
 
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 }
