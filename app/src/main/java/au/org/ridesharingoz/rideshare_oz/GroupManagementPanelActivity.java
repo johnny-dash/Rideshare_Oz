@@ -104,10 +104,11 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
                         System.out.println(eventSnapshot.getKey());
                         count1 += 1;
                         System.out.println("count1: " + count1);
-                        getEventsDetails(eventIDs);
                     }
+                    getEventsDetails(eventIDs);
                 }
                 else {
+                    System.out.println("Is there events children?");
                     countEvents = 0;
                     System.out.println(countEvents);
                 }
@@ -168,6 +169,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
                 if (count1 == count2 & count1 == count3){
                     System.out.println("Or do I get in here actually?");
                     countEvents=0;
+                    System.out.println("coutEvents: " + countEvents);
                     if (countRequests == countEvents){
                         setAdapters();
                     }
@@ -198,6 +200,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
                     count4 -= 4;
                 }
                 else{
+                    System.out.println("Is there requests children?");
                     countRequests = 0;
                 }
             }
@@ -229,7 +232,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
                     if (count4 == count5){
                         System.out.println("When do I get in here?");
                         countRequests = 0;
-                        System.out.println(countRequests);
+                        System.out.println("countRequests: " + countRequests);
                         if (countRequests == countEvents){
                             setAdapters();
                         }

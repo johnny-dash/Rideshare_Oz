@@ -79,8 +79,8 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
     };
 
     private void dateformat(EditText editText, Calendar calendar) {
-        String myFormat = "yyyy-MM-dd";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
+        String myFormat = "dd/MM/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
         editText.setText(sdf.format(calendar.getTime()));
     }
 
@@ -202,6 +202,7 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
             eventRef.updateChildren(newEventInGroup);
             Toast.makeText(getApplicationContext(), "Event created successfully.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getApplicationContext(), GroupManagementPanelActivity.class);
+            intent.putExtra("groupID", groupID);
             startActivity(intent);
         }
         else {
