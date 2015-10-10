@@ -10,6 +10,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,34 +28,45 @@ import java.util.Map;
 public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
 
 
-
-    public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
-
         private List<Map<String,String>> mData;
 
-        List<Ride> Ridelist;
-
+        List<Ride> Ridelist = new ArrayList<Ride>();
+        Ride ride;
         ListView ridelistview;
 
+    public void getRide(){
+
+        mFirebaseRef.child("rides").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot rideSnapshot : dataSnapshot.getChildren()) {
+                    if(rideSnapshot.child("driverID").getValue().equals(mAuthData.getUid())){
+                    Ridelist.add(rideSnapshot.getValue(Ride.class));
+                    ride = rideSnapshot.getValue(Ride.class);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+    }
 
         @Override
         protected void onCreate(Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_joined_rides);
+            setContentView(R.layout.activity_offered_rides);
             mData = getDate();
+            getRide();
 
-            ridelistview = (ListView) findViewById(R.id.joinedRidelistview);
+            System.out.println(Ridelist.size());
+
+            ridelistview = (ListView) findViewById(R.id.OfferedRideListview);
             MyAdapter myAdapter = new MyAdapter(this);
             ridelistview.setAdapter(myAdapter);
-
-
-
-
-        }
-
-        public void getdriverInfo(){
-
-
 
         }
 
@@ -58,28 +74,20 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
 
         }
 
-        public void getRide(){
-            // mFirebaseRef.child("")
-        }
+
 
 
         public List<Map<String, String>> getDate(){
             List<Map<String, String>> list = new ArrayList<Map<String, String>>();
             Map<String, String> map = new HashMap<String, String>();
-            map.put("beginpoint","myhome");
-            map.put("endpoint","unimelb");
-            map.put("date","today");
-            map.put("time","now");
-            map.put("drivername","Johnny");
-            list.add(map);
+            for(Ride ride:Ridelist) {
+                map.put("beginpoint", "myhome");
+                map.put("endpoint", "unimelb");
+                map.put("date", ride.getDate());
+                map.put("seat", Inride.getSeatNum());
+                list.add(map);
+            }
 
-            Map<String, String> map1 = new HashMap<String, String>();
-            map1.put("beginpoint","unimelb");
-            map1.put("endpoint","st kilda");
-            map1.put("date","tomorrow");
-            map1.put("time","23:11");
-            map1.put("drivername", "Gin");
-            list.add(map1);
 
             return list;
         }
@@ -89,10 +97,8 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
             public TextView beginpoint;
             public TextView endpoint;
             public TextView ridedate;
-            public TextView ridetime;
-            public TextView drivername;
+            public TextView seatnum;
             public Button btn_showmap;
-            public Button btn_contact;
             public Button btn_cancel;
         }
 
@@ -126,15 +132,13 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                 if(convertView == null){
                     holder = new ViewHolder();
 
-                    convertView = mInflater.inflate(R.layout.activity_joinedride_item,null);
-                    holder.beginpoint = (TextView)convertView.findViewById(R.id.BeginningAddress);
-                    holder.endpoint = (TextView)convertView.findViewById(R.id.FinishAddress);
-                    holder.ridedate = (TextView)convertView.findViewById(R.id.DateInfo);
-                    holder.ridetime = (TextView)convertView.findViewById(R.id.TimeInfo);
-                    holder.drivername = (TextView) convertView.findViewById(R.id.DriverName);
-                    holder.btn_contact = (Button) convertView.findViewById(R.id.contactDriver);
-                    holder.btn_cancel = (Button) convertView.findViewById(R.id.cancelRide);
-                    holder.btn_showmap = (Button) convertView.findViewById(R.id.showroute);
+                    convertView = mInflater.inflate(R.layout.activity_offeredride_item,null);
+                    holder.beginpoint = (TextView)convertView.findViewById(R.id.off_BeginningAddress);
+                    holder.endpoint = (TextView)convertView.findViewById(R.id.off_FinishAddress);
+                    holder.ridedate = (TextView)convertView.findViewById(R.id.off_DateInfo);
+                    holder.seatnum = (TextView)convertView.findViewById(R.id.SeatNum);
+                    holder.btn_cancel = (Button) convertView.findViewById(R.id.off_cancelRide);
+                    holder.btn_showmap = (Button) convertView.findViewById(R.id.off_showroute);
                     convertView.setTag(holder);
                 }
                 else {
@@ -144,8 +148,8 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                 holder.beginpoint.setText((String) mData.get(position).get("beginpoint"));
                 holder.endpoint.setText((String) mData.get(position).get("endpoint"));
                 holder.ridedate.setText((String) mData.get(position).get("date"));
-                holder.ridetime.setText((String) mData.get(position).get("time"));
-                holder.drivername.setText((String) mData.get(position).get("drivername"));
+                holder.seatnum.setText((String) mData.get(position).get("seat"));
+
                 return convertView;
             }
 
@@ -154,6 +158,6 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
         }
 
 
-    }
-
 }
+
+

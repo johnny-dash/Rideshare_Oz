@@ -87,7 +87,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
     private void dateformat() {
 
         String myFormat = "yyyy-MM-dd"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
 
         editdate.setText(sdf.format(myCalendar.getTime()));
     }
@@ -332,7 +332,7 @@ public class OneRideActivity extends FirebaseAuthenticatedActivity {
         private void timeformat(int position) {
 
             String myFormat = "HH:mm"; //In which you need put here
-            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
             Map<String, String> map = new HashMap<String, String>();
             map.put("Time", sdf.format(myCalendar.getTime()));
             map.put("Address", mData.get(position).get("Address"));
