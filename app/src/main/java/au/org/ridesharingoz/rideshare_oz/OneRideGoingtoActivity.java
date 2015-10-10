@@ -101,7 +101,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_one_off_ride);
+        setContentView(R.layout.activity_one_off_goingto_ride);
         final Bundle bundle = getIntent().getExtras();
 
         if (bundle!= null){
@@ -177,8 +177,8 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
         //重复性检查，错误输入，少输入检查数据重写
         String DriverID = mAuthData.getUid();
-        Firebase RideRef = mFirebaseRef.child("rides");
-        Firebase PinRef = mFirebaseRef.child("pins");
+        Firebase RideRef = mFirebaseRef.child("goingtorides");
+        Firebase PinRef = mFirebaseRef.child("goingtopins");
         String rideID = "";
 
 
@@ -193,7 +193,13 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         Boolean datecheck = date.isEmpty();
 
         if (!seatNumcheck&&!datecheck){
-            Ride new_ride = new Ride(DriverID,Integer.parseInt(seatNum),date,groupname,eventname,type);
+            Ride new_ride = new Ride(DriverID,
+                    Integer.parseInt(seatNum),
+                    date,
+                    null,
+                    groupname,
+                    eventname,
+                    type);
             Firebase rideUniqueID = RideRef.push();
             rideID = rideUniqueID.getKey();
             rideUniqueID.setValue(new_ride, new Firebase.CompletionListener() {
@@ -236,13 +242,13 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
             Timestamp myts =  Timestamp.valueOf(datetime);
             if (!Timecheck&&!addresscheck){
                 Pin pin = new Pin(rideID,
-                                  longitude[index],
-                                  latitude[index],
-                                  address,
-                                  myts,
-                                  groupname,
-                                  eventname,
-                                  type);
+                        longitude[index],
+                        latitude[index],
+                        address,
+                        myts,
+                        groupname,
+                        eventname,
+                        type);
 
                 PinRef.push().setValue(pin, new Firebase.CompletionListener() {
                     @Override
@@ -268,12 +274,12 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
 
 
-        }
+    }
 
 
-                //@Override
-                //protected void onListItemClick(ListView l, View v, int position, long id) {
-                //    Log.v("MyListView4-click", (String) mData.get(position).get("Address"));
+    //@Override
+    //protected void onListItemClick(ListView l, View v, int position, long id) {
+    //    Log.v("MyListView4-click", (String) mData.get(position).get("Address"));
 
 //    }
 
@@ -344,7 +350,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                 }
 
             });
-            
+
             return convertView;
         }
 

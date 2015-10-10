@@ -98,7 +98,7 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_ride);
+        setContentView(R.layout.activity_search_goingto_ride);
         final Bundle bundle = getIntent().getExtras();
 
         if (bundle!= null){
@@ -176,12 +176,12 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
     public void searchRide(){
 
 
-        mFirebaseRef.child("pins").addValueEventListener(new ValueEventListener() {
+        mFirebaseRef.child("goingtopins").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot pinsSnapshot : dataSnapshot.getChildren()) {
-                        pins.add(pinsSnapshot.getValue(Pin.class));
+                    pins.add(pinsSnapshot.getValue(Pin.class));
                 }
             }
 
@@ -193,13 +193,13 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
 
 
 
-            LocationcheckedPin = checkLocation(pins);
-            TimecheckedPin = checkTime(LocationcheckedPin);
-            GroupcheckedPin = checkGroup(TimecheckedPin);
-            for(Pin pin:LocationcheckedPin){
-                //Toast.makeText(getApplicationContext(), "pins: "+pins[i], Toast.LENGTH_SHORT).show();
-                System.out.println("pins have finded: "+pin.getaddress());
-            }
+        LocationcheckedPin = checkLocation(pins);
+        TimecheckedPin = checkTime(LocationcheckedPin);
+        GroupcheckedPin = checkGroup(TimecheckedPin);
+        for(Pin pin:GroupcheckedPin){
+            //Toast.makeText(getApplicationContext(), "pins: "+pins[i], Toast.LENGTH_SHORT).show();
+            System.out.println("pins have finded: "+pin.getaddress());
+        }
 
 
     }
