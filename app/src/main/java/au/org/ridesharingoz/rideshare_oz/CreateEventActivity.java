@@ -36,10 +36,53 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
     Button goToMap;
     EditText eventNameText;
     EditText eventDescriptionText;
+    EditText editStartDate;
+    EditText editEndDate;
     int PIN_REQUEST = 1;
     Pin fixedPin = null;
     String pinID = null;
+    String groupID;
 
+
+
+    Calendar startCalendar = Calendar.getInstance();
+    DatePickerDialog.OnDateSetListener startDate = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            startCalendar.set(Calendar.YEAR, year);
+            startCalendar.set(Calendar.MONTH, monthOfYear);
+            startCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            endCalendar.set(Calendar.HOUR_OF_DAY, 00);
+            endCalendar.set(Calendar.MINUTE, 00);
+            endCalendar.set(Calendar.SECOND, 01);
+            dateformat(editStartDate, startCalendar);
+        }
+
+    };
+
+    Calendar endCalendar = Calendar.getInstance();
+    DatePickerDialog.OnDateSetListener endDate = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            endCalendar.set(Calendar.YEAR, year);
+            endCalendar.set(Calendar.MONTH, monthOfYear);
+            endCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            endCalendar.set(Calendar.HOUR_OF_DAY, 23);
+            endCalendar.set(Calendar.MINUTE, 59);
+            endCalendar.set(Calendar.SECOND, 59);
+            dateformat(editEndDate, endCalendar);
+        }
+    };
+
+    private void dateformat(EditText editText, Calendar calendar) {
+        String myFormat = "yyyy-MM-dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
+        editText.setText(sdf.format(calendar.getTime()));
+    }
 
 
 
@@ -47,13 +90,45 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+        groupID = getIntent().getStringExtra("groupID");
+
 
         submit = (Button) findViewById(R.id.btn_submit_event);
         goToMap = (Button) findViewById(R.id.createFixedPointAddressEvent);
         eventNameText = (EditText) findViewById(R.id.createEventName);
         eventDescriptionText = (EditText) findViewById(R.id.createEventDescription);
+        editStartDate = (EditText) findViewById(R.id.createEventStartDate);
+        editEndDate = (EditText) findViewById(R.id.createEventEndDate);
 
 
+        /* *************************************
+        *          StartDate button listener      *
+        ***************************************/
+
+        editStartDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(CreateEventActivity.this, startDate, startCalendar
+                        .get(Calendar.YEAR), startCalendar.get(Calendar.MONTH),
+                        startCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+
+        /* *************************************
+        *          EndDate button listener      *
+        ***************************************/
+
+        editEndDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(CreateEventActivity.this, endDate, endCalendar
+                        .get(Calendar.YEAR), endCalendar.get(Calendar.MONTH),
+                        endCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
 
         /* *************************************
         *          Go to Map button listener      *
@@ -81,8 +156,12 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
         });
     }
 
+
+
+
+
         /* *************************************
-        *    Create Group and Pin on submit    *
+        *    Create Event and fixedpin on submit    *
         ***************************************/
 
     public void dataSubmit() {
@@ -91,27 +170,38 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
 
         String eventName = eventNameText.getText().toString();
         String eventDescription = eventDescriptionText.getText().toString();
-        //Timestamp eventStartDate = new Timestamp();
-        //Timestamp eventEndDate = new Timestamp();
+        String startDate = editStartDate.getText().toString();
+        String endDate = editEndDate.getText().toString();
+        String startDateTime = startDate+" "+"00:00:00.01";
+        String endDateTime = endDate+" "+"23:59:59.00";
+        Timestamp startTimeStamp =  Timestamp.valueOf(startDateTime);
+        Timestamp endTimeStamp = Timestamp.valueOf(endDateTime);
+
 
         boolean emptyN = isEmptyEditText(eventName, eventNameText);
         boolean emptyD = isEmptyEditText(eventDescription, eventDescriptionText);
+        boolean emptyS = isEmptyEditText(startDate, editStartDate);
+        boolean emptyE = isEmptyEditText(endDate, editEndDate);
 
 
 
 
         //Data validation then pin and group creation in firebase and update of owner
-        if (!emptyN & !emptyD & fixedPin != null) {
+        if (!emptyN & !emptyD & !emptyS & !emptyE & fixedPin != null) {
             Firebase pinsRef = mFirebaseRef.child("fixedpins");
             Firebase uniqueID = pinsRef.push();
             uniqueID.setValue(fixedPin);
             pinID = uniqueID.getKey();
-           // Event event = new Event(eventName, eventDescription, eventStartDate, eventEndDate, pinID);
+            Event event = new Event(eventName, eventDescription, startTimeStamp, endTimeStamp, pinID);
             Firebase eventUniqueID = groupsRef.push();
-            //eventUniqueID.setValue(event);
-            String groupID = eventUniqueID.getKey();
+            eventUniqueID.setValue(event);
+            String eventID = eventUniqueID.getKey();
+            Firebase eventRef = mFirebaseRef.child("groups").child(groupID).child("events");
+            Map<String, Object> newEventInGroup = new HashMap<>();
+            newEventInGroup.put(eventID, true);
+            eventRef.updateChildren(newEventInGroup);
             Toast.makeText(getApplicationContext(), "Event created successfully.", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getApplicationContext(), ManageMyGroupsActivity.class);
+            Intent intent = new Intent(getApplicationContext(), GroupManagementPanelActivity.class);
             startActivity(intent);
         }
         else {

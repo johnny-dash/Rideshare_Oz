@@ -11,8 +11,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
@@ -46,6 +48,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
     List<Map<String,Object>> dataRequests = new ArrayList<>();
     List<Map<String, Object>> dataEvents = new ArrayList<>();
     Context thisContext = this;
+    String groupID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
         createEvent = (Button) findViewById(R.id.button_createEvent);
         groupNameTextView = (TextView) findViewById(R.id.groupName);
         System.out.println("I'm here");
-        String groupID = getIntent().getStringExtra("groupID");
+        groupID = getIntent().getStringExtra("groupID");
         String groupName = getIntent().getStringExtra("groupName");
         groupNameTextView.setText(groupName);
         createData(groupID);
@@ -77,6 +80,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
             switch (v.getId()) {
                 case R.id.button_createEvent:
                     intent = new Intent(GroupManagementPanelActivity.this, CreateEventActivity.class);
+                    intent.putExtra("groupID", groupID);
                     break;
             }
             startActivity(intent);
@@ -91,18 +95,24 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
         eventsnode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                count1 -= 1;
-                count2 -= 2;
-                count3 -= 3;
-                for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
-                    eventIDs.add(groupSnapshot.getKey());
-                    System.out.println(groupSnapshot.getKey());
-                    count1 += 1;
-                    System.out.println("count1: " + count1);
+                if (dataSnapshot.hasChildren()) {
+                    count1 -= 1;
+                    count2 -= 2;
+                    count3 -= 3;
+                    for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                        eventIDs.add(eventSnapshot.getKey());
+                        System.out.println(eventSnapshot.getKey());
+                        count1 += 1;
+                        System.out.println("count1: " + count1);
+                        getEventsDetails(eventIDs);
+                    }
                 }
-                getEventsDetails(eventIDs);
-
+                else {
+                    countEvents = 0;
+                    System.out.println(countEvents);
+                }
             }
+
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 System.out.println("The read at usernode failed: " + firebaseError.getMessage());
@@ -176,16 +186,20 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
         requestsnode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                List<String> userIDs = new ArrayList<String>();
-                for (DataSnapshot userIDDataSnapshot : dataSnapshot.getChildren()){
-                    count4 += 1;
-                    System.out.println("count4: " + count4);
-                    String userID = userIDDataSnapshot.getKey();
-                    userIDs.add(userID);
+                if (dataSnapshot.hasChildren()) {
+                    List<String> userIDs = new ArrayList<String>();
+                    for (DataSnapshot userIDDataSnapshot : dataSnapshot.getChildren()) {
+                        count4 += 1;
+                        System.out.println("count4: " + count4);
+                        String userID = userIDDataSnapshot.getKey();
+                        userIDs.add(userID);
+                    }
+                    getUserInfo(userIDs);
+                    count4 -= 4;
                 }
-                getUserInfo(userIDs);
-                count4 -= 4;
+                else{
+                    countRequests = 0;
+                }
             }
 
             @Override
@@ -215,6 +229,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
                     if (count4 == count5){
                         System.out.println("When do I get in here?");
                         countRequests = 0;
+                        System.out.println(countRequests);
                         if (countRequests == countEvents){
                             setAdapters();
                         }
@@ -232,7 +247,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
 
 
     private void setAdapters(){
-        System.out.println("When do I get in here?");
+        System.out.println("When do I get in adapters?");
 
 
         adapterRequests = new SimpleAdapter(thisContext, (List<Map<String, Object>>) dataRequests,
@@ -263,6 +278,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
                     @Override
                     public void onClick(View arg0) {
                         acceptRequest(userID);
+                        Toast.makeText(getApplicationContext(), "The user has been added to the group" , Toast.LENGTH_SHORT).show();
                     }
                 });
                 refuseButton.setOnClickListener(new View.OnClickListener() {
@@ -270,6 +286,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
                     @Override
                     public void onClick(View arg0) {
                         refuseRequest(userID);
+                        Toast.makeText(getApplicationContext(), "The user's request has been declined" , Toast.LENGTH_SHORT).show();
                     }
                 });
                 return view;
@@ -288,11 +305,37 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
     }
 
 
-    private void acceptRequest(String userUD){
+    private void acceptRequest(String userID){
+        Map<String, Object> acceptedRequest = new HashMap<String, Object>();
+        acceptedRequest.put(groupID, true);
+        Firebase usergroupnode = mFirebaseRef.child("users").child(userID).child("groupsJoined");
+        usergroupnode.updateChildren(acceptedRequest);
+        Map<String, Object> notRequestAnymore = new HashMap<>();
+        notRequestAnymore.put(userID, null);
+        Firebase groupnode = mFirebaseRef.child("groups").child(groupID).child("pendingJoinRequests");
+        groupnode.updateChildren(notRequestAnymore);
+        updateRequestsViewed(userID);
 
     }
 
     private void refuseRequest(String userID){
+        Map<String, Object> refusedRequest = new HashMap<>();
+        refusedRequest.put(userID, null);
+        Firebase grouprequestnode = mFirebaseRef.child("groups").child(groupID).child("pendingJoinRequests");
+        grouprequestnode.updateChildren(refusedRequest);
+        updateRequestsViewed(userID);
+    }
 
+    private void updateRequestsViewed(String userID){
+        Iterator requestIterator = dataRequests.iterator();
+        while (requestIterator.hasNext()){
+            Map request = (Map) requestIterator.next();
+            if (request.containsValue(userID)){
+                System.out.println(request.toString());
+                requestIterator.remove();
+                break;
+            }
+        }
+        adapterRequests.notifyDataSetChanged();
     }
 }
