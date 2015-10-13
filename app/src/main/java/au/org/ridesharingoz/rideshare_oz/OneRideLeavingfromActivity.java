@@ -2,17 +2,22 @@ package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -34,8 +39,13 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
     String eventname;
     String type;
 
+    double latitude[] = new double[100];
+    double longitude[] = new double[100];
+
     ArrayList<Pin> pins;
     List<String> address = new ArrayList<>();
+
+    private List<Map<String,String>> mData;
 
     ListView addresslistview;
 
@@ -150,30 +160,6 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
             }
         });
 
-
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_one_ride_leavingfrom, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
 
@@ -262,5 +248,76 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         return address;
     }
 
+    private List<Map<String, String>> getDate() {
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+
+        int index = 0;
+        if (type.equals("leaving")){
+            pins.remove(0);
+        }
+
+
+        for (Pin pin:pins){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("Address",String.valueOf(pin.getaddress()));
+            latitude[index] = pin.getlatitude();
+            longitude[index] = pin.getlongitude();
+            index++;
+            list.add(map);
+        }
+
+        return list;
+    }
+
+    public final class ViewHolder{
+        public TextView Addressname;
+
+    }
+
+    public class MyAdapter extends BaseAdapter {
+        private LayoutInflater mInflater;
+
+        public MyAdapter(Context context) {
+            this.mInflater = LayoutInflater.from(context);
+        }
+
+
+        @Override
+        public int getCount() {
+            return mData.size();
+        }
+
+        @Override
+        public String getItem(int arg0) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int arg0) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if(convertView == null){
+                holder = new ViewHolder();
+
+                convertView = mInflater.inflate(R.layout.listview_item,null);
+                holder.Addressname = (TextView)convertView.findViewById(R.id.AddressName);
+                convertView.setTag(holder);
+            }
+            else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.Addressname.setText((String) mData.get(position).get("Address"));
+
+
+            return convertView;
+        }
+
+
+    }
 
 }
