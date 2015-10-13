@@ -84,7 +84,7 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                 map.put("beginpoint", "myhome");
                 map.put("endpoint", "unimelb");
                 map.put("date", ride.getDate());
-                map.put("seat", Inride.getSeatNum());
+                //map.put("seat", Inride.getSeatNum());
                 list.add(map);
             }
 

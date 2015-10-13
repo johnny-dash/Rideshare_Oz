@@ -19,6 +19,11 @@ public class Pin implements Serializable {
     private Timestamp timestamp;
     private String group;
     private String event;
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     private String type;
 
 
