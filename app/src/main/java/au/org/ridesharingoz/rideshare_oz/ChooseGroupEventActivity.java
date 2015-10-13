@@ -1,146 +1,102 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.BaseExpandableListAdapter;
 
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import android.graphics.drawable.Drawable;
 
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
+
 public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
-    protected String noEvent = "Create a normal ride !";
     private ExpandableListView expandList;
-    private InfoDetailsAdapter adapter;
+    private Button chooseThisButton;
+    //private InfoDetailsAdapter adapter;
     private Activity activity;
-    private Map<String, Boolean> groupIDmap;
-    private ArrayList<String> groupIDList;
-    private ArrayList<String> groupList;
-    private Map<String, Boolean> eventIDmap;
-    private ArrayList<ArrayList<String>> eventList;
+    private List<String> groupIDs;
     private ArrayList<Map<String, Boolean>> eventIDList = new ArrayList<Map<String, Boolean>>();
-    private ArrayList<String> eNames;
-    private int numberOfEvents;
-    private ArrayList<Integer> endPoint;
-    private int eCounter;
-    private int endCounter;
     private int count1 = 1;
     private int count2 = 2;
-    private int count3 = 3;
+    private int count3;
+    private int countDataTranslation = 0;
+    private int count4 = 0;
+    private Map<String,Map> preAdapterData;
+    private Map<String,Object> groupEventsData;
+    private ExpandableListView listView;
+    private Activity thisActivity = this;
+    private MyExpandableListAdapter adapter;
+    ArrayList<Item> adapterData;
+    private Map<String, String> groupsToPin;
+    private Map<String, String> eventsToPin;
+    private Map<String, String> groupNameToGroupID;
+    private Map<String, String> eventNameToEventID;
+    private Boolean previousActivityActionType;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_choose_group_event);
+        previousActivityActionType = getIntent().getBooleanExtra("isCreatingRide", false);
+        System.out.println("actiontype is: " + previousActivityActionType);
+        createData();
+        listView = (ExpandableListView) findViewById(R.id.choose_group_list);
+        preAdapterData = new HashMap<>();
+        groupEventsData = new HashMap<>();
+        adapterData = new ArrayList<>();
+        groupsToPin = new HashMap<>();
+        eventsToPin = new HashMap<>();
+        groupNameToGroupID = new HashMap<>();
+        eventNameToEventID = new HashMap<>();
+    }
 
 
 
     private void createData() {
-
-        Query usernode = mFirebaseRef.child("users").child(mAuthData.getUid());
+        Query usernode = mFirebaseRef.child("users").child(mAuthData.getUid()).child("groupsJoined");
+        groupIDs = new ArrayList<>();
         usernode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 count1 -= 1;
                 count2 -= 2;
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
                     // get groupID List
-                    groupIDmap = (Map<String, Boolean>) dataSnapshot.child("groupsJoined").getValue();
-
-                    System.out.println(groupIDmap);
+                    groupIDs.add(groupSnapshot.getKey());
+                    System.out.println(groupIDs);
                     count1 += 1;
                     System.out.println("count1: " + count1);
                 }
-
-                groupIDList = new ArrayList<String>();
-                for (Map.Entry<String, Boolean> entry : groupIDmap.entrySet()) {
-                    groupIDList.add(entry.getKey().toString());
-                    System.out.println(groupIDList);
-
-                    groupList = new ArrayList<String>();
-
-                    Query groupnode = mFirebaseRef.child("groups").child(entry.getKey());
-                    groupnode.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            count2 += 1;
-                            System.out.println("count2: " + count2);
-
-                            groupList.add((String) dataSnapshot.child("groupName").getValue());
-                            System.out.println(groupList);
-                            eventIDmap = (Map<String, Boolean>) dataSnapshot.child("events").getValue();
-                            eventIDList.add(eventIDmap);
-                            eventList = new ArrayList<ArrayList<String>>();
-
-                            eNames = new ArrayList<String>();
-                            eCounter = 0;
-                            for (Map.Entry<String, Boolean> entry : eventIDmap.entrySet()) {
-
-
-                                Query pinnode = mFirebaseRef.child("events").child(entry.getKey());
-                                pinnode.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                                        eNames.add(dataSnapshot.child("eventName").getValue() + " | " + dataSnapshot.child("eventStartDate").getValue());
-                                        count3 += 1;
-
-                                        System.out.println("count3: " + count3);
-                                        System.out.println("Final count: " + count1 + " " + count2 + " " + count3);
-
-                                        System.out.println(eventIDmap);
-                                        if (eNames.size() == eventIDList.get(eCounter).size()) {
-                                            eNames.add(noEvent);
-                                            eventList.add(eNames);
-                                            eNames = new ArrayList<String>();
-                                            eCounter += 1;
-                                            System.out.println("eventList id : " + eventList);
-                                        }
-
-
-                                        if (count2 == count3) {
-
-
-                                            adapter = new InfoDetailsAdapter(ChooseGroupEventActivity.this, groupList, eventList);
-                                            expandList.setAdapter(adapter);
-
-                                        }
-                                    }
-
-
-                                    @Override
-                                    public void onCancelled(FirebaseError firebaseError) {
-                                        System.out.println("The read at pinnode failed: " + firebaseError.getMessage());
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-                            System.out.println("The read at usergroupnode failed: " + firebaseError.getMessage());
-                        }
-                    });
-
-                    System.out.println(eventList);
-                }
-                count3 -= 3;
+                getGroupInfo(groupIDs);
             }
-
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -150,175 +106,308 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
 
     }
 
+    private void getGroupInfo(List<String> groupIDs) {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_group_event);
-        final String from = getIntent().getStringExtra("from");
-        createData();
-        activity = this;
-        expandList = (ExpandableListView)
+        for (final String groupID : groupIDs) {
+            final Map<String, Object> map = new HashMap();
+            Query groupnode = mFirebaseRef.child("groups").child(groupID);
+            groupnode.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                findViewById(R.id.el_list);
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    count2 += 1;
+                    System.out.println("count2: " + count2);
+                    String groupName = (String) dataSnapshot.child("groupName").getValue();
+                    String groupPin = (String) dataSnapshot.child("pinID").getValue();
+                    groupsToPin.put(groupID, groupPin);
+                    groupNameToGroupID.put(groupName, groupID);
+                    map.put("groupName", groupName);
+                    if (dataSnapshot.child("events").hasChildren()) {
+                        System.out.println(groupName+ " " + groupID + " has events");
+                        List<String> eventIDs = new ArrayList<>();
+                        int countEvents = 0;
+                        for (DataSnapshot eventDataSnapShot : dataSnapshot.child("events").getChildren()) {
+                            countEvents += 1;
+                            System.out.println("countEvents: " + countEvents);
+                            String eventID = eventDataSnapShot.getKey();
+                            eventIDs.add(eventID);
+                        }
+                        System.out.println("count2 nb " + count2 +" has " + countEvents);
+                        map.put("groupEvents", eventIDs);
+                        System.out.println(eventIDs.toString());
+                    }
+                    else {
+                        System.out.println(groupName + " " + groupID + " doesn't have an event");
+                    }
+                    groupEventsData.put(groupID, map);
+                    if (count1 == count2) {
+                        getEventsInfo();
+                    }
+                }
 
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    System.out.println("The read at groupnode failed: " + firebaseError.getMessage());
+                }
+            });
+        }
+    }
 
-        expandList.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
-                                           {
-                                               /**
-                                                * child click method
-                                                */
-                                               @SuppressWarnings("unchecked")
-                                               @Override
-                                               public boolean onChildClick(
-                                                       ExpandableListView parent,
-                                                       View v,
-                                                       int groupPosition,
-                                                       int childPosition,
-                                                       long id) {
-                                                   // get group data
-                                                   Object Group = adapter.getGroup(groupPosition);
+    private void getEventsInfo(){
+        System.out.println("When do I get here?");
+        for (final String groupID : groupEventsData.keySet()) {
+            final Map<String, Object> group = (HashMap) groupEventsData.get(groupID);
+            if (group.containsKey("groupEvents")) {
+                final ArrayList<String> groupEvents = (ArrayList) group.get("groupEvents");
+                System.out.println("Number of events: " + count3);
+                System.out.println(groupEvents.toString());
+                final Map<String, String> eventsDetails = new HashMap<>();
+                for (final String eventID : groupEvents) {
+                    Query eventnode = mFirebaseRef.child("events").child(eventID);
+                    eventnode.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            count4 += 1;
+                            count3 = groupEvents.size();
+                            System.out.println("count4: " + count4);
+                            Event event = dataSnapshot.getValue(Event.class);
+                            String startDate = new SimpleDateFormat("dd/MM/yyyy").format(event.getEventStartDate());
+                            String endDate = new SimpleDateFormat("dd/MM/yyyy").format(event.getEventEndDate());
+                            String eventPin = event.getEventPinID();
+                            eventsToPin.put(eventID, eventPin);
+                            eventNameToEventID.put(event.getEventName(), eventID);
+                            eventsDetails.put(eventID, event.getEventName() + "\n" + startDate + " - " + endDate);
+                            if (count3 == count4) {
+                                System.out.println("Final count: " + count3 + " " + count4);
+                                count4 = 0;
+                                group.put("groupEvents", eventsDetails);
+                                preAdapterData.put(groupID, group);
+                                makeAdapterData();
+                                adapter = new MyExpandableListAdapter(thisActivity, adapterData);
+                                adapter.notifyDataSetChanged();
+                                listView.setAdapter(adapter);
 
-                                                   // get event data
-                                                   String childMap = (String) adapter.getChild(
-                                                           groupPosition,
-                                                           childPosition);
+                            }
 
-                                                   if (childMap.toString().equals(noEvent)) {
-                                                       // Create a normal ride ---> Choose type
-                                                       Intent GroupAndEvent1 = new Intent(ChooseGroupEventActivity.this, ChooseTypeRideActivity.class);
-                                                       Bundle bundle1 = new Bundle();
-                                                       bundle1.putString("Group", adapter.getGroup(groupPosition).toString());
-                                                       bundle1.putString("Event", childMap.toString());
-                                                       bundle1.putString("from", from);
-                                                       GroupAndEvent1.putExtras(bundle1);
-                                                       startActivity(GroupAndEvent1);
-                                                   } else {
-                                                       int startIndex = childMap.indexOf(" ");
-                                                       int endIndex = childMap.indexOf(" |");
-                                                       String eventName = childMap.substring(startIndex + 1, endIndex);
-                                                       System.out.print(eventName);
-                                                       //Choose an event ---> Directly go to map, choose pick-up points
-                                                       Intent GroupAndEvent2 = new Intent(ChooseGroupEventActivity.this, MapsActivity.class);
-                                                       Bundle bundle2 = new Bundle();
-                                                       bundle2.putString("Group", adapter.getGroup(groupPosition).toString());
-                                                       bundle2.putString("Event", eventName);
-                                                       bundle2.putString("from", from);
-                                                       GroupAndEvent2.putExtras(bundle2);
-                                                       startActivity(GroupAndEvent2);
-                                                   }
+                        }
 
-                                                   // output log
-                                                   Log.d("SampleActivity", "Group: " + Group);
-                                                   Log.d("SampleActivity", "Event: " + childMap);
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                            System.out.println("The read at eventnode failed: " + firebaseError.getMessage());
+                        }
+                    });
+                }
+            }
+            else{
+                preAdapterData.put(groupID, group);
+                adapter = new MyExpandableListAdapter(thisActivity, adapterData);
+                listView.setAdapter(adapter);
+                makeAdapterData();
+            }
 
-                                                   return false;
-                                               }
+        }
+    }
 
-                                           }
-
-        );
-
+    public void makeAdapterData(){
+        System.out.println("This is when data is translated");
+        ArrayList<Item> items = new ArrayList<>();
+        for(String groupID : preAdapterData.keySet()){
+            countDataTranslation += 1;
+            Item item = new Item((String) ((HashMap) preAdapterData.get(groupID)).get("groupName"));
+            if (((HashMap)preAdapterData.get(groupID)).containsKey("groupEvents")) {
+                Map<String,String> details = ((HashMap<String,String>) ((HashMap)preAdapterData.get(groupID)).get("groupEvents"));
+                for (String key : details.keySet()) {
+                    item.itemDetails.add(details.get(key));
+                }
+            }
+            items.add(item);
+        }
+        adapterData = items;
 
     }
 
-    public class InfoDetailsAdapter extends BaseExpandableListAdapter {
 
 
-        Activity activity;
-        List<String> groupList;
-        ArrayList<ArrayList<String>> eventList;
 
-        public InfoDetailsAdapter(Activity a, List<String> groupList,
-                                  ArrayList<ArrayList<String>> eventList) {
-            activity = a;
-            this.groupList = groupList;
-            this.eventList = eventList;
+
+    class MyExpandableListAdapter extends BaseExpandableListAdapter {
+
+        private final ArrayList<Item> items;
+        public LayoutInflater inflater;
+        public Activity activity;
+        private final int[] EMPTY_STATE_SET = {};
+        private final int[] GROUP_EXPANDED_STATE_SET =
+                {android.R.attr.state_expanded};
+        private final int[][] GROUP_STATE_SETS = {
+                EMPTY_STATE_SET, // 0
+                GROUP_EXPANDED_STATE_SET // 1
+        };
+
+        public int[][] getGROUP_STATE_SETS() {
+            return GROUP_STATE_SETS;
         }
 
-        //getTextView
-        TextView getTextView() {
-            AbsListView.LayoutParams lp = new AbsListView.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, 100);
-            TextView textView = new TextView(ChooseGroupEventActivity.this);
-            textView.setLayoutParams(lp);
-            textView.setGravity(Gravity.CENTER_VERTICAL);
-            textView.setPadding(36, 0, 0, 0);
-            textView.setTextSize(20);
-            textView.setTextColor(Color.BLACK);
-            return textView;
-        }
-
-
-        @Override
-        public int getGroupCount() {
-            return groupList.size();
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return eventList.get(groupPosition).size();
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            return groupList.get(groupPosition);
+        public MyExpandableListAdapter(Activity act, ArrayList<Item> items) {
+            activity = act;
+            this.items = items;
+            inflater = act.getLayoutInflater();
         }
 
         @Override
         public Object getChild(int groupPosition, int childPosition) {
-            return eventList.get(groupPosition).get(childPosition);
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
+            return items.get(groupPosition).itemDetails.get(childPosition);
         }
 
         @Override
         public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
+            return 0;
+        }
+
+        @Override
+        public View getChildView(final int groupPosition, final int childPosition,
+                                 boolean isLastChild, View convertView, ViewGroup parent) {
+            final String itemDetails = (String) getChild(groupPosition, childPosition);
+            TextView text = null;
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.expandablelistview_choosegroupevent_itemdetails, null);
+                text = (TextView) convertView.findViewById(R.id.eventToChooseDetails);
+                text.setText(itemDetails);
+                convertView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String eventDetails = (String) adapter.getChild(groupPosition, childPosition);
+                        int endIndex = eventDetails.indexOf("\n");
+                        String eventName = eventDetails.substring(0, endIndex);
+                        System.out.println(eventName);
+                        String eventID = eventNameToEventID.get(eventName);
+                        String eventPin = eventsToPin.get(eventID);
+                        System.out.println(eventID + " " + eventPin);
+                        Intent eventIntent = new Intent(ChooseGroupEventActivity.this, ChooseTypeRideActivity.class);
+                        Bundle bundle2 = new Bundle();
+                        bundle2.putBoolean("isEvent", true);
+                        bundle2.putString("Pin", eventPin);
+                        bundle2.putString("ID", eventID);
+                        bundle2.putBoolean("isCreatingRide", previousActivityActionType);
+                        eventIntent.putExtras(bundle2);
+                        startActivity(eventIntent);
+                    }
+                });
+            }
+            return convertView;
+        }
+
+        @Override
+        public int getChildrenCount(int groupPosition) {
+            return items.get(groupPosition).itemDetails.size();
+        }
+
+        @Override
+        public Object getGroup(int groupPosition) {
+            return items.get(groupPosition);
+        }
+
+        @Override
+        public int getGroupCount() {
+            return items.size();
+        }
+
+        @Override
+        public void onGroupCollapsed(int groupPosition) {
+            super.onGroupCollapsed(groupPosition);
+        }
+
+        @Override
+        public void onGroupExpanded(int groupPosition) {
+            super.onGroupExpanded(groupPosition);
+        }
+
+        @Override
+        public long getGroupId(int groupPosition) {
+            return 0;
+        }
+
+        @Override
+        public View getGroupView(final int groupPosition, boolean isExpanded,
+                                 View convertView, ViewGroup parent) {
+            TextView text = null;
+            ViewHolder holder = null;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = inflater.inflate(R.layout.expandablelistview_choosegroupevent_item, null);
+                holder.groupButton = (Button) convertView.findViewById(R.id.chooseGroupButton);
+                holder.groupButton.setFocusable(false);
+                Item item = (Item) getGroup(groupPosition);
+                text = (TextView) convertView.findViewById(R.id.groupToChooseName);
+                text.setText(item.itemName);
+                ((CheckedTextView) text).setChecked(isExpanded);
+                View ind = convertView.findViewById( R.id.explist_indicator);
+                if( ind != null ) {
+                    ImageView indicator = (ImageView)ind;
+                    if( getChildrenCount( groupPosition ) == 0 ) {
+                        indicator.setVisibility( View.INVISIBLE );
+                    } else {
+                        indicator.setVisibility( View.VISIBLE );
+                        int stateSetIndex = ( isExpanded ? 1 : 0) ;
+                        Drawable drawable = indicator.getDrawable();
+                        drawable.setState(getGROUP_STATE_SETS()[stateSetIndex]);
+                    }
+                }
+                convertView.setTag(holder);
+            }
+            else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder = (ViewHolder) convertView.getTag();
+            holder.groupButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    String groupName = ((Item)adapter.getGroup(groupPosition)).getItemName();
+                    System.out.println(groupName);
+                    String groupID = groupNameToGroupID.get(groupName);
+                    String groupPin = groupsToPin.get(groupID);
+                    System.out.println(groupID + " " + groupPin);
+                    Intent eventIntent = new Intent(ChooseGroupEventActivity.this, ChooseTypeRideActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("isEvent", false);
+                    bundle.putString("Pin", groupPin);
+                    bundle.putString("ID", groupID);
+                    bundle.putBoolean("isCreatingRide", previousActivityActionType);
+                    eventIntent.putExtras(bundle);
+                    startActivity(eventIntent);
+                }
+            });
+
+            return convertView;
         }
 
         @Override
         public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded,
-                                 View convertView, ViewGroup parent) {
-            LinearLayout ll = new LinearLayout(ChooseGroupEventActivity.this);
-            ll.setOrientation(LinearLayout.VERTICAL);
-//             ImageView logo = new ImageView(ExpandableList.this);
-//             logo.setImageResource(logos[groupPosition]);
-//             logo.setPadding(50, 0, 0, 0);
-//             ll.addView(logo);
-            TextView textView = getTextView();
-            textView.setTextColor(Color.BLUE);
-            textView.setText(getGroup(groupPosition).toString());
-            ll.addView(textView);
-            ll.setPadding(100, 10, 10, 10);
-            return ll;
-        }
-
-        @Override
-        public View getChildView(int groupPosition, int childPosition,
-                                 boolean isLastChild, View convertView, ViewGroup parent) {
-            LinearLayout ll = new LinearLayout(ChooseGroupEventActivity.this);
-            ll.setOrientation(LinearLayout.VERTICAL);
-//             ImageView generallogo = new ImageView(TestExpandableListView.this);
-//             generallogo.setImageResource(generallogos[groupPosition][childPosition]);
-//             ll.addView(generallogo);
-            TextView textView = getTextView();
-            textView.setText(getChild(groupPosition, childPosition).toString());
-            ll.addView(textView);
-            return ll;
+            return false;
         }
 
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
+            return false;
+        }
+    }
+
+
+    class Item {
+
+        public String itemName;
+        public final List<String> itemDetails = new ArrayList<String>();
+
+        public Item(String itemName) {
+            this.itemName = itemName;
         }
 
+        public String getItemName() {
+            return itemName;
+        }
+    }
+
+
+    static class ViewHolder {
+        protected Button groupButton;
     }
 }

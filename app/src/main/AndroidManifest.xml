@@ -63,7 +63,11 @@
             android:label="@string/title_activity_regularride" >
         </activity>
         <activity
-            android:name=".OneRideActivity"
+            android:name=".OneRideGoingtoActivity"
+            android:label="@string/title_activity_one_off_ride" >
+        </activity>
+        <activity
+            android:name=".OneRideLeavingfromActivity"
             android:label="@string/title_activity_one_off_ride" >
         </activity>
         <activity
@@ -111,8 +115,12 @@
             android:label="@string/title_activity_to_rate_rides" >
         </activity>
         <activity
-        android:name=".SearchRideActivity"
+        android:name=".SearchGoingtoRideActivity"
         android:label="@string/title_activity_search_ride" >
+        </activity>
+        <activity
+            android:name=".SearchLeavingfromActivity"
+            android:label="@string/title_activity_search_ride" >
         </activity>
         <activity
             android:name=".CreateAGroupActivity"

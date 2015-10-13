@@ -62,11 +62,11 @@ public class ActionChoiceActivity extends FirebaseAuthenticatedActivity {
                     break;
                 case R.id.button_searchride:
                     intent = new Intent(getApplicationContext(), ChooseGroupEventActivity.class);
-                    intent.putExtra("from", "search");
+                    intent.putExtra("isCreatingRide", false);
                     break;
                 case R.id.button_offerride:
                     intent = new Intent(getApplicationContext(), ChooseGroupEventActivity.class);
-                    intent.putExtra("from", "offer");
+                    intent.putExtra("isCreatingRide", true);
                     break;
             }
             startActivity(intent);
