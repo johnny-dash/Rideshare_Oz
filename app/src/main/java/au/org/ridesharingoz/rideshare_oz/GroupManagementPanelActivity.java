@@ -2,7 +2,6 @@ package au.org.ridesharingoz.rideshare_oz;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,12 +137,12 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
                     final Map map = new HashMap();
                     map.put("eventName", event.getEventName());
                     map.put("eventDescription", event.getEventDescription());
-                    map.put("fixedPoint", event.getEventPinID());
+                    map.put("fixedPoint", event.getPinID());
                     map.put("startDate", startDate);
                     map.put("endDate", endDate);
                     map.put("eventID", eventID);
 
-                    getEventAddress(map, event.getEventPinID());
+                    getEventAddress(map, event.getPinID());
                 }
 
                 @Override

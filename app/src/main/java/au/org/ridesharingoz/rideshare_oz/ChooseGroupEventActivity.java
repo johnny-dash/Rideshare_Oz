@@ -1,35 +1,26 @@
 package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseExpandableListAdapter;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 import android.graphics.drawable.Drawable;
 
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
@@ -173,7 +164,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
                             Event event = dataSnapshot.getValue(Event.class);
                             String startDate = new SimpleDateFormat("dd/MM/yyyy").format(event.getEventStartDate());
                             String endDate = new SimpleDateFormat("dd/MM/yyyy").format(event.getEventEndDate());
-                            String eventPin = event.getEventPinID();
+                            String eventPin = event.getPinID();
                             eventsToPin.put(eventID, eventPin);
                             eventNameToEventID.put(event.getEventName(), eventID);
                             eventsDetails.put(eventID, event.getEventName() + "\n" + startDate + " - " + endDate);
