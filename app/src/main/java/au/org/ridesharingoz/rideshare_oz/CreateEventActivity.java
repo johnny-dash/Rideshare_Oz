@@ -138,7 +138,7 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onClick(View v) {
                 Intent getPinFromMap = new Intent(CreateEventActivity.this, MapsActivity.class);
-                getPinFromMap.putExtra("from", "CreateEventActivity");
+                getPinFromMap.putExtra("callingActivity", "CreateEventActivity");
                 startActivityForResult(getPinFromMap, PIN_REQUEST);
             }
         });
