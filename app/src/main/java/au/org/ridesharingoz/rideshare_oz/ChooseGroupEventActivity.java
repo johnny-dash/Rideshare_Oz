@@ -348,7 +348,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
             else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            holder = (ViewHolder) convertView.getTag();
+           // holder = (ViewHolder) convertView.getTag();
             holder.groupButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {

@@ -45,6 +45,7 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
         final String uid = getIntent().getStringExtra("uid");
+        final Boolean showPhoneNumber = getIntent().getBooleanExtra("showPhoneNumber", false);
 
 
         Firebase usernode = mFirebaseRef.child("users").child(uid);
@@ -59,7 +60,7 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
                     data.add("License Number: " + (String) dataSnapshot.child("licenseNb").getValue());
                     data.add("License Type: " + (String) dataSnapshot.child("licenseType").getValue());
                 }
-                if (uid.equals(mAuthData.getUid())){
+                if (uid.equals(mAuthData.getUid()) || showPhoneNumber == true){
                     System.out.println("Do I ever get in here?");
                     data.add("Phone Number: " + (String) dataSnapshot.child("phoneNb").getValue());
                 }

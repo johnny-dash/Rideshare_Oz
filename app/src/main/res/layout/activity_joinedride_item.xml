@@ -4,13 +4,6 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <TextView
-        android:layout_width="124dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Route:"
-        android:id="@+id/textView27" />
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -20,72 +13,97 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Route: "
+            android:id="@+id/textView27" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
-            android:id="@+id/BeginningAddress" />
+            android:id="@+id/departureAddress"
+            android:singleLine="false"
+            android:inputType="textMultiLine" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text=" to "
-            android:id="@+id/textView28" />
+            android:id="@+id/textView28"
+            android:layout_marginLeft="43dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
-            android:id="@+id/FinishAddress"
-            android:layout_weight="0.96" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show on Map"
-            android:id="@+id/showroute" />
-
+            android:id="@+id/arrivalAddress"
+            android:inputType="textMultiLine" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="41dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Date:"
+            android:text="Date: "
             android:id="@+id/textView29" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/DateInfo" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.05">
+            android:text="date"
+            android:id="@+id/dateInfo"
+            android:inputType="date" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Time:"
-            android:id="@+id/textView30" />
+            android:text="Time: "
+            android:id="@+id/textView30"
+            android:layout_marginLeft="30dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/TimeInfo" />
+            android:text="time"
+            android:id="@+id/timeDepartureInfo"
+            android:inputType="time" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:src="@drawable/right_arrow_small"
+            android:id="@+id/timeArrow"
+            android:scaleType="fitStart"
+            android:cropToPadding="false"
+            android:focusable="false"
+            android:layout_marginLeft="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/timeArrivalInfo"
+            android:inputType="time" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -98,7 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Driver Name:"
+            android:text="Driver's Name: "
             android:id="@+id/textView32" />
 
         <TextView
@@ -106,7 +124,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
-            android:id="@+id/DriverName" />
+            android:id="@+id/driversName" />
     </LinearLayout>
 
     <LinearLayout
@@ -124,11 +142,17 @@
             android:id="@+id/contactDriver" />
 
         <Button
-            android:layout_width="188dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel Ride"
             android:id="@+id/cancelRide"
-            android:layout_marginLeft="50dp" />
+            android:layout_marginLeft="0dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show on Map"
+            android:id="@+id/showRoute" />
     </LinearLayout>
 
 </LinearLayout>
