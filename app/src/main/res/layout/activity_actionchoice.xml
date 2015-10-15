@@ -13,35 +13,42 @@
         android:scaleType="centerCrop" />
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="100dp">
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp">
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Join a group"
-            android:id="@+id/button_joingroup"
-            android:layout_gravity="center_horizontal"
-            android:selectAllOnFocus="false" />
+            android:layout_gravity="bottom">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Search rides"
-            android:visibility="invisible"
-            android:id="@+id/button_searchride"
-            android:layout_gravity="center_horizontal" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Join a group"
+                android:id="@+id/button_joingroup"
+                android:layout_gravity="center_horizontal"
+                android:selectAllOnFocus="false" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Offer a ride"
-            android:visibility="invisible"
-            android:id="@+id/button_offerride"
-            android:layout_gravity="center_horizontal" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Search rides"
+                android:visibility="invisible"
+                android:id="@+id/button_searchride"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Offer a ride"
+                android:visibility="invisible"
+                android:id="@+id/button_offerride"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>

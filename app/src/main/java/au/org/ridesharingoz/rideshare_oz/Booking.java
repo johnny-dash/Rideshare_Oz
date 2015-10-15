@@ -7,6 +7,7 @@ import java.util.Map;
 /**
  * Created by Ocunidee on 14/10/2015.
  */
+
 public class Booking {
 
     private String rideID;
@@ -74,4 +75,6 @@ public class Booking {
     public void setUserID(String userID) {
         this.userID = userID;
     }
+
+    //hopefullly it will push this time
 }

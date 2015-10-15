@@ -3,7 +3,6 @@ package au.org.ridesharingoz.rideshare_oz;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +19,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +32,9 @@ import java.util.Map;
  */
 public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
 
-    private List<Map<String, String>> adapterData;
-    private SimpleAdapter adapterJoinedRides;
+    private List<Map<String, String>> joinedData;
+    private List<Map<String, String>> requestData;
+    private MyAdapter requestAdapter;
     private ListView ridesJoinedListview;
     private int count1 = 1;
     private int count2 = 2;
@@ -47,7 +44,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
     private int count6 = 0;
     private int count7 = 0;
     private Context context = this;
-    MyAdapter joinedAdapter;
+    private MyAdapter joinedAdapter;
 
 
     @Override
@@ -61,11 +58,11 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
 
     public void createData() {
         final List<String> bookingMadeIDs = new ArrayList<>();
-        Query bookingmadenode = mFirebaseRef.child("users").child(mAuthData.getUid()).child("bookingsMade");
+        Query bookingmadenode = mFirebaseRef.child("users").child(mAuthData.getUid());
         bookingmadenode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
+                if (dataSnapshot.child("bookingsMade").hasChildren()) {
                     count1 -= 1;
                     for (DataSnapshot bookingID : dataSnapshot.getChildren()) {
                         count1 += 1;
@@ -223,8 +220,9 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                 String address = (String) dataSnapshot.child("address").getValue();
                 map.put("otherPinAddress", address);
                 if (isDataReady()) {
-                    adapterData.add(map);
-                    joinedAdapter = new MyAdapter(context, adapterData, true);
+                    joinedData.add(map);
+                    joinedAdapter = new MyAdapter(context, joinedData, true);
+                    requestAdapter = new MyAdapter(context requestData, false);
                 }
             }
 
@@ -243,18 +241,8 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
     }
 
 
-    public final class ViewHolder {
-        public TextView beginpoint;
-        public TextView endpoint;
-        public TextView ridedate;
-        public TextView ridedeparturetime;
-        public TextView ridearrivaltime;
-        public TextView drivername;
-        public Button btn_showmap;
-        public Button btn_contact;
-        public Button btn_cancel;
-        public ImageView arrow;
-    }
+
+
 
     public class MyAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
@@ -378,7 +366,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
 
 
     private void updateJoinedRidesDisplayed(String bookingID, Boolean isJoined) {
-        Iterator bookingsIterator = adapterData.iterator();
+        Iterator bookingsIterator = joinedData.iterator();
         while (bookingsIterator.hasNext()) {
             Map booking = (Map) bookingsIterator.next();
             if (booking.containsValue(bookingID)) {
@@ -390,8 +378,21 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
         if (isJoined) {
             joinedAdapter.notifyDataSetChanged();
         } else {
-            //requestAdapter.notifyDataSetChange();
+            requestAdapter.notifyDataSetChange();
         }
+    }
+
+    public final class ViewHolder {
+        public TextView beginpoint;
+        public TextView endpoint;
+        public TextView ridedate;
+        public TextView ridedeparturetime;
+        public TextView ridearrivaltime;
+        public TextView drivername;
+        public Button btn_showmap;
+        public Button btn_contact;
+        public Button btn_cancel;
+        public ImageView arrow;
     }
 
 }
