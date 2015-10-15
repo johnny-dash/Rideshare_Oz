@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
 
@@ -14,8 +15,10 @@ public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
     private Button oleavingfrom;
     private Button rgoingto;
     private Button rleavingfrom;
+    private Boolean isEvent;
     private Boolean isCreatingRide;
     private Bundle bundle;
+    private TextView regularText;
 
 
     @Override
@@ -24,11 +27,18 @@ public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
         setContentView(R.layout.activity_choosetyperide);
         bundle = getIntent().getExtras();
         isCreatingRide = bundle.getBoolean("isCreatingRide");
+        isEvent = bundle.getBoolean("isEvent");
         System.out.println("In chooseTypeRide, actionType is :" + isCreatingRide.toString());
         ogoingto = (Button) findViewById(R.id.button_oneoff_goingto);
         oleavingfrom = (Button) findViewById(R.id.button_oneoff_leavingfrom);
         rgoingto = (Button) findViewById(R.id.button_regular_goingto);
         rleavingfrom = (Button) findViewById(R.id.button_regular_leavingfrom);
+        regularText = (TextView) findViewById(R.id.regularRideText);
+        if (isEvent){
+            regularText.setVisibility(View.INVISIBLE);
+            rgoingto.setVisibility(View.INVISIBLE);
+            rleavingfrom.setVisibility(View.INVISIBLE);
+        }
 
         ogoingto.setOnClickListener(new View.OnClickListener() {
             @Override

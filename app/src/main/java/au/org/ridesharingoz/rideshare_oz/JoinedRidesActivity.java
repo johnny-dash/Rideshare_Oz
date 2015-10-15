@@ -38,7 +38,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
 
     private List<Map<String, String>> adapterData;
     private SimpleAdapter adapterJoinedRides;
-    private ListView ridelistview;
+    private ListView ridesJoinedListview;
     private int count1 = 1;
     private int count2 = 2;
     private int count3 = 0;
@@ -55,12 +55,13 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joined_rides);
         createData();
-        ridelistview = (ListView) findViewById(R.id.joinedRidelistview);
+        ridesJoinedListview = (ListView) findViewById(R.id.joinedRidesListview);
+
     }
 
     public void createData() {
         final List<String> bookingMadeIDs = new ArrayList<>();
-        Query bookingmadenode = mFirebaseRef.child("bookingMade");
+        Query bookingmadenode = mFirebaseRef.child("users").child(mAuthData.getUid()).child("bookingsMade");
         bookingmadenode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

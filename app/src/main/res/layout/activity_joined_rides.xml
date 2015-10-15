@@ -17,7 +17,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/joinedRidelistview"
+        android:id="@+id/joinedRidesListview"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.35" />
 
@@ -34,7 +34,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/pendingRideslistview"
+        android:id="@+id/pendingRidesListview"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.35" />
 </LinearLayout>

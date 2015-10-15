@@ -16,7 +16,10 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="end"
+        android:layout_gravity="bottom|center"
+        android:weightSum="3">
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,59 +39,63 @@
             android:layout_marginLeft="5dp"
             android:textColor="#000000" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="One-off ride"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:textColor="#eeeeee"
-            android:textStyle="bold" />
-
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginTop="60dp"
+            android:gravity="bottom"
+            android:layout_weight="2.4">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="One-off ride"
+                android:layout_gravity="bottom|center_horizontal"
+                android:textColor="#eeeeee"
+                android:textStyle="bold" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Going to"
                 android:id="@+id/button_oneoff_goingto"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="bottom|center_horizontal" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Leaving from"
                 android:id="@+id/button_oneoff_leavingfrom"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="bottom|center_horizontal" />
         </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Regular ride"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:textColor="#eeeeee"
-            android:textStyle="bold" />
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="bottom|center_horizontal"
+            android:gravity="bottom"
+            android:layout_weight="0.4">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/regularRideText"
+                android:text="Regular ride"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#eeeeee"
+                android:textStyle="bold"
+                android:layout_marginTop="30dp" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Going to"
-                android:id="@+id/button_regular_goingto"
-                android:layout_gravity="center_horizontal" />
+                android:id="@+id/button_regular_goingto" />
 
             <Button
                 android:layout_width="wrap_content"
