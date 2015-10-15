@@ -11,14 +11,14 @@ public class Event {
     private String eventDescription;
     private Timestamp eventStartDate;
     private Timestamp eventEndDate;
-    private String eventPinID;
+    private String pinID;
 
     public Event(String eventName, String eventDescription, Timestamp eventStartDate, Timestamp eventEndDate, String eventPinID) {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventStartDate = eventStartDate;
         this.eventEndDate = eventEndDate;
-        this.eventPinID = eventPinID;
+        this.pinID = eventPinID;
     }
 
     public Event(){
@@ -56,11 +56,11 @@ public class Event {
         this.eventEndDate = eventEndDate;
     }
 
-    public String getEventPinID() {
-        return eventPinID;
+    public String getPinID() {
+        return pinID;
     }
 
-    public void setEventPinID(String eventPinID) {
-        this.eventPinID = eventPinID;
+    public void setPinID(String pinID) {
+        this.pinID = pinID;
     }
 }

@@ -35,6 +35,7 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
     private String licenseNb;
     private String phoneNb;
     private List<String> data;
+    private List<String> rawUserData;
     private float asDriver;
     private float asPassenger;
 
@@ -43,26 +44,27 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
-        String uid = getIntent().getStringExtra("uid");
+        final String uid = getIntent().getStringExtra("uid");
+        final Boolean showPhoneNumber = getIntent().getBooleanExtra("showPhoneNumber", false);
 
 
-        Firebase userRef = new Firebase("https://flickering-inferno-6814.firebaseio.com/users/" + uid );
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        Firebase usernode = mFirebaseRef.child("users").child(uid);
+        usernode.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 data = new ArrayList<String>();
-                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    data.add(userSnapshot.getKey() + " : " + userSnapshot.getValue());
+                data.add("First Name: " + (String) dataSnapshot.child("firstName").getValue());
+                data.add("Last Name: " + (String) dataSnapshot.child("lastName").getValue());
+                if (dataSnapshot.hasChild("licenseNb")){
+                    data.add("License Number: " + (String) dataSnapshot.child("licenseNb").getValue());
+                    data.add("License Type: " + (String) dataSnapshot.child("licenseType").getValue());
                 }
-//check data
-//                for (int i = 0; i < data.size(); i++) {
-//                    System.out.println(data.get(i));
-//                }
+                if (uid.equals(mAuthData.getUid()) || showPhoneNumber == true){
+                    System.out.println("Do I ever get in here?");
+                    data.add("Phone Number: " + (String) dataSnapshot.child("phoneNb").getValue());
+                }
 
-                /*Haven't check if the user in one ride
-                  set the phone number invisible
-                 */
 
                 listView.setAdapter(new ArrayAdapter<>(ViewProfileActivity.this, android.R.layout.simple_expandable_list_item_1, data));
 
@@ -97,7 +99,7 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
 
         edit = (Button) findViewById(R.id.edit_profile);
 
-        if(uid.equals(mAuthData.getUid()) ) {
+        if(uid.equals(mAuthData.getUid())) {
             edit.setVisibility(View.VISIBLE);
             edit.setOnClickListener(new View.OnClickListener() {
                 @Override

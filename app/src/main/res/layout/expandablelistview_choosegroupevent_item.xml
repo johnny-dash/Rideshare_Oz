@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="au.org.ridesharingoz.rideshare_oz.ChooseGroupEventActivity"
+    android:weightSum="1"
+    android:orientation="horizontal"
+    android:focusable="false"
+    android:measureWithLargestChild="false">
+
+    <ImageView android:src="@drawable/expander_group"
+        android:id="@+id/explist_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.05"
+        android:layout_gravity="center_vertical" />
+
+    <CheckedTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+        android:id="@+id/groupToChooseName"
+        android:layout_weight="0.95"
+        android:gravity="center_vertical|fill"
+        android:checked="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chooseGroupButton"
+        android:layout_weight="0.1"
+        android:contentDescription="ChooseGroup"
+        android:layout_marginRight="4dp"
+        android:text="normal ride"
+        android:gravity="center_vertical|end" />
+
+</LinearLayout>

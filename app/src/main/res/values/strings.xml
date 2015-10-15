@@ -9,6 +9,7 @@
     <string name="my_rides">My Rides</string>
     <string name="my_groups">My Groups</string>
     <string name="home">Home</string>
+    <string name="options">Options</string>
 
     <string name="login_with_facebook">Login with Facebook</string>
     <string name="login_with_google">Login with Google+</string>
@@ -20,6 +21,11 @@
     <string name="address_hint">Jump to an address</string>
     <string name="submit">Submit</string>
     <string name="go">Go</string>
+    <string-array name="pin_options">
+        <item>Set as pick-up address</item>
+        <item>Set as destination address</item>
+        <item>Remove pin</item>
+    </string-array>
 
     <string name="title_activity_signin">SigninActivity</string>
     <string name="title_activity_actionchoice">Choose an action</string>
@@ -50,8 +56,6 @@
     <string name="title_activity_search_ride">Search Rides</string>
     <string name="title_activity_create_a_group">Create a group</string>
 
-
-    <string name="hello_world">Hello world!</string>
     <string name="clickForAgenda">Click for Agenda</string>
     <string name="title_activity_view_profile">Profile</string>
     <string name="title_activity_create_event">Create an event</string>

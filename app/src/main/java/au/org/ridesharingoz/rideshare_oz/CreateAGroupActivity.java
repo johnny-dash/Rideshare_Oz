@@ -113,9 +113,6 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
             pinID = uniqueID.getKey();
             Group group = new Group(groupName, groupDescription, groupCategory, pinID, privateGroup);
             group.setGroupOwner(uid);
-            Map<String, Boolean> events = new HashMap<>();
-            events.put("Normal ride", true);
-            group.setEvents(events);
             Firebase groupUniqueID = groupsRef.push();
             groupUniqueID.setValue(group);
             String groupID = groupUniqueID.getKey();

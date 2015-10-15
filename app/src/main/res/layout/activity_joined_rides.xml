@@ -3,9 +3,38 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Joined Rides"
+        android:id="@+id/textView25"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="3dp" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/joinedRidelistview"
-        android:layout_gravity="center_horizontal" />
+        android:id="@+id/joinedRidesListview"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.35" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Pending requests to join"
+        android:id="@+id/textView26"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="3dp" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pendingRidesListview"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.35" />
 </LinearLayout>

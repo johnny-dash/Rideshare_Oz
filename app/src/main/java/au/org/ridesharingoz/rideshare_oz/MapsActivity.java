@@ -2,8 +2,10 @@ package au.org.ridesharingoz.rideshare_oz;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -16,6 +18,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -40,6 +44,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,11 +59,12 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
     private Button addressButton;
     private Geocoder geocoder;
 
-    private Spinner spinner;
+    private String rideType;
+    private int destinationPins;
 
-    public String rideType;
+    private Pin fixedPin;
 
-    ArrayList<Pin> pins = new ArrayList<Pin>();
+    Map<String, Pin> pins = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +74,9 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
 
         Intent intent = getIntent();
         rideType = intent.getStringExtra("rideType");
+        fixedPin = (Pin) intent.getSerializableExtra("fixedPin");
 
         mTextbox = (EditText) findViewById(R.id.address);
-
-        // Set up spinner
-        String colors[] = {"Set as pick-up address", "Set as destination address", "Delete marker"};
-        spinner = new Spinner(this);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, colors);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        spinner.setAdapter(spinnerArrayAdapter);
 
         Button submitButton = (Button) findViewById(R.id.submit);
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -91,10 +91,11 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                             break;
 
                         default:
-                            intent = new Intent(MapsActivity.this, OneRideActivity.class);
+                            intent = new Intent(MapsActivity.this, OneRideGoingtoActivity.class);
                             break;
                     }
-                    intent.putExtra("pins", pins);
+                    ArrayList<Pin> pinsArray = new ArrayList<Pin>(pins.values());
+                    intent.putExtra("pins", pinsArray);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
@@ -213,6 +214,11 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                 .snippet("Please move the marker if needed.")
                 .draggable(true));*/
 
+        // Add the first fixed pin
+        if (fixedPin != null) {
+            addMarker(new LatLng(fixedPin.getlatitude(), fixedPin.getlongitude()), fixedPin);
+        }
+
         // Get geocoder stuff
         geocoder = new Geocoder(this, Locale.getDefault());
 
@@ -227,14 +233,7 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0) {
-                Marker marker = mMap.addMarker(new MarkerOptions().position(arg0).title("Select type"));
-                pins.add(new Pin(
-                        null,
-                        marker.getPosition().longitude,
-                        marker.getPosition().latitude,
-                        getAddressFromLatLng(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)),
-                        null
-                ));
+                addMarker(arg0, null);
             }
         });
 
@@ -247,11 +246,48 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         });
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
             @Override
             public void onInfoWindowClick(Marker marker) {
-                spinner.performClick();
+
+                // Mark the marker object as final so we can affect it in the dialog listener
+                final Marker theMarker = marker;
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setTitle(R.string.options)
+                        .setItems(R.array.pin_options, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        pins.get(theMarker.getId()).setType("pickup");
+                                        break;
+
+                                    case 1:
+                                        if(destinationPins == 0) {
+                                            pins.get(theMarker.getId()).setType("destination");
+                                            destinationPins++;
+                                        }
+                                        else {
+                                            Toast.makeText(getApplicationContext(), "There is already a destination pin",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                        break;
+
+                                    case 2:
+                                        pins.remove(theMarker.getId());
+                                        theMarker.remove();
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
-        });
+
+    });
 
         mTextbox.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -304,16 +340,23 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
     }
 
     private String getAddressFromLatLng(LatLng target) {
+
         List<Address> addresses;
+        String addressString = "";
+
         try {
             addresses = geocoder.getFromLocation(target.latitude, target.longitude, 1);
-            return addresses.get(0).getAddressLine(0) +
-                    " " + addresses.get(0).getAddressLine(1) +
-                    " " + addresses.get(0).getAddressLine(2);
+            for (int i = 0; i < addresses.get(0).getMaxAddressLineIndex(); i++) {
+                if (i > 0) {
+                    addressString += ", ";
+                }
+                addressString += addresses.get(0).getAddressLine(i);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "";
+
+        return addressString;
     }
 
     private LatLng getLocationFromAddress(String strAddress) {
@@ -338,6 +381,36 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                     Toast.LENGTH_LONG).show();
         }
         return null;
+    }
+
+    private void addMarker(LatLng location, Pin fixedPin) {
+        MarkerOptions markerOptions = new MarkerOptions().position(location);
+        if (fixedPin == null) {
+            markerOptions.title(getString(R.string.options));
+        }
+        Marker marker = mMap.addMarker(markerOptions);
+
+        Pin pin;
+        if (fixedPin == null) {
+            pin = new Pin(
+                    null,
+                    marker.getPosition().longitude,
+                    marker.getPosition().latitude,
+                    getAddressFromLatLng(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)),
+                    null,
+                    null,
+                    null,
+                    "pickup"
+            );
+        }
+        else {
+            pin = fixedPin;
+            if (pin.getType() == "destination") {
+                destinationPins++;
+            }
+        }
+
+        pins.put(marker.getId(), pin);
     }
 
 }
