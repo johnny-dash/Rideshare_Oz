@@ -33,6 +33,7 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
     private String firstName;
     private String lastName;
     private String licenseNb;
+    private String licenseType;
     private String phoneNb;
     private List<String> data;
     private List<String> rawUserData;
@@ -54,15 +55,21 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 data = new ArrayList<String>();
-                data.add("First Name: " + (String) dataSnapshot.child("firstName").getValue());
-                data.add("Last Name: " + (String) dataSnapshot.child("lastName").getValue());
+                firstName = (String) dataSnapshot.child("firstName").getValue();
+                lastName = (String) dataSnapshot.child("lastName").getValue();
+                phoneNb = (String) dataSnapshot.child("phoneNb").getValue();
+                data.add("First Name: " + firstName);
+                data.add("Last Name: " + lastName);
+
                 if (dataSnapshot.hasChild("licenseNb")){
-                    data.add("License Number: " + (String) dataSnapshot.child("licenseNb").getValue());
-                    data.add("License Type: " + (String) dataSnapshot.child("licenseType").getValue());
+                    licenseNb = (String) dataSnapshot.child("licenseNb").getValue();
+                    licenseType = (String) dataSnapshot.child("licenseType").getValue();
+                    data.add("License Number: " + licenseNb);
+                    data.add("License Type: " + licenseType);
                 }
                 if (uid.equals(mAuthData.getUid()) || showPhoneNumber == true){
                     System.out.println("Do I ever get in here?");
-                    data.add("Phone Number: " + (String) dataSnapshot.child("phoneNb").getValue());
+                    data.add("Phone Number: " + phoneNb);
                 }
 
 
@@ -84,12 +91,10 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
             }
         });
 
         listView = (ListView) findViewById(R.id.listView);
-        //Need UserID from prevous activity
         listView.setEnabled(false);
         driverRating = (TextView) findViewById(R.id.textView21);
         driver = (RatingBar) findViewById(R.id.driverRating);
@@ -105,6 +110,14 @@ public class ViewProfileActivity extends FirebaseAuthenticatedActivity{
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(ViewProfileActivity.this, RegistrationInfomationActivity.class);
+                    intent.putExtra("callingActivity", "ViewProfileActivity");
+                    intent.putExtra("firstName", firstName);
+                    intent.putExtra("lastName", lastName);
+                    intent.putExtra("phoneNumber", phoneNb);
+                    if (licenseNb != null){
+                        intent.putExtra("licenseNb", licenseNb);
+                        intent.putExtra("licenseType", licenseType);
+                    }
                     startActivity(intent);
                 }
             });

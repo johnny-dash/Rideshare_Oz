@@ -51,7 +51,7 @@ public class FirebaseActivity extends ActionBarActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (!dataSnapshot.hasChild(mAuthData.getUid())) {
                         Intent personaldetail = new Intent(getApplicationContext(), RegistrationInfomationActivity.class);
-                        personaldetail.putExtra("from", "registration");
+                        personaldetail.putExtra("callingActivity", "FirebaseActivity");
                         startActivity(personaldetail);
 
                     } else {

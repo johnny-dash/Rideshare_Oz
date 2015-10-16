@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -40,6 +39,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
     private MyAdapter requestAdapter;
     private ListView ridesJoinedListview;
     private ListView pendingRidesListview;
+    private Button ridesToRateButton;
     private int count1 = 1;
     private int count2 = 2;
     private int count3 = 0;
@@ -59,11 +59,24 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
         createData();
         ridesJoinedListview = (ListView) findViewById(R.id.joinedRidesListview);
         pendingRidesListview = (ListView) findViewById(R.id.pendingRidesListview);
+        ridesToRateButton = (Button) findViewById(R.id.passengerRatingButton);
         joinedData = new ArrayList<>();
         requestData = new ArrayList<>();
         toRateData = new ArrayList<>();
-
+        ridesToRateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (toRateData.size()>0){
+                    Intent intent = new Intent(JoinedRidesActivity.this, ToRateRidesActivity.class);
+                    intent.putExtra("callingActivity", "JoinedRidesActivity");
+                    intent.putExtra("data", (Serializable) toRateData);
+                }
+            }
+        });
     }
+
+
+
 
     public void createData() {
         final List<String> bookingMadeIDs = new ArrayList<>();
@@ -259,6 +272,14 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                     requestAdapter = new MyAdapter(context, requestData, false);
                     ridesJoinedListview.setAdapter(joinedAdapter);
                     pendingRidesListview.setAdapter(requestAdapter);
+                    if (toRateData.size()>1) {
+                        ridesToRateButton.setText(toRateData.size() + " rides to rate");
+                        ridesToRateButton.setVisibility(View.VISIBLE);
+                    }
+                    else if (toRateData.size() == 1){
+                        ridesToRateButton.setText(toRateData.size() + " ride to rate");
+                        ridesToRateButton.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -311,7 +332,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
             if (convertView == null) {
                 holder = new ViewHolder();
 
-                convertView = mInflater.inflate(R.layout.activity_joinedride_item, null);
+                convertView = mInflater.inflate(R.layout.listview_joinedrides_item, null);
                 holder.beginpoint = (TextView) convertView.findViewById(R.id.departureAddress);
                 holder.endpoint = (TextView) convertView.findViewById(R.id.arrivalAddress);
                 holder.ridedate = (TextView) convertView.findViewById(R.id.dateInfo);
