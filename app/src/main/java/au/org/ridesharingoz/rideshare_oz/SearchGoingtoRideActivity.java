@@ -42,6 +42,7 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
     String eventname;
     String type;
 
+
     int PIN_REQUEST = 1;
 
     EditText searchdate;
@@ -104,7 +105,7 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         if (bundle!= null){
             groupname = bundle.getString("Group");
             eventname = bundle.getString("Event");
-            //type = bundle.getString("type");
+
             type = "goingto";
         }
 
@@ -135,7 +136,8 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         btn_gotomap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent getPinFromMap = new Intent(SearchGoingtoRideActivity.this, MapsActivity.class);
+                Intent getPinFromMap = new Intent(SearchGoingtoRideActivity.this, ChooseLocationActivity.class);
+                getPinFromMap.putExtra("callingActivity","SearchGoingtoRideActivity");
                 startActivityForResult(getPinFromMap, PIN_REQUEST);
             }
         });
@@ -191,10 +193,10 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         for(Pin pin:pins){
             System.out.println("Result");
             System.out.println("latitude:"+pin.getlatitude()+",longitude:"+ pin.getlongitude());
-            if(pin.getlatitude()>=searchpin.getlatitude()-0.025 & pin.getlatitude()<=searchpin.getlatitude()+0.025){
-                if(pin.getlongitude()>=searchpin.getlongitude()-0.025 & pin.getlongitude()<=searchpin.getlongitude()+0.025){
+            if(pin.getlatitude()>=searchpin.getlatitude()-0.05 & pin.getlatitude()<=searchpin.getlatitude()+0.05){
+                if(pin.getlongitude()>=searchpin.getlongitude()-0.05 & pin.getlongitude()<=searchpin.getlongitude()+0.05){
                     checkedpins.add(pin);
-
+                    System.out.println("Pass location check");
                 }
             }
         }
@@ -211,6 +213,7 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
 
                 if(Math.abs(pin.getTimestamp().getTime() - checkdate.getTime())/(3600*16) <= 30 ){
                     checkedpins.add(pin);
+                    System.out.println("pass time checked");
                 }
             }
 
@@ -224,14 +227,8 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         List<Pin> checkedpins = new ArrayList<Pin>();
         for (Pin pin:pins){
             if(pin.getGroup().equals(groupname)){
-                if(eventname!=null){
-                    if(pin.getEvent().equals(eventname)){
-                        checkedpins.add(pin);
-                    }
-                }
-                else {
                     checkedpins.add(pin);
-                }
+
             }
         }
         return checkedpins;

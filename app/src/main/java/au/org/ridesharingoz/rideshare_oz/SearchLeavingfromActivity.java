@@ -127,27 +127,7 @@ public class SearchLeavingfromActivity extends FirebaseAuthenticatedActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search_leavingfrom, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     public void searchRide(){
         mFirebaseRef.child("leavingfromrides").addValueEventListener(new ValueEventListener() {
@@ -210,10 +190,10 @@ public class SearchLeavingfromActivity extends FirebaseAuthenticatedActivity {
         try {
             Date checkdate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " " + time);
             for (Ride ride : rides) {
-                Date ridedate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(ride.getDate()+ " "+ ride.getTime());
-                if(Math.abs(ridedate.getTime() - checkdate.getTime())/(3600*16) <= 30 ){
+                //Date ridedate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(ride.getDate()+ " "+ ride.getTime());
+                //if(Math.abs(ridedate.getTime() - checkdate.getTime())/(3600*16) <= 30 ){
                     checkedrides.add(rideID.get(index));
-                }
+                //}
                 index++;
             }
 

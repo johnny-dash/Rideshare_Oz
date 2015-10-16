@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,6 +39,7 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
     String groupname;
     String eventname;
     String type;
+    Boolean isEvent;
 
     double latitude[] = new double[100];
     double longitude[] = new double[100];
@@ -110,7 +112,9 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         if (bundle!= null){
             groupname = bundle.getString("Group");
             eventname = bundle.getString("Event");
+            isEvent = bundle.getBoolean("isEvent");
             type = "leavingfrom";
+
         }
 
         /* *************************************
@@ -180,14 +184,17 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         Boolean seatNumcheck = seatNum.isEmpty();
         Boolean datecheck = date.isEmpty();
         Boolean timecheck = time.isEmpty();
+        String datetime = date+" "+time+":00.00";
+        Timestamp myts =  Timestamp.valueOf(datetime);
+
 
         if (!seatNumcheck&&!datecheck&&!timecheck){
             Ride new_ride = new Ride(DriverID,
                     Integer.parseInt(seatNum),
-                    date,
-                    time,
+                    myts,
+                    null,
                     groupname,
-                    eventname,
+                    isEvent,
                     type);
             Firebase rideUniqueID = RideRef.push();
             rideID = rideUniqueID.getKey();
@@ -223,7 +230,12 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
                         eventname,
                         type);
 
-                PinRef.push().setValue(savedpin, new Firebase.CompletionListener() {
+                Firebase Pinkey = PinRef.push();
+                String PinID = Pinkey.getKey();
+                Map<String,Boolean> pinsinfo = new HashMap<String,Boolean>();
+                pinsinfo.put(PinID,true);
+                RideRef.child(rideID).child("pins").push().setValue(pinsinfo);
+                Pinkey.setValue(savedpin, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                         if (firebaseError != null) {
@@ -238,6 +250,10 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
                 });
             }
         }
+
+        Intent intent = new Intent(OneRideLeavingfromActivity.this,ActionChoiceActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public List<String> getaddress(List<Pin> pins){
