@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -20,11 +19,13 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -34,8 +35,11 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
 
     private List<Map<String, String>> joinedData;
     private List<Map<String, String>> requestData;
+    private List<Map<String, String>> toRateData;
     private MyAdapter requestAdapter;
     private ListView ridesJoinedListview;
+    private ListView pendingRidesListview;
+    private Button ridesToRateButton;
     private int count1 = 1;
     private int count2 = 2;
     private int count3 = 0;
@@ -47,32 +51,59 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
     private MyAdapter joinedAdapter;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joined_rides);
         createData();
         ridesJoinedListview = (ListView) findViewById(R.id.joinedRidesListview);
-
+        pendingRidesListview = (ListView) findViewById(R.id.pendingRidesListview);
+        ridesToRateButton = (Button) findViewById(R.id.passengerRatingButton);
+        joinedData = new ArrayList<>();
+        requestData = new ArrayList<>();
+        toRateData = new ArrayList<>();
+        ridesToRateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (toRateData.size()>0){
+                    Intent intent = new Intent(JoinedRidesActivity.this, ToRateRidesActivity.class);
+                    intent.putExtra("callingActivity", "JoinedRidesActivity");
+                    intent.putExtra("data", (Serializable) toRateData);
+                }
+            }
+        });
     }
+
+
+
 
     public void createData() {
         final List<String> bookingMadeIDs = new ArrayList<>();
+        final List<String> requestIDs = new ArrayList<>();
         Query bookingmadenode = mFirebaseRef.child("users").child(mAuthData.getUid());
         bookingmadenode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                count1 -= 1;
                 if (dataSnapshot.child("bookingsMade").hasChildren()) {
-                    count1 -= 1;
                     for (DataSnapshot bookingID : dataSnapshot.getChildren()) {
                         count1 += 1;
                         bookingMadeIDs.add(bookingID.getKey());
                         System.out.println("count1: " + count1);
                     }
-                    getBookingInfo(bookingMadeIDs);
+                    getBookingInfo(bookingMadeIDs, true);
+                }
+                if (dataSnapshot.child("pendingJoinRequests").hasChildren()) {
+                    for (DataSnapshot requestID : dataSnapshot.getChildren()) {
+                        count1 += 1;
+                        requestIDs.add(requestID.getKey());
+                        System.out.println("count1: " + count1);
+
+                    }
+                    getBookingInfo(requestIDs, false);
                 }
             }
-
             @Override
             public void onCancelled(FirebaseError firebaseError) {
 
@@ -80,7 +111,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
         });
     }
 
-    private void getBookingInfo(List<String> bookingIDs) {
+    private void getBookingInfo(List<String> bookingIDs, final Boolean isBooking) {
         count2 -= 2;
         for (final String bookingID : bookingIDs) {
             final Map<String, String> map = new HashMap<>();
@@ -90,8 +121,10 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     count2 += 1;
                     Booking booking = dataSnapshot.getValue(Booking.class);
-                    String departureTime = new SimpleDateFormat("HH:mm").format(booking.getDepartureTime());
-                    String date = new SimpleDateFormat("dd/MM/yyyy").format(booking.getDepartureTime());
+                    Timestamp departure = booking.getDepartureTime();
+                    Timestamp now = new Timestamp(System.currentTimeMillis());
+                    String departureTime = new SimpleDateFormat("HH:mm", Locale.ENGLISH).format(departure);
+                    String date = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(departure);
                     String pinID = booking.getPinID();
                     String rideID = booking.getRideID();
                     String rideType = booking.getRideType();
@@ -101,6 +134,12 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                     map.put("pinID", pinID);
                     map.put("rideID", rideID);
                     map.put("rideType", rideType);
+                    if (departure.after(now)) {
+                        map.put("isBooking", isBooking.toString());
+                    }
+                    else {
+                        map.put("isBooking", "isPast");
+                    }
                     if (rideType == "goingtorides") {
                         String arrivalTime = new SimpleDateFormat("HH:mm").format(booking.getArrivalTime());
                         map.put("arrivalTime", arrivalTime);
@@ -207,7 +246,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
     private void getOtherPinAddress(final Map map) {
         String otherPinID = (String) map.get("pinID");
         String rideType = (String) map.get("rideType");
-        Query otherpinnode = null;
+        Query otherpinnode = mFirebaseRef;
         if (rideType == "goingtorides") {
             otherpinnode = mFirebaseRef.child("goingtopins").child(otherPinID);
         } else if (rideType == "leavingfromrides") {
@@ -219,10 +258,28 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                 count7 += 1;
                 String address = (String) dataSnapshot.child("address").getValue();
                 map.put("otherPinAddress", address);
-                if (isDataReady()) {
+                if (map.containsValue("isBooking")) {
                     joinedData.add(map);
+                }
+                else if(map.containsValue("isPast")){
+                    toRateData.add(map);
+                }
+                else{
+                    requestData.add(map);
+                }
+                if (isDataReady()) {
                     joinedAdapter = new MyAdapter(context, joinedData, true);
-                    requestAdapter = new MyAdapter(context requestData, false);
+                    requestAdapter = new MyAdapter(context, requestData, false);
+                    ridesJoinedListview.setAdapter(joinedAdapter);
+                    pendingRidesListview.setAdapter(requestAdapter);
+                    if (toRateData.size()>1) {
+                        ridesToRateButton.setText(toRateData.size() + " rides to rate");
+                        ridesToRateButton.setVisibility(View.VISIBLE);
+                    }
+                    else if (toRateData.size() == 1){
+                        ridesToRateButton.setText(toRateData.size() + " ride to rate");
+                        ridesToRateButton.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -241,15 +298,12 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
     }
 
 
-
-
-
     public class MyAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
         private List<Map<String, String>> adapterData;
         private Boolean isJoined;
 
-        public MyAdapter(Context context, List adapterData, Boolean isJoined) {
+        public MyAdapter(Context context, List<Map<String, String>> adapterData, Boolean isJoined) {
             this.mInflater = LayoutInflater.from(context);
             this.adapterData = adapterData;
             this.isJoined = isJoined;
@@ -278,7 +332,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
             if (convertView == null) {
                 holder = new ViewHolder();
 
-                convertView = mInflater.inflate(R.layout.activity_joinedride_item, null);
+                convertView = mInflater.inflate(R.layout.listview_joinedrides_item, null);
                 holder.beginpoint = (TextView) convertView.findViewById(R.id.departureAddress);
                 holder.endpoint = (TextView) convertView.findViewById(R.id.arrivalAddress);
                 holder.ridedate = (TextView) convertView.findViewById(R.id.dateInfo);
@@ -292,17 +346,17 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
 
                 if (adapterData.get(position).get("rideType") == "goingtorides") {
                     holder.arrow.setVisibility(View.VISIBLE);
-                    holder.beginpoint.setText((String) adapterData.get(position).get("otherPinAddress"));
-                    holder.endpoint.setText((String) adapterData.get(position).get("fixedPinAddress"));
-                    holder.ridearrivaltime.setText((String) adapterData.get(position).get("arrivalTime"));
+                    holder.beginpoint.setText(adapterData.get(position).get("otherPinAddress"));
+                    holder.endpoint.setText(adapterData.get(position).get("fixedPinAddress"));
+                    holder.ridearrivaltime.setText(adapterData.get(position).get("arrivalTime"));
 
                 } else if (adapterData.get(position).get("rideType") == "leavingfromrides") {
-                    holder.beginpoint.setText((String) adapterData.get(position).get("fixedPinAddress"));
-                    holder.endpoint.setText((String) adapterData.get(position).get("otherPinAddress"));
+                    holder.beginpoint.setText(adapterData.get(position).get("fixedPinAddress"));
+                    holder.endpoint.setText(adapterData.get(position).get("otherPinAddress"));
                 }
-                holder.ridedate.setText((String) adapterData.get(position).get("date"));
-                holder.ridedeparturetime.setText((String) adapterData.get(position).get("departureTime"));
-                holder.drivername.setText((String) adapterData.get(position).get("driverFirstName") + " " + (String) adapterData.get(position).get("driverLastName"));
+                holder.ridedate.setText(adapterData.get(position).get("date"));
+                holder.ridedeparturetime.setText(adapterData.get(position).get("departureTime"));
+                holder.drivername.setText(adapterData.get(position).get("driverFirstName") + " " + (String) adapterData.get(position).get("driverLastName"));
 
                 convertView.setTag(holder);
             } else {
@@ -331,7 +385,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                 @Override
                 public void onClick(View arg0) {
                     //TODO set the right link to the map once it's designed
-                    Intent intent = new Intent(JoinedRidesActivity.this, MapsActivity.class);
+                    Intent intent = new Intent(JoinedRidesActivity.this, MarkPinsActivity.class);
                     intent.putExtra("callingActivity", "JoinedRidesActivity");
                     List<String> pins = new ArrayList();
                     pins.add(adapterData.get(position).get("pinID"));
@@ -378,7 +432,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
         if (isJoined) {
             joinedAdapter.notifyDataSetChanged();
         } else {
-            requestAdapter.notifyDataSetChange();
+            requestAdapter.notifyDataSetChanged();
         }
     }
 

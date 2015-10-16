@@ -4,15 +4,33 @@
     android:layout_height="match_parent">
 
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Joined Rides"
-        android:id="@+id/textView25"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="3dp" />
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Joined Rides"
+            android:id="@+id/textView25"
+            android:layout_marginLeft="3dp"
+            android:layout_weight="0.7"
+            android:layout_gravity="center_vertical" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/passengerRatingButton"
+            android:layout_weight="0.1"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+    </LinearLayout>
 
     <ListView
         android:layout_width="match_parent"

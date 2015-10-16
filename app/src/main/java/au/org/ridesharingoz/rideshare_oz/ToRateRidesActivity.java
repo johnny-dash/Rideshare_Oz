@@ -3,5 +3,14 @@ package au.org.ridesharingoz.rideshare_oz;
 /**
  * Created by Ocunidee on 20/09/2015.
  */
-public class ToRateRidesActivity extends FirebaseAuthenticatedActivity{
+public class ToRateRidesActivity extends FirebaseAuthenticatedActivity {
+
+
+
+
+
+    JoinedRidesActivity.MyAdapter adapter;
+
+
+
 }

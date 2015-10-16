@@ -20,12 +20,13 @@ public class Booking {
 
     public Booking(){}
 
-    public Booking(String rideID, String rideType, String pinID, Timestamp departureTime, String userID) {
+    public Booking(String rideID, String rideType, String pinID, Timestamp departureTime, String userID, Timestamp arrivalTime) {
         this.rideID = rideID;
         this.pinID = pinID;
         this.departureTime = departureTime;
         this.rideType = rideType;
         this.userID = userID;
+        this.arrivalTime = arrivalTime;
     }
 
     public String getRideType() {
@@ -75,6 +76,4 @@ public class Booking {
     public void setUserID(String userID) {
         this.userID = userID;
     }
-
-    //hopefullly it will push this time
 }

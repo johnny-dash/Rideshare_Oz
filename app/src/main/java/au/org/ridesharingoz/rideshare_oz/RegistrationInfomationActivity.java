@@ -38,20 +38,45 @@ public class RegistrationInfomationActivity extends FirebaseAuthenticatedActivit
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_infomation);
-        callingActivity = getIntent().getStringExtra("from");
+        callingActivity = getIntent().getStringExtra("callingActivity");
+        System.out.println("Calling activity: " + callingActivity);
         submit = (Button) findViewById(R.id.btn_submit);
         fNameText = (EditText)findViewById(R.id.editFirstName);
         lNameText = (EditText)findViewById(R.id.editLastName);
         phoneNbText = (EditText)findViewById(R.id.editPhoneNumber);
         licenseNbText = (EditText)findViewById(R.id.editLicenseNumber);
         radioLicenseTypeGroup =  (RadioGroup)findViewById(R.id.licenseTypeRadioGroup);
-
+        if (callingActivity.equals("ViewProfileActivity")){
+            System.out.println(callingActivity);
+            setCurrentInfo();
+        }
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dataSubmit();
             }
         });
+
+    }
+
+    private void setCurrentInfo(){
+        fNameText.setText(getIntent().getStringExtra("firstName"));
+        System.out.println(getIntent().getStringExtra("firstName"));
+        lNameText.setText(getIntent().getStringExtra("lastName"));
+        phoneNbText.setText(getIntent().getStringExtra("phoneNumber"));
+        if (getIntent().getStringExtra("licenseNb") != null && getIntent().getStringExtra("licenseType") != null){
+            licenseNbText.setText(getIntent().getStringExtra("licenseNb"));
+            String licenseType = getIntent().getStringExtra("licenseType").toLowerCase();
+            if (licenseType.equals("p1")){
+                radioLicenseTypeGroup.check(R.id.p1Button);
+            }
+            else if (licenseType.equals("p2")){
+                radioLicenseTypeGroup.check(R.id.p2Button);
+            }
+            else{
+                radioLicenseTypeGroup.check(R.id.fullButton);
+            }
+        }
     }
 
 
@@ -79,10 +104,22 @@ public class RegistrationInfomationActivity extends FirebaseAuthenticatedActivit
         else licenseType = null;
 
         if (!emptyF & !emptyL & !emptyP) {
-            User user = new User(firstName, lastName, phoneNumber, licenseNumber, licenseType);
-            userRef.setValue(user);
-            if (callingActivity.equals("registration")){
+            if (callingActivity.equals("FirebaseActivity")){
+                User user = new User(firstName, lastName, phoneNumber, licenseNumber, licenseType);
+                userRef.setValue(user);
                 Intent intent = new Intent(getApplicationContext(), JoinGroupActivity.class);
+                startActivity(intent);
+            }
+            else if (callingActivity.equals("ViewProfileActivity")){
+                Map<String, Object> editedData = new HashMap<>();
+                editedData.put("firstName", firstName);
+                editedData.put("lastName", lastName);
+                editedData.put("phoneNb", phoneNumber);
+                editedData.put("licenseNb", licenseNumber);
+                editedData.put("licenseType", licenseType);
+                userRef.updateChildren(editedData);
+                Intent intent = new Intent(RegistrationInfomationActivity.this, ViewProfileActivity.class);
+                intent.putExtra("uid", mAuthData.getUid());
                 startActivity(intent);
             }
             else {

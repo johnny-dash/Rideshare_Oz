@@ -53,8 +53,8 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
         goToMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent getPinFromMap = new Intent(CreateAGroupActivity.this, MapsActivity.class);
-                getPinFromMap.putExtra("from","CreateAGroupActivity");
+                Intent getPinFromMap = new Intent(CreateAGroupActivity.this, ChooseLocationActivity.class);
+                getPinFromMap.putExtra("callingActivity","CreateAGroupActivity");
                 startActivityForResult(getPinFromMap, PIN_REQUEST);
             }
         });
@@ -139,7 +139,7 @@ public class CreateAGroupActivity extends FirebaseAuthenticatedActivity {
         } else return false;
     }
 
-    //gets pin data back from the MapsActivity
+    //gets pin data back from the ChooseLocationActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PIN_REQUEST) {

@@ -51,74 +51,33 @@ import java.util.Map;
 
 public class MapsActivity extends FirebaseAuthenticatedActivity {
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    protected GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static final int PERMISSION_REQUEST_LOCATION = 0;
     private View mLayout;
 
-    private EditText mTextbox;
-    private Button addressButton;
+    protected Intent intent;
+
+    protected EditText mTextbox;
+    protected Button   addressButton;
+    protected Button   submitButton;
+
     private Geocoder geocoder;
 
-    private String rideType;
-    private int destinationPins;
-
-    private Pin fixedPin;
-
-    Map<String, Pin> pins = new HashMap<>();
+    protected Map<String, Pin> pins = new HashMap<>();
+    protected int numDestinationPins;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        final Bundle bundle = getIntent().getExtras();
 
-        Intent intent = getIntent();
-        rideType = intent.getStringExtra("rideType");
-        fixedPin = (Pin) intent.getSerializableExtra("fixedPin");
+        intent = getIntent();
 
-        mTextbox = (EditText) findViewById(R.id.address);
+        mTextbox      = (EditText) findViewById(R.id.address);
+        submitButton  = (Button)   findViewById(R.id.submit);
+        addressButton = (Button)   findViewById(R.id.address_submit);
 
-        Button submitButton = (Button) findViewById(R.id.submit);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = null;
-                if (rideType != null) {
-                    switch (rideType) {
-                        case "regular":
-                            intent = new Intent(MapsActivity.this, RegularRideActivity.class);
-                            break;
-
-                        default:
-                            intent = new Intent(MapsActivity.this, OneRideGoingtoActivity.class);
-                            break;
-                    }
-                    ArrayList<Pin> pinsArray = new ArrayList<Pin>(pins.values());
-                    intent.putExtra("pins", pinsArray);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-                else {
-                    // Group creation
-                    if (!pins.isEmpty()) {
-                        String callingActivity = getIntent().getStringExtra("from");
-                        if (callingActivity.equals("CreateEventActivity")){
-                            intent = new Intent(MapsActivity.this, CreateEventActivity.class);
-                        }
-                        else {
-                            intent = new Intent(MapsActivity.this, CreateAGroupActivity.class);
-                        }
-                        intent.putExtra("pin", pins.get(0));
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                }
-            }
-
-        });
-
-        addressButton = (Button) findViewById(R.id.address_submit);
+        // Respond to addresses entered in the address box
         addressButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -173,7 +132,7 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
      * This is where we can add markers or lines, add listeners or move the camera.
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
-    private void setUpMap() {
+    protected void setUpMap() {
 
         final double DEFAULT_LONGITUDE = -37.8136111;
         final double DEFAULT_LATITUDE  = 144.9630556;
@@ -183,13 +142,12 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         // Set up the location manager
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria               = new Criteria();
-        Location location               = null;
         LatLng locationLatLng           = null;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
             // Location is enabled, request location
-            location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
             if (location != null) {
                 locationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
             }
@@ -209,15 +167,6 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
 
         // Move the camera and add marker
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 13));
-        /*mMap.addMarker(new MarkerOptions().position(locationLatLng)
-                .title("Set address")
-                .snippet("Please move the marker if needed.")
-                .draggable(true));*/
-
-        // Add the first fixed pin
-        if (fixedPin != null) {
-            addMarker(new LatLng(fixedPin.getlatitude(), fixedPin.getlongitude()), fixedPin);
-        }
 
         // Get geocoder stuff
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -227,13 +176,6 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 //updateAddressLabel();
-            }
-        });
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng arg0) {
-                addMarker(arg0, null);
             }
         });
 
@@ -263,12 +205,12 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                                         break;
 
                                     case 1:
-                                        if(destinationPins == 0) {
+                                        if(numDestinationPins == 0) {
                                             pins.get(theMarker.getId()).setType("destination");
-                                            destinationPins++;
+                                            numDestinationPins++;
                                         }
                                         else {
-                                            Toast.makeText(getApplicationContext(), "There is already a destination pin",
+                                            Toast.makeText(MapsActivity.this, "There is already a destination pin",
                                                     Toast.LENGTH_LONG).show();
                                         }
                                         break;
@@ -334,11 +276,13 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         }
     }
 
+    // Update the address label
     private void updateAddressLabel() {
         LatLng target = mMap.getCameraPosition().target;
         mTextbox.setText(getAddressFromLatLng(target));
     }
 
+    // Given a LatLng, get an address string
     private String getAddressFromLatLng(LatLng target) {
 
         List<Address> addresses;
@@ -359,6 +303,7 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         return addressString;
     }
 
+    // Given an address string, get a LatLng
     private LatLng getLocationFromAddress(String strAddress) {
 
         Log.v("address", "Looking up address: " + strAddress);
@@ -383,9 +328,10 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         return null;
     }
 
-    private void addMarker(LatLng location, Pin fixedPin) {
+    // Add a marker to the map, update the pins object
+    protected Pin addMarker(LatLng location, Pin fixedPin, boolean options) {
         MarkerOptions markerOptions = new MarkerOptions().position(location);
-        if (fixedPin == null) {
+        if (fixedPin == null && options) {
             markerOptions.title(getString(R.string.options));
         }
         Marker marker = mMap.addMarker(markerOptions);
@@ -405,12 +351,13 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         }
         else {
             pin = fixedPin;
-            if (pin.getType() == "destination") {
-                destinationPins++;
+            if (pin.getType() != null && pin.getType().equals("destination")) {
+                numDestinationPins++;
             }
         }
 
         pins.put(marker.getId(), pin);
+        return pin;
     }
 
 }
