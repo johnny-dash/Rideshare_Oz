@@ -104,13 +104,13 @@ public class RegistrationInfomationActivity extends FirebaseAuthenticatedActivit
         else licenseType = null;
 
         if (!emptyF & !emptyL & !emptyP) {
-            if (callingActivity == "FirebaseActivity"){
+            if (callingActivity.equals("FirebaseActivity")){
                 User user = new User(firstName, lastName, phoneNumber, licenseNumber, licenseType);
                 userRef.setValue(user);
                 Intent intent = new Intent(getApplicationContext(), JoinGroupActivity.class);
                 startActivity(intent);
             }
-            else if (callingActivity == "ViewProfileActivity"){
+            else if (callingActivity.equals("ViewProfileActivity")){
                 Map<String, Object> editedData = new HashMap<>();
                 editedData.put("firstName", firstName);
                 editedData.put("lastName", lastName);
