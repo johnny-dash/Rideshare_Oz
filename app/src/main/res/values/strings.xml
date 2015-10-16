@@ -60,5 +60,8 @@
     <string name="title_activity_view_profile">Profile</string>
     <string name="title_activity_create_event">Create an event</string>
     <string name="title_activity_group_management_panel">Group Management Panel</string>
+    <string name="title_activity_searchresult">SearchresultActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>
