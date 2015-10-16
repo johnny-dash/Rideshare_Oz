@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
 
             System.out.println(Ridelist.size());
 
-            ridelistview = (ListView) findViewById(R.id.OfferedRideListview);
+            ridelistview = (ListView) findViewById(R.id.offeredRidesListview);
             MyAdapter myAdapter = new MyAdapter(this);
             ridelistview.setAdapter(myAdapter);
 
@@ -100,6 +99,8 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
             public TextView seatnum;
             public Button btn_showmap;
             public Button btn_cancel;
+            public TextView ridedeparturetime;
+            public TextView ridearrivaltime;
         }
 
         public class MyAdapter extends BaseAdapter {
@@ -132,13 +133,15 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                 if(convertView == null){
                     holder = new ViewHolder();
 
-                    convertView = mInflater.inflate(R.layout.activity_offeredride_item,null);
-                    holder.beginpoint = (TextView)convertView.findViewById(R.id.off_BeginningAddress);
-                    holder.endpoint = (TextView)convertView.findViewById(R.id.off_FinishAddress);
-                    holder.ridedate = (TextView)convertView.findViewById(R.id.off_DateInfo);
-                    holder.seatnum = (TextView)convertView.findViewById(R.id.SeatNum);
-                    holder.btn_cancel = (Button) convertView.findViewById(R.id.off_cancelRide);
-                    holder.btn_showmap = (Button) convertView.findViewById(R.id.off_showroute);
+                    convertView = mInflater.inflate(R.layout.listview_offeredrides_item,null);
+                    holder.beginpoint = (TextView)convertView.findViewById(R.id.offered_BeginningAddress);
+                    holder.endpoint = (TextView)convertView.findViewById(R.id.offered_FinishAddress);
+                    holder.ridedate = (TextView)convertView.findViewById(R.id.dateOfferedInfo);
+                    holder.ridedeparturetime = (TextView)convertView.findViewById(R.id.timeDepartureOfferedInfo);
+                    holder.ridearrivaltime = (TextView) convertView.findViewById(R.id.timeArrivalOfferedInfo);
+                    holder.seatnum = (TextView)convertView.findViewById(R.id.seatNum);
+                    holder.btn_cancel = (Button) convertView.findViewById(R.id.offered_cancelRide);
+                    holder.btn_showmap = (Button) convertView.findViewById(R.id.offered_showroute);
                     convertView.setTag(holder);
                 }
                 else {

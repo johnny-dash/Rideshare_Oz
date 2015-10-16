@@ -104,9 +104,10 @@ public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
                                                 View v = super.getView(position, convertView, parent);
 
                                                 final ImageButton b = (ImageButton) v.findViewById(R.id.addButton);
-                                                Map<String, String> group = ((Map<String, String>) getItem(position));
-                                                final String groupName = group.get("groupName");
-                                                final String groupID = group.get("groupID");
+                                                Map<String, Object> group = ((Map<String, Object>) getItem(position));
+                                                final String groupName = (String) group.get("groupName");
+                                                final String groupID = (String) group.get("groupID");
+                                                final Boolean isPrivate = (Boolean)group.get("privateGroup");
                                                 b.setOnClickListener(new View.OnClickListener() {
 
                                                     @Override
@@ -114,7 +115,7 @@ public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
                                                         if (groupsAlreadyJoined.contains(groupID)) {
                                                             Toast.makeText(getApplicationContext(), "You are already a member of the group: " + groupName, Toast.LENGTH_SHORT).show();
                                                         } else {
-                                                            if ((boolean)map.get("privateGroup")) {
+                                                            if (isPrivate) {
                                                                 sendJoinRequest(groupID);
                                                                 Toast.makeText(getApplicationContext(), "A request to join has been sent to the group owner of: " + groupName, Toast.LENGTH_SHORT).show();
                                                             } else {

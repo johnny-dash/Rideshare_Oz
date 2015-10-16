@@ -113,6 +113,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
                     groupsToPin.put(groupID, groupPin);
                     groupNameToGroupID.put(groupName, groupID);
                     map.put("groupName", groupName);
+                    map.put("isPrivate", (Boolean) dataSnapshot.child("privateGroup").getValue());
                     if (dataSnapshot.child("events").hasChildren()) {
                         System.out.println(groupName+ " " + groupID + " has events");
                         List<String> eventIDs = new ArrayList<>();
@@ -204,7 +205,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
         ArrayList<Item> items = new ArrayList<>();
         for(String groupID : preAdapterData.keySet()){
             countDataTranslation += 1;
-            Item item = new Item((String) ((HashMap) preAdapterData.get(groupID)).get("groupName"));
+            Item item = new Item((String) ((HashMap) preAdapterData.get(groupID)).get("groupName"), (Boolean) ((HashMap)preAdapterData.get(groupID)).get("isPrivate"));
             if (((HashMap)preAdapterData.get(groupID)).containsKey("groupEvents")) {
                 Map<String,String> details = ((HashMap<String,String>) ((HashMap)preAdapterData.get(groupID)).get("groupEvents"));
                 for (String key : details.keySet()) {
@@ -326,8 +327,11 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
                 holder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.expandablelistview_choosegroupevent_item, null);
                 holder.groupButton = (Button) convertView.findViewById(R.id.chooseGroupButton);
-                holder.groupButton.setFocusable(false);
                 Item item = (Item) getGroup(groupPosition);
+                if (!item.getIsPrivate()){
+                    holder.groupButton.setVisibility(View.INVISIBLE);
+                }
+                holder.groupButton.setFocusable(false);
                 text = (TextView) convertView.findViewById(R.id.groupToChooseName);
                 text.setText(item.itemName);
                 ((CheckedTextView) text).setChecked(isExpanded);
@@ -348,7 +352,6 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
             else {
                 holder = (ViewHolder) convertView.getTag();
             }
-           // holder = (ViewHolder) convertView.getTag();
             holder.groupButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
@@ -386,16 +389,27 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
     class Item {
 
         public String itemName;
+        public Boolean isPrivate;
         public final List<String> itemDetails = new ArrayList<String>();
 
-        public Item(String itemName) {
+        public Item(String itemName, Boolean isPrivate) {
             this.itemName = itemName;
+            this.isPrivate = isPrivate;
         }
 
         public String getItemName() {
             return itemName;
         }
+
+        public Boolean getIsPrivate() {
+            return isPrivate;
+        }
+
+        public void setIsPrivate(Boolean isPrivate) {
+            this.isPrivate = isPrivate;
+        }
     }
+
 
 
     static class ViewHolder {

@@ -64,7 +64,7 @@ public class RegistrationInfomationActivity extends FirebaseAuthenticatedActivit
         System.out.println(getIntent().getStringExtra("firstName"));
         lNameText.setText(getIntent().getStringExtra("lastName"));
         phoneNbText.setText(getIntent().getStringExtra("phoneNumber"));
-        if (getIntent().getStringExtra("licenseNb") != null){
+        if (getIntent().getStringExtra("licenseNb") != null && getIntent().getStringExtra("licenseType") != null){
             licenseNbText.setText(getIntent().getStringExtra("licenseNb"));
             String licenseType = getIntent().getStringExtra("licenseType").toLowerCase();
             if (licenseType.equals("p1")){
@@ -114,8 +114,8 @@ public class RegistrationInfomationActivity extends FirebaseAuthenticatedActivit
                 Map<String, Object> editedData = new HashMap<>();
                 editedData.put("firstName", firstName);
                 editedData.put("lastName", lastName);
-                editedData.put("phoneNumber", phoneNumber);
-                editedData.put("licenseNumber", licenseNumber);
+                editedData.put("phoneNb", phoneNumber);
+                editedData.put("licenseNb", licenseNumber);
                 editedData.put("licenseType", licenseType);
                 userRef.updateChildren(editedData);
                 Intent intent = new Intent(RegistrationInfomationActivity.this, ViewProfileActivity.class);
