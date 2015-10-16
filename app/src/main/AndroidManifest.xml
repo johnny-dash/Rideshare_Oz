@@ -59,6 +59,18 @@
                 android:value=".LoginActivity" />
         </activity>
         <activity
+            android:name=".MarkPinsActivity"
+            android:label="@string/title_activity_maps" >
+        </activity>
+        <activity
+            android:name=".ChooseLocationActivity"
+            android:label="@string/title_activity_maps" >
+        </activity>
+        <activity
+            android:name=".DisplaySearchResultActivity"
+            android:label="@string/title_activity_maps" >
+        </activity>
+        <activity
             android:name=".RegularRideActivity"
             android:label="@string/title_activity_regularride" >
         </activity>

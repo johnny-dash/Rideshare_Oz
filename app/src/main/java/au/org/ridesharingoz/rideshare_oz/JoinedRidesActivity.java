@@ -385,7 +385,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                 @Override
                 public void onClick(View arg0) {
                     //TODO set the right link to the map once it's designed
-                    Intent intent = new Intent(JoinedRidesActivity.this, MapsActivity.class);
+                    Intent intent = new Intent(JoinedRidesActivity.this, MarkPinsActivity.class);
                     intent.putExtra("callingActivity", "JoinedRidesActivity");
                     List<String> pins = new ArrayList();
                     pins.add(adapterData.get(position).get("pinID"));

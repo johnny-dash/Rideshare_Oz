@@ -85,7 +85,7 @@ public class ChooseTypeRideActivity extends FirebaseAuthenticatedActivity {
     private Intent setupIntent(boolean isGoingTo){
         Intent intent = null;
         if (isCreatingRide) {
-            intent = new Intent(ChooseTypeRideActivity.this, MapsActivity.class);
+            intent = new Intent(ChooseTypeRideActivity.this, MarkPinsActivity.class);
             intent.putExtra("isGoingTo", isGoingTo);
             return intent;
         }
