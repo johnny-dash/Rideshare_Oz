@@ -4,8 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -25,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -183,7 +180,7 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
             System.out.println("pins have finded: "+pin.getValue().getaddress());
         }
         if(!GroupcheckedPin.isEmpty()) {
-            Intent intent = new Intent(SearchGoingtoRideActivity.this, SearchresultActivity.class);
+            Intent intent = new Intent(SearchGoingtoRideActivity.this, RideSearchResultActivity.class);
             ArrayList<String> pinID = new ArrayList();
             for(Map.Entry<String, Pin> pin : GroupcheckedPin.entrySet()){
                 pinID.add(pin.getKey());

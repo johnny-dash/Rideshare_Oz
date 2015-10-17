@@ -150,10 +150,6 @@
             android:name=".GroupManagementPanelActivity"
             android:label="@string/title_activity_group_management_panel" >
         </activity>
-        <activity
-            android:name=".SearchresultActivity"
-            android:label="@string/title_activity_searchresult" >
-        </activity>
     </application>
 
 </manifest>
