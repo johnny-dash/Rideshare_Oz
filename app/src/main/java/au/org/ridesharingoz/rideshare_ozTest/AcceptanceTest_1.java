@@ -58,11 +58,6 @@ public class AcceptanceTest_1 extends ActivityInstrumentationTestCase2<LoginActi
             // Enter a valid Email and password
             long uniq = System.currentTimeMillis();
             String name = "jack" + uniq;
-        /*
-
-            We need this email in acceptanceTest3
-
-         */
             String email = name + "@gamil.com";
             String password = "abc1234567";
             solo.enterText((EditText) solo.getView("email_address"), email);

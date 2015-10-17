@@ -99,9 +99,9 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="216dp"
+        android:layout_height="103dp"
         android:id="@+id/AddressList"
-        android:layout_weight="0.84" />
+        android:layout_weight="0.13" />
 
     <Button
         android:layout_width="fill_parent"

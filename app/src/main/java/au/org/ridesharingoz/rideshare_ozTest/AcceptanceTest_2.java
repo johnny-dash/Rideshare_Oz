@@ -43,7 +43,7 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
 
     /*
 
-        This test will simulate a new user register, fill in personal information and then request to join a group
+        This test will simulate a group owner accepts the join group request, creates an event and offers a ride for that event.
 
     */
     public void testAcceptance_2() throws Exception {
@@ -62,6 +62,7 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
         solo.clickOnView(login_btn);
         solo.sleep(1000);
         currentActivity = solo.getCurrentActivity();
+        // click menu item
         int id_groups = currentActivity.getResources().getIdentifier("my_groups", "id", currentActivity.getPackageName());
         solo.sleep(500);
         solo.clickOnView(solo.getView(id_groups));
@@ -104,51 +105,68 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
 
          */
 
-        currentActivity = solo.getCurrentActivity();
-        int btn_createEvent = currentActivity.getResources().getIdentifier("button_createEvent", "id", currentActivity.getPackageName());
-        solo.clickOnView(solo.getView(btn_createEvent));
+//        currentActivity = solo.getCurrentActivity();
+//        int btn_createEvent = currentActivity.getResources().getIdentifier("button_createEvent", "id", currentActivity.getPackageName());
+//        solo.clickOnView(solo.getView(btn_createEvent));
+//        solo.waitForDialogToOpen(100);
+//
+//        solo.enterText((EditText) solo.getView("createEventName"), "Halloween Party");
+//        solo.enterText((EditText) solo.getView("createEventDescription"), "Have fun with us!");
+//
+//        int id_startDate = currentActivity.getResources().getIdentifier("createEventStartDate", "id", currentActivity.getPackageName());
+//        EditText startDate = (EditText) solo.getView(id_startDate);
+//        solo.clickOnView(startDate);
+//        solo.clickOnView(startDate);
+//        solo.waitForDialogToOpen(100);
+//        solo.setDatePicker(0, 2015, 10, 28);
+//        solo.clickOnText("Done");
+//
+//        int id_endDate = currentActivity.getResources().getIdentifier("createEventEndDate", "id", currentActivity.getPackageName());
+//        EditText endDate = (EditText) solo.getView(id_endDate);
+//        solo.clickOnView(endDate);
+//        solo.clickOnView(endDate);
+//        solo.waitForDialogToOpen(100);
+//        solo.setDatePicker(0, 2015, 10, 28);
+//        solo.clickOnText("Done");
+//
+//        int id_map = currentActivity.getResources().getIdentifier("createFixedPointAddressEvent", "id", currentActivity.getPackageName());
+//        solo.clickOnView(solo.getView(id_map));
+//        solo.sleep(500);
+//
+//        // Go to map
+//        currentActivity = solo.getCurrentActivity();
+//        boolean initialID = solo.waitForFragmentById(R.id.map); //where id.satellite is defined in the R file, eventually would time out and throw error if fragment was not present
+//        solo.sleep(1000);
+//        Activity mapActivity = solo.getCurrentActivity();
+//        int map = mapActivity.getResources().getIdentifier("map", "id", currentActivity.getPackageName());
+//        View mapView =  solo.getView(map);
+//        solo.clickOnView(mapView);
+//        int mapSubmit = currentActivity.getResources().getIdentifier("submit", "id", currentActivity.getPackageName());
+//        Button btn_mapSubmit = (Button) solo.getView(mapSubmit);
+//        solo.clickOnView(btn_mapSubmit);
+//
+//        //Back to event information
+//        solo.sleep(1000);
+//        currentActivity = solo.getCurrentActivity();
+//        int btn_submit = currentActivity.getResources().getIdentifier("btn_submit_event","id",currentActivity.getPackageName());
+//        solo.clickOnView(solo.getView(btn_submit));
+//        solo.sleep(1000);
 
-        solo.enterText((EditText) solo.getView("createEventName"), "Acceptance Test");
-        solo.enterText((EditText) solo.getView("createEventDescription"), "Team members are to attend the session");
+        //Offers a ride for that event
 
-        int id_startDate = currentActivity.getResources().getIdentifier("createEventStartDate", "id", currentActivity.getPackageName());
-        EditText startDate = (EditText) solo.getView(id_startDate);
-        solo.clickOnView(startDate);
-        solo.clickOnView(startDate);
-        solo.waitForDialogToOpen(100);
-        solo.setDatePicker(0, 2015, 10, 23);
-        solo.clickOnText("Done");
-
-        int id_endDate = currentActivity.getResources().getIdentifier("createEventEndDate", "id", currentActivity.getPackageName());
-        EditText endDate = (EditText) solo.getView(id_endDate);
-        solo.clickOnView(endDate);
-        solo.clickOnView(endDate);
-        solo.waitForDialogToOpen(100);
-        solo.setDatePicker(0, 2015, 10, 23);
-        solo.clickOnText("Done");
-
-        int id_map = currentActivity.getResources().getIdentifier("createFixedPointAddressEvent", "id", currentActivity.getPackageName());
-        solo.clickOnView(solo.getView(id_map));
+        int id_action = currentActivity.getResources().getIdentifier("R.id.home", "id", currentActivity.getPackageName());
         solo.sleep(500);
 
-        // Go to map
         currentActivity = solo.getCurrentActivity();
-        boolean initialID = solo.waitForFragmentById(R.id.map); //where id.satellite is defined in the R file, eventually would time out and throw error if fragment was not present
-        solo.sleep(1000);
-        Activity mapActivity = solo.getCurrentActivity();
-        int map = mapActivity.getResources().getIdentifier("map", "id", currentActivity.getPackageName());
-        View mapView =  solo.getView(map);
-        solo.clickOnView(mapView);
-        int mapSubmit = currentActivity.getResources().getIdentifier("submit", "id", currentActivity.getPackageName());
-        Button btn_mapSubmit = (Button) solo.getView(mapSubmit);
-        solo.clickOnView(btn_mapSubmit);
+        int btn_offerARide = currentActivity.getResources().getIdentifier("button_offerride","id",currentActivity.getPackageName());
+        solo.clickOnView(solo.getView(btn_offerARide));
+        if(solo.searchText("University of Melbourne students")){
 
-        //Back to event information
-        solo.sleep(1000);
-        currentActivity = solo.getCurrentActivity();
-        int btn_submit = currentActivity.getResources().getIdentifier("btn_submit_event","id",currentActivity.getPackageName());
-        solo.clickOnView(solo.getView(btn_submit));
-        solo.sleep(1000);
+        }
+
+
+
+
 
 
 

@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,13 +217,15 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         String date = editdate.getText().toString();
         String arrival = edit_arrivaltime.getText().toString();
 
-        Boolean seatNumcheck = seatNum.isEmpty();
-        Boolean datecheck = date.isEmpty();
-        String ridedate = date+" "+arrival+":00.00";
-        Timestamp ridets =  Timestamp.valueOf(ridedate);
+        Boolean seatNumcheck = isEmptyEditText(seatNum, tx_seatNum);
+        Boolean datecheck = isEmptyTime(date, editdate);
+        Boolean timecheck = isEmptyTime(arrival, edit_arrivaltime);
 
 
-        if (!seatNumcheck&&!datecheck){
+
+        if (!seatNumcheck &!datecheck & !timecheck){
+            String ridedate = date+" "+arrival+":00.00";
+            Timestamp ridets =  Timestamp.valueOf(ridedate);
             Ride new_ride = new Ride(DriverID,
                     Integer.parseInt(seatNum),
                     ridets,
@@ -270,11 +273,10 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                     time = value;
                 }
             }
-            boolean Timecheck = time.isEmpty();
-            boolean addresscheck = address.isEmpty();
-            String datetime = date+" "+time+":00.00";
-            Timestamp myts =  Timestamp.valueOf(datetime);
-            if (!Timecheck&&!addresscheck){
+
+            if (!seatNumcheck &!datecheck & !timecheck) {
+                String datetime = date+" "+time+":00.00";
+                Timestamp myts =  Timestamp.valueOf(datetime);
                 Pin pin = new Pin(rideID,
                         longitude[index],
                         latitude[index],
@@ -301,16 +303,20 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                     }
 
                 });
+                Intent intent = new Intent(OneRideGoingtoActivity.this,ActionChoiceActivity.class);
+                startActivity(intent);
+                finish();
+            }{
+                Toast.makeText(getApplicationContext(), "Ride cannot be created. Missing data.", Toast.LENGTH_LONG).show();
             }
+
 
 
 
 
             index=index+1;
 
-            Intent intent = new Intent(OneRideGoingtoActivity.this,ActionChoiceActivity.class);
-            startActivity(intent);
-            finish();
+
         }
 
 
@@ -408,4 +414,21 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
 
     }
+
+    private boolean isEmptyEditText(String editTextString, EditText editText) {
+        if (TextUtils.isEmpty(editTextString)) {
+            editText.setError("You need to fill this field");
+            return true;
+        } else return false;
+    }
+
+    //check if time has been setted
+    private boolean isEmptyTime(String editTextString, EditText editText){
+
+        if(editTextString.equals("") ){
+            editText.setError("You need to set time");
+            return true;
+        } else return false;
+    }
+
 }
