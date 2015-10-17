@@ -17,8 +17,8 @@ public class Pin implements Serializable {
     private double latitude;
     private String address;
     private Timestamp timestamp;
-    private String group;
-    private String event;
+    private String groupEventID;
+    private Boolean isEvent;
 
     public void setType(String type) {
         this.type = type;
@@ -29,14 +29,14 @@ public class Pin implements Serializable {
 
     public Pin() {}
 
-    public Pin(String RideID,double longitude,double latitude,String address,Timestamp datetime, String group, String event, String type){
+    public Pin(String RideID,double longitude,double latitude,String address,Timestamp datetime, String groupEventID, Boolean isEvent, String type){
         this.rideID = RideID;
         this.longitude = longitude;
         this.latitude = latitude;
         this.address = address;
         this.timestamp = datetime;
-        this.group = group;
-        this.event = event;
+        this.groupEventID = groupEventID;
+        this.isEvent = isEvent;
         this.type = type;
 
     }
@@ -51,9 +51,9 @@ public class Pin implements Serializable {
 
     public Timestamp getTimestamp() {return timestamp;}
 
-    public String getGroup() {return  group;}
+    public String getGroupEventID() {return  groupEventID;}
 
-    public String getEvent() {return event;}
+    public Boolean getIsEvent() {return isEvent;}
 
     public String getType() {return type;}
 

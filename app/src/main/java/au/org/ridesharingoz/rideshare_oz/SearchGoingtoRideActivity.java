@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 
 import com.firebase.client.DataSnapshot;
@@ -23,23 +24,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
+import java.util.Map;
 
 
 public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
 
 
     Pin searchpin;
+    Map<String,Pin> pins = new HashMap<>();
+    Map<String,Pin> LocationcheckedPin = new HashMap<>();
+    Map<String,Pin> TimecheckedPin = new HashMap<>();
+    Map<String,Pin> GroupcheckedPin = new HashMap<>();
 
-    List<Pin> pins = new ArrayList<Pin>();
-    List<Pin> LocationcheckedPin = new ArrayList<Pin>();
-    List<Pin> TimecheckedPin = new ArrayList<Pin>();
-    List<Pin> GroupcheckedPin = new ArrayList<Pin>();
-
-    String groupname;
-    String eventname;
+    String groupEventID;
+    Boolean isEvent;
     String type;
 
 
@@ -103,8 +104,8 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         final Bundle bundle = getIntent().getExtras();
 
         if (bundle!= null){
-            groupname = bundle.getString("Group");
-            eventname = bundle.getString("Event");
+            groupEventID = bundle.getString("ID");
+            isEvent = bundle.getBoolean("isEvent");
 
             type = "goingto";
         }
@@ -161,7 +162,8 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot pinsSnapshot : dataSnapshot.getChildren()) {
-                    pins.add(pinsSnapshot.getValue(Pin.class));
+                    pins.put(pinsSnapshot.getKey(), pinsSnapshot.getValue(Pin.class));
+
                 }
             }
 
@@ -176,26 +178,41 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         LocationcheckedPin = checkLocation(pins);
         TimecheckedPin = checkTime(LocationcheckedPin);
         GroupcheckedPin = checkGroup(TimecheckedPin);
-        for(Pin pin:GroupcheckedPin){
-            //Toast.makeText(getApplicationContext(), "pins: "+pins[i], Toast.LENGTH_SHORT).show();
-            System.out.println("pins have finded: "+pin.getaddress());
+        for(Map.Entry<String, Pin> pin : GroupcheckedPin.entrySet()){
+
+            System.out.println("pins have finded: "+pin.getValue().getaddress());
         }
+        if(!GroupcheckedPin.isEmpty()) {
+            Intent intent = new Intent(SearchGoingtoRideActivity.this, SearchresultActivity.class);
+            ArrayList<String> pinID = new ArrayList();
+            for(Map.Entry<String, Pin> pin : GroupcheckedPin.entrySet()){
+                pinID.add(pin.getKey());
+            }
+            intent.putExtra("pins",pinID);
+            startActivity(intent);
+            finish();
+        }
+        else {
+
+            Toast.makeText(getApplicationContext(), "Don't find any match pins. Please change the condition and search again: )", Toast.LENGTH_SHORT).show();
+        }
+
 
 
     }
 
 
-    public List<Pin> checkLocation(List<Pin> pins){
+    public Map<String,Pin> checkLocation(Map<String,Pin> pins){
 
-        List<Pin> checkedpins = new ArrayList<Pin>();
+        Map<String,Pin> checkedpins = new HashMap<>();
         System.out.println("target");
         System.out.println("latitude:"+searchpin.getlatitude()+",longitude:"+ searchpin.getlongitude());
-        for(Pin pin:pins){
+        for(Map.Entry<String, Pin> pin : pins.entrySet()){
             System.out.println("Result");
-            System.out.println("latitude:"+pin.getlatitude()+",longitude:"+ pin.getlongitude());
-            if(pin.getlatitude()>=searchpin.getlatitude()-0.05 & pin.getlatitude()<=searchpin.getlatitude()+0.05){
-                if(pin.getlongitude()>=searchpin.getlongitude()-0.05 & pin.getlongitude()<=searchpin.getlongitude()+0.05){
-                    checkedpins.add(pin);
+            System.out.println("latitude:"+pin.getValue().getlatitude()+",longitude:"+ pin.getValue().getlongitude());
+            if(pin.getValue().getlatitude()>=searchpin.getlatitude()-0.05 & pin.getValue().getlatitude()<=searchpin.getlatitude()+0.05){
+                if(pin.getValue().getlongitude()>=searchpin.getlongitude()-0.05 & pin.getValue().getlongitude()<=searchpin.getlongitude()+0.05){
+                    checkedpins.put(pin.getKey(), pin.getValue());
                     System.out.println("Pass location check");
                 }
             }
@@ -203,16 +220,17 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         return checkedpins;
     }
 
-    public List<Pin> checkTime(List<Pin> pins) {
-        List<Pin> checkedpins = new ArrayList<Pin>();
+    public Map<String,Pin> checkTime(Map<String,Pin> pins) {
+        Map<String,Pin> checkedpins = new HashMap<>();
         String date = searchdate.getText().toString();
         String time = searchtime.getText().toString();
         try {
             Date checkdate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " " + time);
-            for (Pin pin : pins) {
-
-                if(Math.abs(pin.getTimestamp().getTime() - checkdate.getTime())/(3600*16) <= 30 ){
-                    checkedpins.add(pin);
+            for (Map.Entry<String, Pin> pin : pins.entrySet()) {
+                double test = Math.abs(pin.getValue().getTimestamp().getTime() - checkdate.getTime())/(3600*16);
+                System.out.println(test);
+                if(Math.abs(pin.getValue().getTimestamp().getTime() - checkdate.getTime())/(3600*16) <= 30 ){
+                    checkedpins.put(pin.getKey(), pin.getValue());
                     System.out.println("pass time checked");
                 }
             }
@@ -223,11 +241,11 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         return checkedpins;
     }
 
-    public List<Pin> checkGroup(List<Pin> pins){
-        List<Pin> checkedpins = new ArrayList<Pin>();
-        for (Pin pin:pins){
-            if(pin.getGroup().equals(groupname)){
-                    checkedpins.add(pin);
+    public Map<String,Pin> checkGroup(Map<String,Pin> pins){
+        Map<String,Pin> checkedpins = new HashMap<>();
+        for (Map.Entry<String, Pin> pin : pins.entrySet()){
+            if(pin.getValue().getGroupEventID().equals(groupEventID)){
+                    checkedpins.put(pin.getKey(),pin.getValue());
 
             }
         }

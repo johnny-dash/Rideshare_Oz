@@ -36,8 +36,7 @@ import java.util.Map;
 import au.org.ridesharingoz.rideshare_oz.R;
 
 public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
-    String groupname;
-    String eventname;
+    String groupEventID;
     String type;
     Boolean isEvent;
 
@@ -110,8 +109,7 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         final Bundle bundle = getIntent().getExtras();
 
         if (bundle!= null){
-            groupname = bundle.getString("Group");
-            eventname = bundle.getString("Event");
+            groupEventID = bundle.getString("ID");
             isEvent = bundle.getBoolean("isEvent");
             type = "leavingfrom";
 
@@ -193,7 +191,7 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
                     Integer.parseInt(seatNum),
                     myts,
                     null,
-                    groupname,
+                    groupEventID,
                     isEvent,
                     type);
             Firebase rideUniqueID = RideRef.push();
@@ -226,15 +224,15 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
                         pin.getlatitude(),
                         pin.getaddress(),
                         null,
-                        groupname,
-                        eventname,
+                        groupEventID,
+                        isEvent,
                         type);
 
                 Firebase Pinkey = PinRef.push();
                 String PinID = Pinkey.getKey();
-                Map<String,Boolean> pinsinfo = new HashMap<String,Boolean>();
-                pinsinfo.put(PinID,true);
-                RideRef.child(rideID).child("pins").push().setValue(pinsinfo);
+                Map<String,Object> pinid = new HashMap<>();
+                pinid.put(PinID,true);
+                RideRef.child(rideID).child("pins").updateChildren(pinid);
                 Pinkey.setValue(savedpin, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
