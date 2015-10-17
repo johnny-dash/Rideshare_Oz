@@ -21,9 +21,15 @@
     <string name="address_hint">Jump to an address</string>
     <string name="submit">Submit</string>
     <string name="go">Go</string>
+    <string name="departure">Departure Point</string>
+    <string name="pickup">Pick-up point</string>
+    <string name="arrival">Arrival Point</string>
+    <string name="fixed">(fixed)</string>
+    <string name="has_options">(click for options)</string>
     <string-array name="pin_options">
-        <item>Set as pick-up address</item>
-        <item>Set as destination address</item>
+        <item>Set as departure point</item>
+        <item>Set as pick-up point</item>
+        <item>Set as arrival point</item>
         <item>Remove pin</item>
     </string-array>
 
@@ -61,7 +67,5 @@
     <string name="title_activity_create_event">Create an event</string>
     <string name="title_activity_group_management_panel">Group Management Panel</string>
     <string name="title_activity_searchresult">SearchresultActivity</string>
-
-    <string name="hello_world">Hello world!</string>
 
 </resources>
