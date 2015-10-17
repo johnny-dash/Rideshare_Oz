@@ -16,6 +16,10 @@ import au.org.ridesharingoz.rideshare_oz.R;
 
 /**
  * Created by helen on 24/09/15.
+ *
+ *                THIS TEST ONLY FOR BUILD 1
+ *
+ *
  */
 public class OneOffRideScenarioTest extends ActivityInstrumentationTestCase2<LoginActivity> {
     private Solo solo;
@@ -123,6 +127,7 @@ public class OneOffRideScenarioTest extends ActivityInstrumentationTestCase2<Log
         solo.clickOnView(button);
         solo.setTimePicker(0, 10, 55);
         solo.clickOnText("Done");
+
 
         solo.clickOnButton("Create Ride!");
         //save successfully!

@@ -79,7 +79,8 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
     };
 
     private void dateformat(EditText editText, Calendar calendar) {
-        String myFormat = "dd/MM/yyyy";
+//        String myFormat = "dd/MM/yyyy";
+        String myFormat = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
         editText.setText(sdf.format(calendar.getTime()));
     }
@@ -172,22 +173,23 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
         String eventDescription = eventDescriptionText.getText().toString();
         String startDate = editStartDate.getText().toString();
         String endDate = editEndDate.getText().toString();
-        String startDateTime = startDate+" "+"00:00:00.01";
-        String endDateTime = endDate+" "+"23:59:59.00";
-        Timestamp startTimeStamp =  Timestamp.valueOf(startDateTime);
-        Timestamp endTimeStamp = Timestamp.valueOf(endDateTime);
 
 
         boolean emptyN = isEmptyEditText(eventName, eventNameText);
         boolean emptyD = isEmptyEditText(eventDescription, eventDescriptionText);
-        boolean emptyS = isEmptyEditText(startDate, editStartDate);
-        boolean emptyE = isEmptyEditText(endDate, editEndDate);
+        boolean emptyS = isEmptyTime(startDate, editStartDate);
+        boolean emptyE = isEmptyTime(endDate, editEndDate);
 
 
 
 
         //Data validation then pin and group creation in firebase and update of owner
         if (!emptyN & !emptyD & !emptyS & !emptyE & fixedPin != null) {
+            String startDateTime = startDate+" "+"00:00:00.01";
+            String endDateTime = endDate+" "+"23:59:59.00";
+            Timestamp startTimeStamp =  Timestamp.valueOf(startDateTime);
+            Timestamp endTimeStamp = Timestamp.valueOf(endDateTime);
+
             Firebase pinsRef = mFirebaseRef.child("fixedpins");
             Firebase uniqueID = pinsRef.push();
             uniqueID.setValue(fixedPin);
@@ -214,6 +216,16 @@ public class CreateEventActivity extends FirebaseAuthenticatedActivity {
     private boolean isEmptyEditText(String editTextString, EditText editText) {
         if (TextUtils.isEmpty(editTextString)) {
             editText.setError("You need to fill this field");
+            return true;
+        } else return false;
+    }
+
+
+    //check if time has been setted
+    private boolean isEmptyTime(String editTextString, EditText editText){
+
+        if(editTextString.equals("") ){
+            editText.setError("You need to set time");
             return true;
         } else return false;
     }
