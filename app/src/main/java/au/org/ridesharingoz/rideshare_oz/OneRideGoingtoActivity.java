@@ -56,13 +56,15 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
     String groupname;
     String eventname;
     String type;
-
+    Boolean isEvent;
 
     Button createOffRide;
 
     ListView addresslistview;
 
     private List<Map<String,String>> mData;
+
+
 
 
     /* *************************************
@@ -107,6 +109,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         if (bundle!= null){
             groupname = bundle.getString("Group");
             eventname = bundle.getString("Event");
+            isEvent = bundle.getBoolean("isEvent");
             type = "goingto";
         }
 
@@ -180,7 +183,8 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         Firebase RideRef = mFirebaseRef.child("goingtorides");
         Firebase PinRef = mFirebaseRef.child("goingtopins");
         String rideID = "";
-
+        Firebase rideUniqueID = RideRef.push();
+        rideID = rideUniqueID.getKey();
 
 
         /* *************************************
@@ -191,17 +195,19 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
         Boolean seatNumcheck = seatNum.isEmpty();
         Boolean datecheck = date.isEmpty();
+        String ridedate = date+" 00:00:00.00";
+        Timestamp ridets =  Timestamp.valueOf(ridedate);
+
 
         if (!seatNumcheck&&!datecheck){
             Ride new_ride = new Ride(DriverID,
                     Integer.parseInt(seatNum),
-                    date,
+                    ridets,
                     null,
                     groupname,
-                    eventname,
+                    isEvent,
                     type);
-            Firebase rideUniqueID = RideRef.push();
-            rideID = rideUniqueID.getKey();
+
             rideUniqueID.setValue(new_ride, new Firebase.CompletionListener() {
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -217,6 +223,8 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
             });
         }
 
+
+
         /* *************************************
         *          Store of pins              *
         ***************************************/
@@ -224,6 +232,9 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         String time ="";
         String address ="";
         int index = 0;
+
+
+
         for (Map<String,String> map : mData){
 
             for (Map.Entry<String,String> entry: map.entrySet()){
@@ -249,8 +260,12 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                         groupname,
                         eventname,
                         type);
-
-                PinRef.push().setValue(pin, new Firebase.CompletionListener() {
+                Firebase PinKey = PinRef.push();
+                String PinID = PinKey.getKey();
+                Map<String,Boolean> pinid = new HashMap<String, Boolean>();
+                pinid.put(PinID,true);
+                RideRef.child(rideID).child("pins").push().setValue(pinid);
+                PinKey.setValue(pin, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                         if (firebaseError != null) {
@@ -264,6 +279,9 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
                 });
             }
+
+
+
 
             index=index+1;
 

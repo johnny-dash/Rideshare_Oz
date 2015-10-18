@@ -2,23 +2,29 @@ package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,9 +39,15 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
     String groupname;
     String eventname;
     String type;
+    Boolean isEvent;
+
+    double latitude[] = new double[100];
+    double longitude[] = new double[100];
 
     ArrayList<Pin> pins;
     List<String> address = new ArrayList<>();
+
+    private List<Map<String,String>> mData;
 
     ListView addresslistview;
 
@@ -100,7 +112,9 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         if (bundle!= null){
             groupname = bundle.getString("Group");
             eventname = bundle.getString("Event");
+            isEvent = bundle.getBoolean("isEvent");
             type = "leavingfrom";
+
         }
 
         /* *************************************
@@ -150,9 +164,8 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
             }
         });
 
-
-
     }
+
 
     public void CreateRide(){
         String DriverID = mAuthData.getUid();
@@ -171,14 +184,17 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         Boolean seatNumcheck = seatNum.isEmpty();
         Boolean datecheck = date.isEmpty();
         Boolean timecheck = time.isEmpty();
+        String datetime = date+" "+time+":00.00";
+        Timestamp myts =  Timestamp.valueOf(datetime);
+
 
         if (!seatNumcheck&&!datecheck&&!timecheck){
             Ride new_ride = new Ride(DriverID,
                     Integer.parseInt(seatNum),
-                    date,
-                    time,
+                    myts,
+                    null,
                     groupname,
-                    eventname,
+                    isEvent,
                     type);
             Firebase rideUniqueID = RideRef.push();
             rideID = rideUniqueID.getKey();
@@ -214,7 +230,12 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
                         eventname,
                         type);
 
-                PinRef.push().setValue(savedpin, new Firebase.CompletionListener() {
+                Firebase Pinkey = PinRef.push();
+                String PinID = Pinkey.getKey();
+                Map<String,Boolean> pinsinfo = new HashMap<String,Boolean>();
+                pinsinfo.put(PinID,true);
+                RideRef.child(rideID).child("pins").push().setValue(pinsinfo);
+                Pinkey.setValue(savedpin, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                         if (firebaseError != null) {
@@ -229,6 +250,10 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
                 });
             }
         }
+
+        Intent intent = new Intent(OneRideLeavingfromActivity.this,ActionChoiceActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public List<String> getaddress(List<Pin> pins){
@@ -239,5 +264,76 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         return address;
     }
 
+    private List<Map<String, String>> getDate() {
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+
+        int index = 0;
+        if (type.equals("leaving")){
+            pins.remove(0);
+        }
+
+
+        for (Pin pin:pins){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("Address",String.valueOf(pin.getaddress()));
+            latitude[index] = pin.getlatitude();
+            longitude[index] = pin.getlongitude();
+            index++;
+            list.add(map);
+        }
+
+        return list;
+    }
+
+    public final class ViewHolder{
+        public TextView Addressname;
+
+    }
+
+    public class MyAdapter extends BaseAdapter {
+        private LayoutInflater mInflater;
+
+        public MyAdapter(Context context) {
+            this.mInflater = LayoutInflater.from(context);
+        }
+
+
+        @Override
+        public int getCount() {
+            return mData.size();
+        }
+
+        @Override
+        public String getItem(int arg0) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int arg0) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if(convertView == null){
+                holder = new ViewHolder();
+
+                convertView = mInflater.inflate(R.layout.listview_item,null);
+                holder.Addressname = (TextView)convertView.findViewById(R.id.AddressName);
+                convertView.setTag(holder);
+            }
+            else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.Addressname.setText((String) mData.get(position).get("Address"));
+
+
+            return convertView;
+        }
+
+
+    }
 
 }
