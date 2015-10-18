@@ -190,6 +190,8 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
             Map<String, String> map = new HashMap<String, String>();
             map.put("Address",String.valueOf(pin.getaddress()));
             map.put("Time","Haven't been set");
+            map.put("Type",String.valueOf(pin.getType()));
+            System.out.println(pin.getType());
             latitude[index] = pin.getlatitude();
             longitude[index] = pin.getlongitude();
             index++;
@@ -257,6 +259,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
         String time ="";
         String address ="";
+        String pintype = "";
         int index = 0;
 
 
@@ -266,11 +269,15 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
             for (Map.Entry<String,String> entry: map.entrySet()){
                 String key = entry.getKey();
                 String value = entry.getValue();
+
                 if(key == "Address"){
                     address = value;
                 }
                 if (key == "Time"){
                     time = value;
+                }
+                if (key == "Type"){
+                    pintype = value;
                 }
             }
 
@@ -284,11 +291,11 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                         myts,
                         groupEventID,
                         isEvent,
-                        type);
+                        pintype);
                 Firebase PinKey = PinRef.push();
                 String PinID = PinKey.getKey();
                 Map<String,Object> pinid = new HashMap<>();
-                pinid.put(PinID,true);
+                pinid.put(PinID,pin.getType());
                 RideRef.child(rideID).child("pins").updateChildren(pinid);
                 PinKey.setValue(pin, new Firebase.CompletionListener() {
                     @Override
@@ -306,7 +313,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                 Intent intent = new Intent(OneRideGoingtoActivity.this,ActionChoiceActivity.class);
                 startActivity(intent);
                 finish();
-            }{
+            }else {
                 Toast.makeText(getApplicationContext(), "Ride cannot be created. Missing data.", Toast.LENGTH_LONG).show();
             }
 
@@ -408,6 +415,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
             Map<String, String> map = new HashMap<String, String>();
             map.put("Time", sdf.format(myCalendar.getTime()));
             map.put("Address", mData.get(position).get("Address"));
+            map.put("Type", mData.get(position).get("Type"));
             mData.set(position, map);
             notifyDataSetChanged();
         }

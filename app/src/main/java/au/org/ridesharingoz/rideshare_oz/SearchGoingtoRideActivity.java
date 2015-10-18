@@ -162,6 +162,28 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
                     pins.put(pinsSnapshot.getKey(), pinsSnapshot.getValue(Pin.class));
 
                 }
+                LocationcheckedPin = checkLocation(pins);
+                TimecheckedPin = checkTime(LocationcheckedPin);
+                GroupcheckedPin = checkGroup(TimecheckedPin);
+                for(Map.Entry<String, Pin> pin : GroupcheckedPin.entrySet()){
+
+                    System.out.println("pins have finded: " + pin.getValue().getaddress());
+                }
+                if(!GroupcheckedPin.isEmpty()) {
+                    Intent intent = new Intent(SearchGoingtoRideActivity.this, RideSearchResultActivity.class);
+                    ArrayList<String> pinID = new ArrayList();
+                    for(Map.Entry<String, Pin> pin : GroupcheckedPin.entrySet()){
+                        pinID.add(pin.getKey());
+                    }
+                    intent.putExtra("pins",pinID);
+                    intent.putExtra("Type","goingto");
+                    startActivity(intent);
+                    finish();
+                }
+                else {
+
+                    Toast.makeText(getApplicationContext(), "Don't find any match pins. Please change the condition and search again: )", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -172,27 +194,7 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
 
 
 
-        LocationcheckedPin = checkLocation(pins);
-        TimecheckedPin = checkTime(LocationcheckedPin);
-        GroupcheckedPin = checkGroup(TimecheckedPin);
-        for(Map.Entry<String, Pin> pin : GroupcheckedPin.entrySet()){
 
-            System.out.println("pins have finded: "+pin.getValue().getaddress());
-        }
-        if(!GroupcheckedPin.isEmpty()) {
-            Intent intent = new Intent(SearchGoingtoRideActivity.this, RideSearchResultActivity.class);
-            ArrayList<String> pinID = new ArrayList();
-            for(Map.Entry<String, Pin> pin : GroupcheckedPin.entrySet()){
-                pinID.add(pin.getKey());
-            }
-            intent.putExtra("pins",pinID);
-            startActivity(intent);
-            finish();
-        }
-        else {
-
-            Toast.makeText(getApplicationContext(), "Don't find any match pins. Please change the condition and search again: )", Toast.LENGTH_SHORT).show();
-        }
 
 
 
