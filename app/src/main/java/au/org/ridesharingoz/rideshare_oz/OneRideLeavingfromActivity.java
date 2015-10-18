@@ -231,12 +231,12 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
                         null,
                         groupEventID,
                         isEvent,
-                        type);
+                        pin.getType());
 
                 Firebase Pinkey = PinRef.push();
                 String PinID = Pinkey.getKey();
                 Map<String,Object> pinid = new HashMap<>();
-                pinid.put(PinID,true);
+                pinid.put(PinID,pin.getType());
                 RideRef.child(rideID).child("pins").updateChildren(pinid);
                 Pinkey.setValue(savedpin, new Firebase.CompletionListener() {
                     @Override
@@ -282,6 +282,7 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         for (Pin pin:pins){
             Map<String, String> map = new HashMap<String, String>();
             map.put("Address",String.valueOf(pin.getaddress()));
+            map.put("Type",pin.getType());
             latitude[index] = pin.getlatitude();
             longitude[index] = pin.getlongitude();
             index++;
