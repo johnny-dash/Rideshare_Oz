@@ -129,6 +129,7 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
                     }
                     else {
                         System.out.println(groupName + " " + groupID + " doesn't have an event");
+
                     }
                     groupEventsData.put(groupID, map);
                     if (count1 == count2) {
@@ -191,9 +192,11 @@ public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
             }
             else{
                 preAdapterData.put(groupID, group);
-                adapter = new MyExpandableListAdapter(thisActivity, adapterData);
-                listView.setAdapter(adapter);
                 makeAdapterData();
+                adapter = new MyExpandableListAdapter(thisActivity, adapterData);
+                adapter.notifyDataSetChanged();
+                listView.setAdapter(adapter);
+
             }
 
         }

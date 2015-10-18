@@ -49,6 +49,7 @@ public class ManageMyGroupsActivity extends FirebaseAuthenticatedActivity{
         createagroup = (Button) findViewById(R.id.button_createagroup);
         System.out.println("I'm here");
         createData();
+        createagroup.setOnClickListener(buttonListener);
     }
 
 
@@ -159,7 +160,7 @@ public class ManageMyGroupsActivity extends FirebaseAuthenticatedActivity{
                                                 oListView.setAdapter(adapterOwned);
                                                 jListView.setAdapter(adapterJoined);
 
-                                                createagroup.setOnClickListener(buttonListener);
+                                                //createagroup.setOnClickListener(buttonListener);
 
 
                                             }
