@@ -31,7 +31,6 @@ import com.firebase.client.ValueEventListener;
 public class ChooseGroupEventActivity extends FirebaseAuthenticatedActivity {
     private ExpandableListView expandList;
     private Button chooseThisButton;
-    //private InfoDetailsAdapter adapter;
     private Activity activity;
     private List<String> groupIDs;
     private ArrayList<Map<String, Boolean>> eventIDList = new ArrayList<Map<String, Boolean>>();
