@@ -209,8 +209,8 @@ public class SearchGoingtoRideActivity extends FirebaseAuthenticatedActivity {
         for(Map.Entry<String, Pin> pin : pins.entrySet()){
             System.out.println("Result");
             System.out.println("latitude:"+pin.getValue().getlatitude()+",longitude:"+ pin.getValue().getlongitude());
-            if(pin.getValue().getlatitude()>=searchpin.getlatitude()-0.05 & pin.getValue().getlatitude()<=searchpin.getlatitude()+0.05){
-                if(pin.getValue().getlongitude()>=searchpin.getlongitude()-0.05 & pin.getValue().getlongitude()<=searchpin.getlongitude()+0.05){
+            if(pin.getValue().getlatitude()>=searchpin.getlatitude()-0.025 & pin.getValue().getlatitude()<=searchpin.getlatitude()+0.025){
+                if(pin.getValue().getlongitude()>=searchpin.getlongitude()-0.025 & pin.getValue().getlongitude()<=searchpin.getlongitude()+0.025){
                     checkedpins.put(pin.getKey(), pin.getValue());
                     System.out.println("Pass location check");
                 }

@@ -98,7 +98,7 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
     private void timeformat() {
 
         String myFormat = "HH:mm"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
         edittime.setText(sdf.format(myCalendar.getTime()));
     }
 
