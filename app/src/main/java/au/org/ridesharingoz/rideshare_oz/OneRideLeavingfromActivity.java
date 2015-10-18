@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,8 +37,7 @@ import java.util.Map;
 import au.org.ridesharingoz.rideshare_oz.R;
 
 public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
-    String groupname;
-    String eventname;
+    String groupEventID;
     String type;
     Boolean isEvent;
 
@@ -110,8 +110,7 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         final Bundle bundle = getIntent().getExtras();
 
         if (bundle!= null){
-            groupname = bundle.getString("Group");
-            eventname = bundle.getString("Event");
+            groupEventID = bundle.getString("ID");
             isEvent = bundle.getBoolean("isEvent");
             type = "leavingfrom";
 
@@ -181,19 +180,20 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         String date = editdate.getText().toString();
         String time = edittime.getText().toString();
 
-        Boolean seatNumcheck = seatNum.isEmpty();
-        Boolean datecheck = date.isEmpty();
-        Boolean timecheck = time.isEmpty();
-        String datetime = date+" "+time+":00.00";
-        Timestamp myts =  Timestamp.valueOf(datetime);
+        Boolean seatNumcheck = isEmptyEditText(seatNum,editseat);
+        Boolean datecheck = isEmptyTime(date,editdate);
+        Boolean timecheck = isEmptyTime(time,edittime);
 
 
-        if (!seatNumcheck&&!datecheck&&!timecheck){
+
+        if (!seatNumcheck &!datecheck & !timecheck){
+            String datetime = date+" "+time+":00.00";
+            Timestamp myts =  Timestamp.valueOf(datetime);
             Ride new_ride = new Ride(DriverID,
                     Integer.parseInt(seatNum),
                     myts,
                     null,
-                    groupname,
+                    groupEventID,
                     isEvent,
                     type);
             Firebase rideUniqueID = RideRef.push();
@@ -211,6 +211,8 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
                 }
 
             });
+        } else {
+            Toast.makeText(getApplicationContext(), "Ride cannot be created. Missing data.", Toast.LENGTH_LONG).show();
         }
 
 
@@ -218,23 +220,24 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         *          Store of pins              *
         ***************************************/
 
+        if (!seatNumcheck &!datecheck & !timecheck){
 
         for (Pin pin:pins){
-            if (!seatNumcheck&&!datecheck&&!timecheck){
+
                 Pin savedpin = new Pin(rideID,
                         pin.getlongitude(),
                         pin.getlatitude(),
                         pin.getaddress(),
                         null,
-                        groupname,
-                        eventname,
+                        groupEventID,
+                        isEvent,
                         type);
 
                 Firebase Pinkey = PinRef.push();
                 String PinID = Pinkey.getKey();
-                Map<String,Boolean> pinsinfo = new HashMap<String,Boolean>();
-                pinsinfo.put(PinID,true);
-                RideRef.child(rideID).child("pins").push().setValue(pinsinfo);
+                Map<String,Object> pinid = new HashMap<>();
+                pinid.put(PinID,true);
+                RideRef.child(rideID).child("pins").updateChildren(pinid);
                 Pinkey.setValue(savedpin, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -249,11 +252,14 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
 
                 });
             }
+            Intent intent = new Intent(OneRideLeavingfromActivity.this,ActionChoiceActivity.class);
+            startActivity(intent);
+            finish();
+        }else {
+            Toast.makeText(getApplicationContext(), "Ride cannot be created. Missing data.", Toast.LENGTH_LONG).show();
         }
 
-        Intent intent = new Intent(OneRideLeavingfromActivity.this,ActionChoiceActivity.class);
-        startActivity(intent);
-        finish();
+
     }
 
     public List<String> getaddress(List<Pin> pins){
@@ -334,6 +340,21 @@ public class OneRideLeavingfromActivity extends FirebaseAuthenticatedActivity {
         }
 
 
+    }
+    private boolean isEmptyEditText(String editTextString, EditText editText) {
+        if (TextUtils.isEmpty(editTextString)) {
+            editText.setError("You need to fill this field");
+            return true;
+        } else return false;
+    }
+
+    //check if time has been setted
+    private boolean isEmptyTime(String editTextString, EditText editText){
+
+        if(editTextString.equals("") ){
+            editText.setError("You need to set time");
+            return true;
+        } else return false;
     }
 
 }

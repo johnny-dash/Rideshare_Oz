@@ -64,7 +64,10 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
     private Geocoder geocoder;
 
     protected Map<String, Pin> pins = new HashMap<>();
+    protected int numDeparturePins;
     protected int numDestinationPins;
+
+    private final static int ZOOM_LEVEL = 13;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +169,7 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         }
 
         // Move the camera and add marker
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 13));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, ZOOM_LEVEL));
 
         // Get geocoder stuff
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -175,61 +178,17 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                //updateAddressLabel();
+                //mTextbox.setText("");
             }
         });
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                updateAddressLabel();
-                return false;
+                customOnMarkerClick(marker);
+                return true;
             }
         });
-
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-
-                // Mark the marker object as final so we can affect it in the dialog listener
-                final Marker theMarker = marker;
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-                builder.setTitle(R.string.options)
-                        .setItems(R.array.pin_options, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0:
-                                        pins.get(theMarker.getId()).setType("pickup");
-                                        break;
-
-                                    case 1:
-                                        if(numDestinationPins == 0) {
-                                            pins.get(theMarker.getId()).setType("destination");
-                                            numDestinationPins++;
-                                        }
-                                        else {
-                                            Toast.makeText(MapsActivity.this, "There is already a destination pin",
-                                                    Toast.LENGTH_LONG).show();
-                                        }
-                                        break;
-
-                                    case 2:
-                                        pins.remove(theMarker.getId());
-                                        theMarker.remove();
-                                        break;
-
-                                    default:
-                                        break;
-                                }
-                            }
-                        });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }
-
-    });
 
         mTextbox.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -296,7 +255,7 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                 }
                 addressString += addresses.get(0).getAddressLine(i);
             }
-        } catch (IOException e) {
+        } catch (IOException|IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
 
@@ -329,13 +288,31 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
     }
 
     // Add a marker to the map, update the pins object
-    protected Pin addMarker(LatLng location, Pin fixedPin, boolean options) {
-        MarkerOptions markerOptions = new MarkerOptions().position(location);
-        if (fixedPin == null && options) {
-            markerOptions.title(getString(R.string.options));
-        }
-        Marker marker = mMap.addMarker(markerOptions);
+    protected Pin addMarker(LatLng location, Pin fixedPin, Boolean options) {
 
+        // Start a marker object
+        MarkerOptions markerOptions = new MarkerOptions().position(location);
+
+        // Set the title of the object
+        if (fixedPin == null && options) {
+            markerOptions.title(getString(R.string.pickup));
+            markerOptions.snippet(getString(R.string.has_options));
+        }
+        else {
+            markerOptions.snippet(getString(R.string.fixed));
+        }
+        if (fixedPin != null && fixedPin.getType() != null && fixedPin.getType().equals("departure")) {
+            markerOptions.title(getString(R.string.departure));
+        }
+        else if (fixedPin != null && fixedPin.getType() != null && fixedPin.getType().equals("arrival")) {
+            markerOptions.title(getString(R.string.arrival));
+        }
+
+        // Add the marker to the map
+        Marker marker = mMap.addMarker(markerOptions);
+        customOnMarkerClick(marker);
+
+        // Add the pin object to our array of pins
         Pin pin;
         if (fixedPin == null) {
             pin = new Pin(
@@ -346,18 +323,39 @@ public class MapsActivity extends FirebaseAuthenticatedActivity {
                     null,
                     null,
                     null,
-                    "pickup"
+                    "mid"
             );
+            pins.put(marker.getId(), pin);
         }
         else {
             pin = fixedPin;
-            if (pin.getType() != null && pin.getType().equals("destination")) {
+            if (pin.getType() != null && pin.getType().equals("departure")) {
+                numDeparturePins++;
+            }
+            if (pin.getType() != null && pin.getType().equals("arrival")) {
                 numDestinationPins++;
             }
         }
 
-        pins.put(marker.getId(), pin);
+        // Return the pin
         return pin;
+    }
+
+    // As we cannot programmatically trigger a marker click, we call this instead to simulate it
+    protected void customOnMarkerClick(Marker marker) {
+        final Marker theMarker = marker;
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), ZOOM_LEVEL), new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                theMarker.showInfoWindow();
+                updateAddressLabel();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
     }
 
 }

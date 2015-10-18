@@ -49,4 +49,7 @@ public class Ride {
     public Map<String,Boolean> getPendingJoinRequests(){return pendingJoinRequests;}
 
 
+    public String getDate() {
+        return null;
+    }
 }

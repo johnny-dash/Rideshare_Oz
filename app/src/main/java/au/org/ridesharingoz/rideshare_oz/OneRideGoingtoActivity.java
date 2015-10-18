@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +54,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
     double latitude[] = new double[100];
     double longitude[] = new double[100];
 
-    String groupname;
-    String eventname;
+    String groupEventID;
     String type;
     Boolean isEvent;
 
@@ -71,6 +71,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
     *          init of calender            *
     ***************************************/
     EditText editdate;
+    EditText edit_arrivaltime;
 
     Calendar myCalendar = Calendar.getInstance();
 
@@ -87,16 +88,28 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
     };
 
-
+    TimePickerDialog.OnTimeSetListener arrival_time = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            myCalendar.set(Calendar.HOUR, hourOfDay);
+            myCalendar.set(Calendar.MINUTE, minute);
+            arrival_timeformat();
+        }
+    };
 
     private void dateformat() {
-
         String myFormat = "yyyy-MM-dd"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
 
         editdate.setText(sdf.format(myCalendar.getTime()));
     }
 
+    private void arrival_timeformat() {
+
+        String myFormat = "HH:mm"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
+        edit_arrivaltime.setText(sdf.format(myCalendar.getTime()));
+    }
 
 
 
@@ -107,8 +120,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         final Bundle bundle = getIntent().getExtras();
 
         if (bundle!= null){
-            groupname = bundle.getString("Group");
-            eventname = bundle.getString("Event");
+            groupEventID = bundle.getString("ID");
             isEvent = bundle.getBoolean("isEvent");
             type = "goingto";
         }
@@ -141,6 +153,8 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         *          init of calender            *
         ***************************************/
         editdate = (EditText) findViewById(R.id.Date);
+        edit_arrivaltime = (EditText) findViewById(R.id.Arrival_Time);
+
         editdate.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -151,6 +165,15 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+        edit_arrivaltime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new TimePickerDialog(OneRideGoingtoActivity.this, arrival_time, myCalendar.get(Calendar.HOUR_OF_DAY),
+                        myCalendar.get(Calendar.MINUTE), true).show();
+            }
+        });
+
 
     }
 
@@ -192,19 +215,22 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         ***************************************/
         String seatNum = tx_seatNum.getText().toString();
         String date = editdate.getText().toString();
+        String arrival = edit_arrivaltime.getText().toString();
 
-        Boolean seatNumcheck = seatNum.isEmpty();
-        Boolean datecheck = date.isEmpty();
-        String ridedate = date+" 00:00:00.00";
-        Timestamp ridets =  Timestamp.valueOf(ridedate);
+        Boolean seatNumcheck = isEmptyEditText(seatNum, tx_seatNum);
+        Boolean datecheck = isEmptyTime(date, editdate);
+        Boolean timecheck = isEmptyTime(arrival, edit_arrivaltime);
 
 
-        if (!seatNumcheck&&!datecheck){
+
+        if (!seatNumcheck &!datecheck & !timecheck){
+            String ridedate = date+" "+arrival+":00.00";
+            Timestamp ridets =  Timestamp.valueOf(ridedate);
             Ride new_ride = new Ride(DriverID,
                     Integer.parseInt(seatNum),
                     ridets,
                     null,
-                    groupname,
+                    groupEventID,
                     isEvent,
                     type);
 
@@ -247,24 +273,23 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                     time = value;
                 }
             }
-            boolean Timecheck = time.isEmpty();
-            boolean addresscheck = address.isEmpty();
-            String datetime = date+" "+time+":00.00";
-            Timestamp myts =  Timestamp.valueOf(datetime);
-            if (!Timecheck&&!addresscheck){
+
+            if (!seatNumcheck &!datecheck & !timecheck) {
+                String datetime = date+" "+time+":00.00";
+                Timestamp myts =  Timestamp.valueOf(datetime);
                 Pin pin = new Pin(rideID,
                         longitude[index],
                         latitude[index],
                         address,
                         myts,
-                        groupname,
-                        eventname,
+                        groupEventID,
+                        isEvent,
                         type);
                 Firebase PinKey = PinRef.push();
                 String PinID = PinKey.getKey();
-                Map<String,Boolean> pinid = new HashMap<String, Boolean>();
+                Map<String,Object> pinid = new HashMap<>();
                 pinid.put(PinID,true);
-                RideRef.child(rideID).child("pins").push().setValue(pinid);
+                RideRef.child(rideID).child("pins").updateChildren(pinid);
                 PinKey.setValue(pin, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -278,16 +303,20 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                     }
 
                 });
+                Intent intent = new Intent(OneRideGoingtoActivity.this,ActionChoiceActivity.class);
+                startActivity(intent);
+                finish();
+            }{
+                Toast.makeText(getApplicationContext(), "Ride cannot be created. Missing data.", Toast.LENGTH_LONG).show();
             }
+
 
 
 
 
             index=index+1;
 
-            Intent intent = new Intent(OneRideGoingtoActivity.this,ActionChoiceActivity.class);
-            startActivity(intent);
-            finish();
+
         }
 
 
@@ -385,4 +414,21 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
 
 
     }
+
+    private boolean isEmptyEditText(String editTextString, EditText editText) {
+        if (TextUtils.isEmpty(editTextString)) {
+            editText.setError("You need to fill this field");
+            return true;
+        } else return false;
+    }
+
+    //check if time has been setted
+    private boolean isEmptyTime(String editTextString, EditText editText){
+
+        if(editTextString.equals("") ){
+            editText.setError("You need to set time");
+            return true;
+        } else return false;
+    }
+
 }
