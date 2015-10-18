@@ -2,6 +2,7 @@ package au.org.ridesharingoz.rideshare_oz;
 
 import android.app.DownloadManager;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,11 +15,20 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FirebaseAuthenticatedActivity extends FirebaseActivity {
+
+    Firebase mUserRef;
+
+    GoogleCloudMessaging gcm;
+    final static String PROJECT_NUMBER = "523906066693";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +36,7 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
 
         // Initialize Firebase
         mFirebaseRef = new Firebase(FIREBASE);
-        mAuthData = mFirebaseRef.getAuth();
+        mAuthData    = mFirebaseRef.getAuth();
 
         // Process authentication
         if (mAuthData == null) {
@@ -36,6 +46,21 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
             startActivity(loginIntent);
             finish();
         }
+
+        // Process user reference
+        mUserRef = mFirebaseRef.child("users").child(mAuthData.getUid());
+        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.child("gcmID").getValue() == null) {
+                    getRegId();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
 
     }
 
@@ -129,5 +154,30 @@ public class FirebaseAuthenticatedActivity extends FirebaseActivity {
         finish();
     }
 
-}
 
+    public void getRegId() {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+                    }
+                    msg = gcm.register(PROJECT_NUMBER);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("gcmID", msg);
+                mUserRef.updateChildren(data);
+            }
+        }.execute(null, null, null);
+    }
+
+}

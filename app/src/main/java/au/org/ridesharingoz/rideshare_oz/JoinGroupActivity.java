@@ -3,7 +3,9 @@ package au.org.ridesharingoz.rideshare_oz;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -16,6 +18,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +26,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
+import com.google.android.gcm.server.*;
 
+
+public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
 
     private ListView mListView;
     private SimpleAdapter adapter;
@@ -174,12 +179,65 @@ public class JoinGroupActivity extends FirebaseAuthenticatedActivity {
         usergroupnode.updateChildren(newJoinedGroup);
     }
 
-    private void sendJoinRequest(String groupID){
+    private void sendJoinRequest(String groupID) {
         String user = mAuthData.getUid();
         Map<String, Object> joinRequest = new HashMap<>();
         joinRequest.put(user, true);
         Firebase grouprequestnode = mFirebaseRef.child("groups").child(groupID).child("pendingJoinRequests");
         grouprequestnode.updateChildren(joinRequest);
+
+        final String theGroupID = groupID;
+
+        Firebase mGroupRef = mFirebaseRef.child("groups").child(groupID);
+        mGroupRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.child("groupOwner").getValue() != null) {
+                    final String groupUserId = snapshot.child("groupOwner").getValue().toString();
+                    Firebase groupUserGcmIdRef = new Firebase(FIREBASE).child("users").child(groupUserId);
+                    groupUserGcmIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.child("gcmID").getValue() != null) {
+                                final String groupUserGcmId = snapshot.child("gcmID").getValue().toString();
+                                new AsyncTask<Void, Void, String>() {
+                                    @Override
+                                    protected String doInBackground(Void... params) {
+                                        Sender sender = new Sender(getString(R.string.gcm_server_key));
+                                        Message message = new Message.Builder()
+                                                .collapseKey("1")
+                                                .timeToLive(3)
+                                                .delayWhileIdle(true)
+                                                .addData("joinRequest", theGroupID)
+                                                .build();
+                                        try {
+                                            Result result = sender.send(message, groupUserGcmId, 5);
+                                            return result.toString();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        return "";
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(String msg) {
+                                        Log.v("gcm", msg);
+                                    }
+                                }.execute(null, null, null);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
     }
 
 
