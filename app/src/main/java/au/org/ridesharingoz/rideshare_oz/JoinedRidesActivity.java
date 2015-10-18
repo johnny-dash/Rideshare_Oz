@@ -92,7 +92,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                         bookingMadeIDs.add(bookingID.getKey());
                         System.out.println("count1: " + count1);
                     }
-                    getBookingInfo(bookingMadeIDs, true);
+                    getBookingInfo(bookingMadeIDs, true, "bookings");
                 }
                 if (dataSnapshot.child("pendingJoinRequests").hasChildren()) {
                     for (DataSnapshot requestID : dataSnapshot.getChildren()) {
@@ -101,7 +101,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                         System.out.println("count1: " + count1);
 
                     }
-                    getBookingInfo(requestIDs, false);
+                    getBookingInfo(requestIDs, false, "pendingbookings");
                 }
             }
             @Override
@@ -111,11 +111,11 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
         });
     }
 
-    private void getBookingInfo(List<String> bookingIDs, final Boolean isBooking) {
+    private void getBookingInfo(List<String> bookingIDs, final Boolean isBooking, String childnode) {
         count2 -= 2;
         for (final String bookingID : bookingIDs) {
             final Map<String, String> map = new HashMap<>();
-            Query bookinginfonode = mFirebaseRef.child("bookings").child(bookingID);
+            Query bookinginfonode = mFirebaseRef.child(childnode).child(bookingID);
             bookinginfonode.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -133,7 +133,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
                     map.put("departureTime", departureTime);
                     map.put("pinID", pinID);
                     map.put("rideID", rideID);
-                    map.put("rideType", rideType);
+                    map.put("rideType", rideType + "rides");
                     if (departure.after(now)) {
                         map.put("isBooking", isBooking.toString());
                     }
@@ -384,7 +384,6 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
             holder.btn_showmap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    //TODO set the right link to the map once it's designed
                     Intent intent = new Intent(JoinedRidesActivity.this, MarkPinsActivity.class);
                     intent.putExtra("callingActivity", "JoinedRidesActivity");
                     List<String> pins = new ArrayList();
@@ -411,7 +410,7 @@ public class JoinedRidesActivity extends FirebaseAuthenticatedActivity {
             usernode = mFirebaseRef.child("users").child(mAuthData.getUid()).child("bookingsMade");
 
         }
-        Firebase ridenode = mFirebaseRef.child(rideType).child(rideID).child("bookings");
+        Firebase ridenode = mFirebaseRef.child(rideType).child(rideID).child("pending");
         usernode.updateChildren(deleteBooking);
         bookingnode.removeValue();
         ridenode.updateChildren(deleteBooking);

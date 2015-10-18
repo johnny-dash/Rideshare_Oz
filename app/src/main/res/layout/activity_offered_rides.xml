@@ -12,7 +12,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Bookings made in your rides"
+            android:text="Your rides and their bookings"
             android:id="@+id/textView34"
             android:layout_weight="0.95" />
 
@@ -23,10 +23,14 @@
             android:layout_weight="0.05" />
     </LinearLayout>
 
-    <ListView
-        android:layout_width="match_parent"
+    <ExpandableListView
+        android:id="@+id/offeredRidesExpandableListview"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/offeredRidesListview"
-        android:layout_weight="0.4" />
+        android:background="#ffffff"
+        android:groupIndicator="@android:color/transparent"
+        android:cacheColorHint="#abf8f9ff"
+        android:listSelector="#cdcfeaef"
+        android:layout_marginTop="45dp"/>
 
 </LinearLayout>

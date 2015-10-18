@@ -62,6 +62,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
         String groupName = getIntent().getStringExtra("groupName");
         groupNameTextView.setText(groupName);
         createData(groupID);
+        createEvent.setOnClickListener(buttonListener);
     }
 
 
@@ -75,13 +76,9 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
 
         @Override
         public void onClick(View v) {
-            Intent intent = null;
-            switch (v.getId()) {
-                case R.id.button_createEvent:
-                    intent = new Intent(GroupManagementPanelActivity.this, CreateEventActivity.class);
-                    intent.putExtra("groupID", groupID);
-                    break;
-            }
+            Intent intent = new Intent(GroupManagementPanelActivity.this, CreateEventActivity.class);
+            System.out.println("Do I get the click on create event button?");
+            intent.putExtra("groupID", groupID);
             startActivity(intent);
         }
     };
@@ -248,8 +245,9 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
     }
 
 
-    private void setAdapters(){
+    private void setAdapters() {
         System.out.println("When do I get in adapters?");
+
 
 
         adapterRequests = new SimpleAdapter(thisContext, (List<Map<String, Object>>) dataRequests,
@@ -303,7 +301,7 @@ public class GroupManagementPanelActivity extends FirebaseAuthenticatedActivity{
         requestsListView.setAdapter(adapterRequests);
         eventsListView.setAdapter(adapterEvents);
 
-        createEvent.setOnClickListener(buttonListener);
+
     }
 
 
