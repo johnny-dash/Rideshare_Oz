@@ -306,7 +306,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
                 Intent intent = new Intent(OneRideGoingtoActivity.this,ActionChoiceActivity.class);
                 startActivity(intent);
                 finish();
-            }{
+            }else{
                 Toast.makeText(getApplicationContext(), "Ride cannot be created. Missing data.", Toast.LENGTH_LONG).show();
             }
 
