@@ -411,7 +411,7 @@ public class OneRideGoingtoActivity extends FirebaseAuthenticatedActivity {
         private void timeformat(int position) {
 
             String myFormat = "HH:mm"; //In which you need put here
-            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
             Map<String, String> map = new HashMap<String, String>();
             map.put("Time", sdf.format(myCalendar.getTime()));
             map.put("Address", mData.get(position).get("Address"));

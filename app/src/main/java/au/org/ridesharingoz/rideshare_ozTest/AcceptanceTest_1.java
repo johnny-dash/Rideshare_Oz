@@ -61,6 +61,7 @@ public class AcceptanceTest_1 extends ActivityInstrumentationTestCase2<LoginActi
             String email = name + "@gamil.com";
             String password = "abc1234567";
             solo.enterText((EditText) solo.getView("email_address"), email);
+            solo.sleep(600);
             solo.enterText((EditText) solo.getView("password"), password);
             //Click on login button
             currentActivity = solo.getCurrentActivity();
@@ -69,7 +70,7 @@ public class AcceptanceTest_1 extends ActivityInstrumentationTestCase2<LoginActi
             solo.clickOnView(register_btn);
             boolean validRegister = solo.waitForText("Successfully created user account with uid:");
             assertTrue("Pass", validRegister);
-            solo.sleep(200);
+            solo.sleep(1000);
 
             //Click on login button
             int id_login = currentActivity.getResources().getIdentifier("btn_login", "id", currentActivity.getPackageName());
@@ -79,11 +80,13 @@ public class AcceptanceTest_1 extends ActivityInstrumentationTestCase2<LoginActi
 
 
 //      Fill in personal information
-        solo.sleep(500);
+        solo.sleep(700);
         solo.enterText((EditText) solo.getView("editFirstName"), "Jack");
-        solo.enterText((EditText)solo.getView("editLastName"),"Zhang");
-        solo.enterText((EditText)solo.getView("editPhoneNumber"),"0413895555");
         solo.sleep(500);
+        solo.enterText((EditText) solo.getView("editLastName"), "Zhang");
+        solo.sleep(500);
+        solo.enterText((EditText)solo.getView("editPhoneNumber"),"0413895555");
+        solo.sleep(1000);
         currentActivity = solo.getCurrentActivity();
         int id_submit = currentActivity.getResources().getIdentifier("btn_submit", "id", currentActivity.getPackageName());
         Button submit_button = (Button) solo.getView(id_submit);
@@ -97,20 +100,21 @@ public class AcceptanceTest_1 extends ActivityInstrumentationTestCase2<LoginActi
         currentActivity = solo.getCurrentActivity();
         int listGroupToJoin = currentActivity.getResources().getIdentifier("listGroupToJoin","id",currentActivity.getPackageName());
         ListView groupList = (ListView) solo.getView(listGroupToJoin);
-        ImageButton a = (ImageButton) groupList.getChildAt(0).findViewById(R.id.addButton);
+        ImageButton a = (ImageButton) groupList.getChildAt(1).findViewById(R.id.addButton);
         solo.clickOnView(a);
-        solo.sleep(200);
+        solo.sleep(500);
         ImageButton b = (ImageButton) groupList.getChildAt(2).findViewById(R.id.addButton);
         solo.clickOnView(b);
 
         //view and edit profile
-        solo.sleep(500);
+        solo.sleep(1000);
         solo.clickOnMenuItem("Profile", true);
+        solo.sleep(1000);
         currentActivity = solo.getCurrentActivity();
         int editProfile = currentActivity.getResources().getIdentifier("edit_profile","id",currentActivity.getPackageName());
         solo.clickOnView(solo.getView(editProfile));
 
-        solo.sleep(500);
+        solo.sleep(1000);
         solo.enterText((EditText) solo.getView("editLicenseNumber"), "12345");
         currentActivity = solo.getCurrentActivity();
         int lisenceType = currentActivity.getResources().getIdentifier("p1Button", "id", currentActivity.getPackageName());
