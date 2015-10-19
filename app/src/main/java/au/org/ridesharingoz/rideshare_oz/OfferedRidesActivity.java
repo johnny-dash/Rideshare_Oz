@@ -38,18 +38,22 @@ import java.util.zip.CheckedInputStream;
 public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
 
     ArrayList<OfferedRide> offeredRideList = new ArrayList<OfferedRide>();
-    List<Map> offeredRideBookings;
     ExpandableListView rideexpandablelistview;
     List<Map<String, Object>> rides;
     private int count1 = 2;
     private int count2 = 0;
     private int count3 = 0;
     private int count4 = 0;
+    private int count6 = 0;
     private int countpin0 = 0;
     private int countpin1 = 0;
+    private int countTotalDriverBookings;
     private int countBooking;
     private int countRides = 5;
     private int countPendingBooking;
+    private int countTotalBooking;
+    private int countRidesThatHaveBookings;
+    private int countPassengerNames;
     private List<Map> bookingList;
     private Boolean isGoingTo;
     String arrivalTimeBis = "";
@@ -157,12 +161,14 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                     String arrivalPinID = "";
                     List<String> bookingIDs = new ArrayList<>();
                     List<String> pendingBookingIDs = new ArrayList<>();
+                    Map map = new HashMap();
                     if (rideSnapshot.hasChild("bookings")) {
                         System.out.println("Has bookings");
                         DataSnapshot bookingsSnapshot = rideSnapshot.child("bookings");
                         for (DataSnapshot bookingID : bookingsSnapshot.getChildren()) {
                             bookingIDs.add(bookingID.getKey());
                         }
+                        map.put("bookingIDs", bookingIDs);
                     }
                     if (rideSnapshot.hasChild(("pendingJoinRequests"))) {
                         System.out.println("Has pending booking");
@@ -170,6 +176,7 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                         for (DataSnapshot bookingID : pendingBookingsSnapshot.getChildren()) {
                             pendingBookingIDs.add(bookingID.getKey());
                         }
+                        map.put("pendingBookingIDs", pendingBookingIDs);
                     }
                     for (DataSnapshot pinID : rideSnapshot.child("pins").getChildren()) {
                         if (pinID.getValue().equals("arrival")) {
@@ -177,11 +184,9 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                             System.out.println("arrivalPinID: " + arrivalPinID);
                         }
                     }
-                    Map map = new HashMap();
+
                     map.put("ride", ride);
                     map.put("pinID", arrivalPinID);
-                    map.put("bookingIDs", bookingIDs);
-                    map.put("pendingBookingIDs", pendingBookingIDs);
                     map.put("rideID", rideID);
                     Query groupEventNode = mFirebaseRef;
                     if (ride.getIsEvent()) {
@@ -310,7 +315,6 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                     pinnode1.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            count1 += 1;
                             System.out.println("countpins, pinnode1: " + countpin0 + " " + countpin1);
                             String address1 = (String) dataSnapshot.child("address").getValue();
                             OfferedRide offeredRide = new OfferedRide((String) map.get("address0"), address1, (Boolean) map.get("isGoingTo"), ride.getSeatNum(), rideID);
@@ -320,22 +324,23 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                             offeredRide.setDate((String) map.get("date"));
                             offeredRide.setDepartureTime((String) map.get("departureTime"));
                             //if (countpin0 == countpin1) {
-                                if (bookingIDs.size() > 0 || pendingBookingIDs.size() > 0) {
-                                    getBookingsInfo(offeredRide, bookingIDs, pendingBookingIDs);
-                                } else {
+                                //if (bookingIDs.size() > 0 || pendingBookingIDs.size() > 0) {
+                                //    getBookingsInfo(offeredRide, bookingIDs, pendingBookingIDs);
+                                //} else {
                                     count4 += 1;
                                     System.out.println("count4 : " + count4);
-                                    offeredRideList.add(offeredRide);
+                                    map.put("offeredRide",offeredRide);
                                     System.out.println("the ride doesn't have a booking");
                                     if (count4 == rides.size()) {
-                                        System.out.println("This is where the adapter is set");
-                                        adapter = new OfferedExpandableListAdapter(thisActivity, offeredRideList);
-                                        rideexpandablelistview.setAdapter(adapter);
+                                        getBookingsInfo();
+                                        //System.out.println("This is where the adapter is set");
+                                        //adapter = new OfferedExpandableListAdapter(thisActivity, offeredRideList);
+                                        //rideexpandablelistview.setAdapter(adapter);
                                     }
                                 }
 
                             //}
-                        }
+                       // }
 
                         @Override
                         public void onCancelled(FirebaseError firebaseError) {
@@ -355,111 +360,176 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
 
 
 
-    private void getBookingsInfo(OfferedRide offeredRide, List<String> bookingIDs, List<String> pendingBookingIDs){
+    private void getBookingsInfo(/*OfferedRide offeredRide, List<String> bookingIDs, List<String> pendingBookingIDs*/){
         System.out.println("I'm in getBookingInfo");
-        bookingList = new ArrayList<>();
-        count4 +=1;
-        countBooking = bookingIDs.size();
-        countPendingBooking = pendingBookingIDs.size();
-        offeredRideBookings = new ArrayList<>();
-        count2 = 0;
-        Map map = new HashMap();
-        if (countBooking>0) {
-            for (String bookingID : bookingIDs) {
-                count3 += 1;
-                System.out.println("bookingID: " + bookingID);
-                map.put("bookingNode", "bookings");
-                map.put("bookingID", bookingID);
-                map.put("offeredRide", offeredRide);
+        for (Map map : rides) {
+            countBooking =0;
+            countPendingBooking = 0;
+            count3 += 1;
+            bookingList = new ArrayList<>();
+            if (map.containsKey("bookingIDs")) {
+                countBooking = ((List) map.get("bookingIDs")).size();
             }
-        }
-        if (countPendingBooking>0){
-            for (String pendingBookingID : pendingBookingIDs){
-                count3 += 1;
-                System.out.println("pendingBookingID: " + pendingBookingID);
-                map.put("bookingNode", "pendingbookings");
-                map.put("bookingID", pendingBookingID);
-                map.put("offeredRide", offeredRide);
+            if (map.containsKey("pendingBookingIDs")){
+                countPendingBooking = ((List) map.get("pendingBookingIDs")).size();
             }
-        }
-        if (count3 == countPendingBooking + countBooking){
-            getBookingDetails(map);
-        }
+            List<Map> offeredRideBookings = new ArrayList<>();
 
-    }
-
-
-
-    private void getBookingDetails(final Map map){
-        System.out.println("I'm in getBookingData");
-        Query bookingnode = mFirebaseRef.child((String) map.get("bookingNode")).child((String) map.get("bookingID"));
-        bookingnode.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(map.toString());
-                if (((OfferedRide) map.get("offeredRide")).getIsGoingTo()) {
-                    System.out.println("Do I get in the condition if?");
-                    Timestamp departureTimestamp = (Timestamp) dataSnapshot.child("departureTime").getValue();
-                    String departureTime = new SimpleDateFormat("HH:mm").format(departureTimestamp);
-                    map.put("departureTime", departureTime);
+            if (countBooking > 0) {
+                for (String bookingID : (List<String>) map.get("bookingIDs")) {
+                    Map mapBooking = new HashMap();
+                    System.out.println("bookingID: " + bookingID);
+                    mapBooking.put("bookingNode", "bookings");
+                    mapBooking.put("bookingID", bookingID);
+                    offeredRideBookings.add(mapBooking);
                 }
-                map.put("passengerID", dataSnapshot.child("userID").getValue());
-                map.put("pinID", dataSnapshot.child("pinID").getValue());
-                map.put("pinNode", dataSnapshot.child("rideType").getValue() + "pins");
-                getPassengerName(map, (OfferedRide) map.get("offeredRide"));
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
 
             }
-        });
+            if (countPendingBooking > 0) {
+                for (String pendingBookingID : (List<String>) map.get("pendingBookingIDs")) {
+                    Map mapBooking = new HashMap();
+                    System.out.println("pendingBookingID: " + pendingBookingID);
+                    mapBooking.put("bookingNode", "pendingbookings");
+                    mapBooking.put("bookingID", pendingBookingID);
+                    offeredRideBookings.add(mapBooking);
+                }
+            }
+            if (countBooking>0 || countPendingBooking>0) {
+                map.put("offeredRideBookings", offeredRideBookings);
+            }
+        }
+        if (count3 == rides.size()) {
+            getBookingDetails();
+        }
     }
 
 
-    private void getPassengerName(final Map<String, Object> map, final OfferedRide offeredRide) {
-        System.out.println("I'm in getPassengerName");
-        Query usernode = mFirebaseRef.child("users").child((String) map.get("passengerID"));
-        usernode.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                map.put("passengerName", (String) dataSnapshot.child("firstName").getValue() + dataSnapshot.child("lastName").getValue());
-                map.put("rating", "Rating: " + dataSnapshot.child("rating").child("asPassenger").getValue() + " (" + dataSnapshot.child("rating").child("pRatingNb").getValue() + " ratings)");
-                System.out.println("passener name: " + (String) dataSnapshot.child("firstName").getValue() + dataSnapshot.child("lastName").getValue());
-                System.out.println("Rating: " + dataSnapshot.child("rating").child("asPassenger").getValue() + " (" + dataSnapshot.child("rating").child("pRatingNb").getValue() + " ratings)");
-                getPinAddress(map, offeredRide);
+
+    private void getBookingDetails(/*final Map map*/){
+        System.out.println("I'm in getBookingDetails");
+        countTotalDriverBookings = 0;
+        countRidesThatHaveBookings = 0;
+        for (final Map map : rides) {
+            if (map.containsKey("offeredRideBookings")) {
+                countRidesThatHaveBookings += 1;
+                countTotalDriverBookings += ((List) map.get("offeredRideBookings")).size();
+                System.out.println("countTotalDriverBookings: " + countTotalDriverBookings);
+                System.out.println("nb of rides that have bookings: " + countRidesThatHaveBookings);
+                for (final Map booking : (List<Map>) map.get("offeredRideBookings")) {
+                    countTotalBooking = 0 ;
+                    System.out.println("offeredRideBookings size: " + ((List) map.get("offeredRideBookings")).size());
+                    Query bookingnode = mFirebaseRef.child((String) booking.get("bookingNode")).child((String) booking.get("bookingID"));
+                    System.out.println("bookingID: " + (String) booking.get("bookingID"));
+                    bookingnode.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            System.out.println(booking.toString());
+                            countTotalBooking += 1;
+                            System.out.println("countTotalBooking: " + countTotalBooking);
+                            if (((OfferedRide) map.get("offeredRide")).getIsGoingTo()) {
+                                System.out.println("Do I get in the condition if?");
+                                Timestamp departureTimestamp = (Timestamp) dataSnapshot.child("departureTime").getValue();
+                                String departureTime = new SimpleDateFormat("HH:mm").format(departureTimestamp);
+                                booking.put("departureTime", departureTime);
+                            }
+                            booking.put("passengerID", dataSnapshot.child("userID").getValue());
+                            booking.put("pinID", dataSnapshot.child("pinID").getValue());
+                            booking.put("pinNode", dataSnapshot.child("rideType").getValue() + "pins");
+                            ((OfferedRide) map.get("offeredRide")).addBooking(booking);
+
+                            if (((List) map.get("offeredRideBookings")).size() == countTotalBooking) {
+                                countTotalBooking = 0;
+                                offeredRideList.add((OfferedRide) map.get("offeredRide"));
+                                System.out.println("the ride is added to offered ride");
+                                if (offeredRideList.size() == rides.size()) {
+                                    getPassengerName();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+                }
             }
+            else{
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-    }
-
-    private void getPinAddress(final Map<String, Object> map, final OfferedRide offeredRide){
-        System.out.println("I'm in getPinAddress");
-        Query pinnode = mFirebaseRef.child((String) map.get("pinNode")).child((String) map.get("pinID"));
-        pinnode.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                count2 +=1;
-                map.put("pinAddress", dataSnapshot.child("address").getValue());
-                System.out.println(dataSnapshot.child("address").getValue());
-                offeredRide.addBooking(map);
-                if (count2 == countBooking+countPendingBooking && count4 == rides.size()){
-                    offeredRideList.add(offeredRide);
+                offeredRideList.add((OfferedRide) map.get("offeredRide"));
+                if (offeredRideList.size() == rides.size()){
                     adapter = new OfferedExpandableListAdapter(thisActivity, offeredRideList);
-                    adapter.notifyDataSetChanged();
                     rideexpandablelistview.setAdapter(adapter);
                 }
             }
+        }
+    }
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
 
+    private void getPassengerName(/*final Map<String, Object> map, final OfferedRide offeredRide*/) {
+        System.out.println("I'm in getPassengerName");
+        for (final OfferedRide offeredRide : offeredRideList) {
+            if (offeredRide.offeredRideBookings.size() > 0) {
+                countPassengerNames = 0;
+
+                for (final Map map : offeredRide.getOfferedRideBookings()) {
+                    Query usernode = mFirebaseRef.child("users").child((String) map.get("passengerID"));
+                    usernode.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            countPassengerNames += 1;
+                            count6 += 1;
+                            map.put("passengerName", (String) dataSnapshot.child("firstName").getValue() + dataSnapshot.child("lastName").getValue());
+                            map.put("rating", "Rating: " + dataSnapshot.child("rating").child("asPassenger").getValue() + " (" + dataSnapshot.child("rating").child("pRatingNb").getValue() + " ratings)");
+                            System.out.println("passenger name: " + (String) dataSnapshot.child("firstName").getValue() + dataSnapshot.child("lastName").getValue());
+                            System.out.println("Rating: " + dataSnapshot.child("rating").child("asPassenger").getValue() + " (" + dataSnapshot.child("rating").child("pRatingNb").getValue() + " ratings)");
+                            if (countPassengerNames == offeredRide.getOfferedRideBookings().size()){
+                                countPassengerNames = 0;
+                                if (count6 == countTotalDriverBookings) {
+                                    getPinAddress();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+                }
             }
-        });
+        }
+    }
+
+    private void getPinAddress(/*final Map<String, Object> map, final OfferedRide offeredRide*/){
+        System.out.println("I'm in getPinAddress");
+        for (final OfferedRide offeredRide : offeredRideList) {
+            if (offeredRide.getOfferedRideBookings().size()>0) {
+                for (final Map map : offeredRide.getOfferedRideBookings()) {
+                    Query pinnode = mFirebaseRef.child((String) map.get("pinNode")).child((String) map.get("pinID"));
+                    pinnode.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            count2 += 1;
+                            map.put("pinAddress", dataSnapshot.child("address").getValue());
+                            System.out.println(dataSnapshot.child("address").getValue());
+                            if (count2 == countTotalDriverBookings && count4 == rides.size()) {
+                                System.out.println("This is when the adapter is set");
+                                adapter = new OfferedExpandableListAdapter(thisActivity, offeredRideList);
+                                adapter.notifyDataSetChanged();
+                                rideexpandablelistview.setAdapter(adapter);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+                }
+            }
+        }
     }
 
 
