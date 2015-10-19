@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="firebase_url">https://flickering-inferno-6814.firebaseio.com</string>
 
     <!-- Your Facebook App ID from your app settings on https://developers.facebook.com/ -->
     <!-- More details here: https://www.firebase.com/docs/android/guide/login/facebook.html -->
     <string name="facebook_app_id">1491842651127638</string>
 
-    <!--
-    To get one, follow this link, follow the directions and press "Create" at the end:
-
-    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=99:66:86:F7:10:1B:99:38:CC:89:A6:59:A2:5E:A6:C2:15:24:6D:3C%3Bau.org.ridesharingoz.rideshare_oz
-
-    You can also add your credentials to an existing key, using this line:
-    99:66:86:F7:10:1B:99:38:CC:89:A6:59:A2:5E:A6:C2:15:24:6D:3C;au.org.ridesharingoz.rideshare_oz
-
-    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
-    string in this file.
-    -->
+    <!-- Your API keys from the Google Developers Console at console.developers.google.com/ -->
     <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
         AIzaSyD7m4j9pgFgHwUNkqZpMcHFMVjj6oCp1UA
+    </string>
+    <string name="gcm_server_key" translatable="false" templateMergeStrategy="preserve">
+        AIzaSyCP0o7BfrBUsSGOIfZS0EDeVJY3zlV--js
     </string>
 </resources>

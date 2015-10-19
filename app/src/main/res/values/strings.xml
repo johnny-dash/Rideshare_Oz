@@ -17,6 +17,9 @@
     <string name="login_with_password">Login with Password</string>
     <string name="login_anonymously">Login Anonymously</string>
 
+    <string name="notification_joinrequest_title">New join request in RideShare-OZ</string>
+    <string name="notification_joinrequest_body">A user has requested to join your group in RideShare-OZ.</string>
+
     <string name="title_activity_maps">Map</string>
     <string name="address_hint">Jump to an address</string>
     <string name="submit">Submit</string>

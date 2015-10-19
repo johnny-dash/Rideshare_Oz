@@ -5,7 +5,7 @@
     android:clickable="true"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context="au.org.ridesharingoz.rideshare_oz.JoinGroupActivity">
+    tools:context="au.org.ridesharingoz.rideshare_oz.groupsPackage.JoinGroupActivity">
 
     <TextView
         android:layout_width="match_parent"

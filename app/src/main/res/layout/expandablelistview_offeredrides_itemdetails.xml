@@ -47,7 +47,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text = "firstName + lastName"
                 android:layout_marginTop="4dp"
-                android:id="@+id/passengerName"
+                android:id="@+id/passengerNameOffered"
                 android:layout_gravity="center_vertical" />
 
             <TextView

@@ -2,15 +2,13 @@ package au.org.ridesharingoz.rideshare_ozTest;
 
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.robotium.solo.Solo;
 
-import au.org.ridesharingoz.rideshare_oz.LoginActivity;
+import au.org.ridesharingoz.rideshare_oz.userPackage.LoginActivity;
 import au.org.ridesharingoz.rideshare_oz.R;
 
 /**
@@ -19,7 +17,7 @@ import au.org.ridesharingoz.rideshare_oz.R;
 public class AcceptanceTest_3 extends ActivityInstrumentationTestCase2<LoginActivity> {
     private Solo solo;
     private Activity currentActivity;
-    private String email = "ocunidee@gmail.com";
+    private String email = "helen@gmail.com";
     private String password = "123";
 
 
@@ -42,112 +40,89 @@ public class AcceptanceTest_3 extends ActivityInstrumentationTestCase2<LoginActi
 
     /*
 
-        This test will simulate a new user register, fill in personal information and then request to join a group
+        This test will simulate a user in a group wants to search a ride and request to join a ride.
 
     */
     public void testAcceptance_3() throws Exception {
 
-        // Email : ocunidee@gmail.com  Password:123
+        // Email : helen@gmail.com Password:123
 
 
         //Unlock the lock screen.
         solo.unlockScreen();
         solo.enterText((EditText) solo.getView("email_address"), email);
+        solo.sleep(500);
         solo.enterText((EditText) solo.getView("password"), password);
+        solo.sleep(500);
         //Click on login button
         currentActivity = solo.getCurrentActivity();
         int id_login = currentActivity.getResources().getIdentifier("btn_login", "id", currentActivity.getPackageName());
         Button login_btn = (Button) solo.getView(id_login);
         solo.clickOnView(login_btn);
         solo.sleep(1000);
+
         currentActivity = solo.getCurrentActivity();
-        int id_groups = currentActivity.getResources().getIdentifier("my_groups", "id", currentActivity.getPackageName());
-        solo.sleep(500);
-        solo.clickOnView(solo.getView(id_groups));
+        int id_search = currentActivity.getResources().getIdentifier("button_searchride", "id", currentActivity.getPackageName());
+        solo.clickOnView(solo.getView(id_search));
+        solo.sleep(1000);
 
+        currentActivity = solo.getCurrentActivity();
+        int normalRIde = currentActivity.getResources().getIdentifier("chooseGroupButton", "id", currentActivity.getPackageName());
+        solo.clickOnView(solo.getView(normalRIde));
+
+        solo.sleep(500);
+        // choose type
+        currentActivity = solo.getCurrentActivity();
+        int btn_GoingTo = currentActivity.getResources().getIdentifier("button_oneoff_goingto","id",currentActivity.getPackageName());
+        solo.clickOnView(solo.getView(btn_GoingTo));
         solo.sleep(500);
         currentActivity = solo.getCurrentActivity();
-        solo.sleep(2000);
-        int listGroupOwned = currentActivity.getResources().getIdentifier("listGroupsOwned", "id", currentActivity.getPackageName());
-        ListView groupList = (ListView) solo.getView(listGroupOwned);
-        ImageButton a = (ImageButton) groupList.getChildAt(0).findViewById(R.id.getDeatilsButton);
-        solo.clickOnView(a);
+        int id_searchDate = currentActivity.getResources().getIdentifier("search_date", "id", currentActivity.getPackageName());
+        EditText searchDate = (EditText) solo.getView(id_searchDate);
+        solo.sleep(300);
+        solo.clickOnView(searchDate);
+//        solo.sleep(300);
+//        solo.clickOnView(searchDate);
+//        solo.sleep(300);
+//        solo.clickOnView(searchDate);
+        solo.waitForDialogToOpen(100);
+        solo.setDatePicker(0, 2015, 10, 27);
+        solo.clickOnText("Done");
+        solo.sleep(800);
 
-        /*
+        int id_searchTime = currentActivity.getResources().getIdentifier("search_time", "id", currentActivity.getPackageName());
+        EditText searchTime = (EditText) solo.getView(id_searchTime);
+        solo.clickOnView(searchTime);
+        solo.clickOnView(searchTime);
+        solo.waitForDialogToOpen(100);
+        solo.setTimePicker(0, 11, 20);
+        solo.clickOnText("Done");
 
-            GroupManagementPanel
+        solo.sleep(800);
 
-            Group owner will accept the request.
+        int id_gotoMap = currentActivity.getResources().getIdentifier("btn_gotomap","id", currentActivity.getPackageName());
+        solo.clickOnView(solo.getView(id_gotoMap));
+        solo.sleep(6000);
 
-         */
-
-
-        solo.sleep(2000);
+        solo.waitForActivity("SearchGoingtoRideActivity");
         currentActivity = solo.getCurrentActivity();
+        int id_searchSubmit = currentActivity.getResources().getIdentifier("btn_search","id", currentActivity.getPackageName());
+        solo.clickOnView(solo.getView(id_searchSubmit));
 
-        int joinGroupRequest = currentActivity.getResources().getIdentifier("listGroupsRequests", "id", currentActivity.getPackageName());
-        ListView requestList = (ListView) solo.getView(joinGroupRequest);
-        ImageButton p = (ImageButton) requestList.getChildAt(0).findViewById(R.id.profileButton);
+        solo.sleep(1000);
+        currentActivity = solo.getCurrentActivity();
+        int id_searchResults = currentActivity.getResources().getIdentifier("SearchedResult","id", currentActivity.getPackageName());
+        ListView requestList = (ListView) solo.getView(id_searchResults);
+        Button profile = (Button) requestList.getChildAt(0).findViewById(R.id.btn_view_driver);
+        solo.clickOnView(profile);
         solo.sleep(500);
-        solo.clickOnView(p);
         solo.goBack();
-        ImageButton r = (ImageButton) requestList.getChildAt(0).findViewById(R.id.acceptButton);
-        solo.clickOnView(r);
-
-
-        /*
-
-            ManageMyGroupsPanel
-
-            Group owner will create an event.
-
-         */
-
         currentActivity = solo.getCurrentActivity();
-        int btn_createEvent = currentActivity.getResources().getIdentifier("button_createEvent", "id", currentActivity.getPackageName());
-        solo.clickOnView(solo.getView(btn_createEvent));
-        solo.waitForDialogToOpen(100);
+        id_searchResults = currentActivity.getResources().getIdentifier("SearchedResult", "id", currentActivity.getPackageName());
+        requestList = (ListView) solo.getView(id_searchResults);
+        Button joinRide = (Button) requestList.getChildAt(0).findViewById(R.id.btn_joinride);
+        solo.clickOnView(joinRide);
 
-        solo.enterText((EditText) solo.getView("createEventName"), "Halloween Party");
-        solo.enterText((EditText) solo.getView("createEventDescription"), "Have fun with us!");
-
-        int id_startDate = currentActivity.getResources().getIdentifier("createEventStartDate", "id", currentActivity.getPackageName());
-        EditText startDate = (EditText) solo.getView(id_startDate);
-        solo.clickOnView(startDate);
-        solo.clickOnView(startDate);
-        solo.waitForDialogToOpen(100);
-        solo.setDatePicker(0, 2015, 10, 28);
-        solo.clickOnText("Done");
-
-        int id_endDate = currentActivity.getResources().getIdentifier("createEventEndDate", "id", currentActivity.getPackageName());
-        EditText endDate = (EditText) solo.getView(id_endDate);
-        solo.clickOnView(endDate);
-        solo.clickOnView(endDate);
-        solo.waitForDialogToOpen(100);
-        solo.setDatePicker(0, 2015, 10, 28);
-        solo.clickOnText("Done");
-
-        int id_map = currentActivity.getResources().getIdentifier("createFixedPointAddressEvent", "id", currentActivity.getPackageName());
-        solo.clickOnView(solo.getView(id_map));
-        solo.sleep(500);
-
-        // Go to map
-        currentActivity = solo.getCurrentActivity();
-        boolean initialID = solo.waitForFragmentById(R.id.map); //where id.satellite is defined in the R file, eventually would time out and throw error if fragment was not present
-        solo.sleep(1000);
-        Activity mapActivity = solo.getCurrentActivity();
-        int map = mapActivity.getResources().getIdentifier("map", "id", currentActivity.getPackageName());
-        View mapView = solo.getView(map);
-        solo.clickOnView(mapView);
-        int mapSubmit = currentActivity.getResources().getIdentifier("submit", "id", currentActivity.getPackageName());
-        Button btn_mapSubmit = (Button) solo.getView(mapSubmit);
-        solo.clickOnView(btn_mapSubmit);
-
-        //Back to event information
-        solo.sleep(1000);
-        currentActivity = solo.getCurrentActivity();
-        int btn_submit = currentActivity.getResources().getIdentifier("btn_submit_event", "id", currentActivity.getPackageName());
-        solo.clickOnView(solo.getView(btn_submit));
         solo.sleep(1000);
 
 

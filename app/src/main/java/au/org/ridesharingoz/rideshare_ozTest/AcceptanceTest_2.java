@@ -1,11 +1,8 @@
 package au.org.ridesharingoz.rideshare_ozTest;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -14,8 +11,7 @@ import android.widget.ListView;
 
 import com.robotium.solo.Solo;
 
-import au.org.ridesharingoz.rideshare_oz.LoginActivity;
-import au.org.ridesharingoz.rideshare_oz.OneRideGoingtoActivity;
+import au.org.ridesharingoz.rideshare_oz.userPackage.LoginActivity;
 import au.org.ridesharingoz.rideshare_oz.R;
 
 /**
@@ -66,6 +62,8 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
         solo.clickOnView(login_btn);
         solo.sleep(1000);
         currentActivity = solo.getCurrentActivity();
+
+
         // click menu item
         int id_groups = currentActivity.getResources().getIdentifier("my_groups", "id", currentActivity.getPackageName());
         solo.sleep(500);
@@ -99,6 +97,7 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
         solo.goBack();
         ImageButton r = (ImageButton) requestList.getChildAt(0).findViewById(R.id.acceptButton);
         solo.clickOnView(r);
+        solo.sleep(1000);
 
 
         /*
@@ -124,6 +123,7 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
         solo.waitForDialogToOpen(100);
         solo.setDatePicker(0, 2015, 10, 28);
         solo.clickOnText("Done");
+        solo.sleep(500);
 
         int id_endDate = currentActivity.getResources().getIdentifier("createEventEndDate", "id", currentActivity.getPackageName());
         EditText endDate = (EditText) solo.getView(id_endDate);
@@ -132,6 +132,7 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
         solo.waitForDialogToOpen(100);
         solo.setDatePicker(0, 2015, 10, 28);
         solo.clickOnText("Done");
+        solo.sleep(500);
 
         int id_map = currentActivity.getResources().getIdentifier("createFixedPointAddressEvent", "id", currentActivity.getPackageName());
         solo.clickOnView(solo.getView(id_map));
@@ -154,13 +155,15 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
         currentActivity = solo.getCurrentActivity();
         int btn_submit = currentActivity.getResources().getIdentifier("btn_submit_event","id",currentActivity.getPackageName());
         solo.clickOnView(solo.getView(btn_submit));
-        solo.sleep(1000);
+        solo.sleep(500);
 
 
 
-        //Offers a ride for that event
-
-        int id_action = currentActivity.getResources().getIdentifier("R.id.home", "id", currentActivity.getPackageName());
+        //Offers a ride
+        solo.sleep(500);
+        currentActivity = solo.getCurrentActivity();
+        int id_action = currentActivity.getResources().getIdentifier("home", "id", currentActivity.getPackageName());
+        solo.clickOnView(solo.getView(id_action));
         solo.sleep(1000);
 
         currentActivity = solo.getCurrentActivity();
@@ -186,12 +189,6 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
 
         solo.sleep(1000);
 
-        // Go to map
-//        currentActivity = solo.getCurrentActivity();
-//        boolean initialID = solo.waitForFragmentById(R.id.map);
-//        Activity mapActivity = solo.getCurrentActivity();
-//        int map = mapActivity.getResources().getIdentifier("map", "id", currentActivity.getPackageName());
-//        View mapView =  solo.getView(map);
 
 
 /*
@@ -216,16 +213,18 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
         solo.clickOnView(date);
         solo.clickOnView(date);
         solo.waitForDialogToOpen(100);
-        solo.setDatePicker(0, 2015, 10, 22);
+        solo.setDatePicker(0, 2015, 10, 27);
         solo.clickOnText("Done");
+        solo.sleep(500);
 
         int id_ArrivalTime = currentActivity.getResources().getIdentifier("Arrival_Time", "id", currentActivity.getPackageName());
         EditText Arrival_Time = (EditText) solo.getView(id_ArrivalTime);
         solo.clickOnView(Arrival_Time);
         solo.clickOnView(Arrival_Time);
         solo.waitForDialogToOpen(100);
-        solo.setTimePicker(0, 11, 30);
+        solo.setTimePicker(0, 11, 00);
         solo.clickOnText("Done");
+        solo.sleep(500);
 
         int AddressList = currentActivity.getResources().getIdentifier("AddressList", "id", currentActivity.getPackageName());
         ListView addList = (ListView) solo.getView(AddressList);
@@ -235,7 +234,7 @@ public class AcceptanceTest_2 extends ActivityInstrumentationTestCase2<LoginActi
             Button time1 = (Button) addList.getChildAt(i).findViewById(R.id.AddTime);
             solo.clickOnView(time1);
             solo.waitForDialogToOpen(100);
-            solo.setTimePicker(0, 11, (30+(10*(i+1))));
+            solo.setTimePicker(0, 11, (00+(10*(i+1))));
             solo.clickOnText("Done");
             solo.sleep(300);
 
