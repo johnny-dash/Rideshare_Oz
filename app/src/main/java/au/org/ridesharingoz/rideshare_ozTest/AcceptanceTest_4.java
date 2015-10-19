@@ -9,7 +9,7 @@ import android.widget.RadioButton;
 
 import com.robotium.solo.Solo;
 
-import au.org.ridesharingoz.rideshare_oz.LoginActivity;
+import au.org.ridesharingoz.rideshare_oz.userPackage.LoginActivity;
 import au.org.ridesharingoz.rideshare_oz.R;
 
 /**

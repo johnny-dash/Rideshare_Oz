@@ -7,12 +7,7 @@ import android.widget.EditText;
 
 import com.robotium.solo.Solo;
 
-import junit.framework.TestSuite;
-
-import java.util.Date;
-import java.util.Random;
-
-import au.org.ridesharingoz.rideshare_oz.LoginActivity;
+import au.org.ridesharingoz.rideshare_oz.userPackage.LoginActivity;
 
 /**
  * Created by helen on 24/09/15.
