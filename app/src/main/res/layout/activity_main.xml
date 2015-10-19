@@ -11,7 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="au.org.ridesharingoz.rideshare_oz.LoginActivity">
+    tools:context="au.org.ridesharingoz.rideshare_oz.userPackage.LoginActivity">
 
     <ImageView
         android:layout_width="wrap_content"

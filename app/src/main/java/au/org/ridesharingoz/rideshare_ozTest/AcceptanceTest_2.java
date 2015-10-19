@@ -1,11 +1,8 @@
 package au.org.ridesharingoz.rideshare_ozTest;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -14,8 +11,7 @@ import android.widget.ListView;
 
 import com.robotium.solo.Solo;
 
-import au.org.ridesharingoz.rideshare_oz.LoginActivity;
-import au.org.ridesharingoz.rideshare_oz.OneRideGoingtoActivity;
+import au.org.ridesharingoz.rideshare_oz.userPackage.LoginActivity;
 import au.org.ridesharingoz.rideshare_oz.R;
 
 /**

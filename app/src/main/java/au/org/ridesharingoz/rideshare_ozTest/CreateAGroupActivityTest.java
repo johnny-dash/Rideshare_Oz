@@ -1,7 +1,6 @@
 package au.org.ridesharingoz.rideshare_ozTest;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.Button;
@@ -11,9 +10,8 @@ import android.widget.RadioButton;
 import com.robotium.solo.Solo;
 
 
-import au.org.ridesharingoz.rideshare_oz.CreateAGroupActivity;
+import au.org.ridesharingoz.rideshare_oz.groupsPackage.CreateAGroupActivity;
 import au.org.ridesharingoz.rideshare_oz.R;
-import au.org.ridesharingoz.rideshare_oz.ToRateRidesActivity;
 
 /**
  * Created by helen on 11/10/15.

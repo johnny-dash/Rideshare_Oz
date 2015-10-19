@@ -1,20 +1,13 @@
 package au.org.ridesharingoz.rideshare_ozTest;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.support.v7.internal.view.menu.MenuView;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.robotium.solo.Solo;
 
-import java.util.List;
-
-import au.org.ridesharingoz.rideshare_oz.LoginActivity;
-import au.org.ridesharingoz.rideshare_oz.R;
+import au.org.ridesharingoz.rideshare_oz.userPackage.LoginActivity;
 
 /**
  * Created by helen on 23/09/15.
