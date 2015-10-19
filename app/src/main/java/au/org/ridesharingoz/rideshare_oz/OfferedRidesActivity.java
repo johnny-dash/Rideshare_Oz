@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
@@ -599,7 +600,7 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                 addressTimeTextView = (TextView) convertView.findViewById(R.id.bookingPlace);
                 ratingTextView = (TextView) convertView.findViewById(R.id.passengerBookingRating);
                 nameTextview.setText(offeredRideBookings.get("passengerName"));
-                addressTimeTextView.setText(offeredRideBookings.get("departureTime") + "  " + offeredRideBookings.get("pinAddress"));
+                addressTimeTextView.setText(offeredRideBookings.get("pinAddress"));
                 ratingTextView.setText(offeredRideBookings.get("rating"));
 
                 convertView.setTag(holder);
@@ -621,6 +622,8 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                 @Override
                 public void onClick(View arg0) {
                     Map offeredRideBookings = (Map) adapter.getChild(groupPosition, childPosition);
+                    OfferedRide offeredRide = (OfferedRide) getGroup(groupPosition);
+                    refuseRequest((String) offeredRideBookings.get("bookingID"), (String) offeredRideBookings.get("passengerID"), (Boolean) offeredRide.getIsGoingTo(), (String) offeredRide.getRideID());
 
                     Toast.makeText(getApplicationContext(), "The request was refused.", Toast.LENGTH_LONG).show();
                 }
@@ -629,6 +632,8 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
                 @Override
                 public void onClick(View arg0) {
                     Map offeredRideBookings = (Map) adapter.getChild(groupPosition, childPosition);
+                    OfferedRide offeredRide = (OfferedRide) getGroup(groupPosition);
+                    acceptRequest((String) offeredRideBookings.get("bookingID"), (String) offeredRideBookings.get("passengerID"), (Boolean) offeredRide.getIsGoingTo(), (String) offeredRide.getRideID());
                     Toast.makeText(getApplicationContext(), "The request was accepted.", Toast.LENGTH_LONG).show();
                 }
             });
@@ -746,6 +751,59 @@ public class OfferedRidesActivity extends FirebaseAuthenticatedActivity {
             return false;
         }
 
+    }
+
+
+    private void acceptRequest(final String bookingID, String passengerID, Boolean isGoingTo, String rideID){
+        Map<String, Object> acceptedRequest = new HashMap<String, Object>();
+        acceptedRequest.put(bookingID, true);
+        Firebase userbookingsmadenode = mFirebaseRef.child("users").child(passengerID).child("bookingsMade");
+        userbookingsmadenode.updateChildren(acceptedRequest);
+        Map<String, Object> notPendingRequestAnymore = new HashMap<>();
+        notPendingRequestAnymore.put(bookingID, null);
+        Firebase userpendingbookingsnode = mFirebaseRef.child("users").child(passengerID).child("pendingJoinRequests");
+        userbookingsmadenode.updateChildren(notPendingRequestAnymore);
+        String typeRide = "";
+        if (isGoingTo) {
+           typeRide = "goingtorides";
+        }
+        else{
+            typeRide = "leavingfromrides";
+        }
+        final String type = typeRide;
+        Firebase ridependingnode = mFirebaseRef.child(typeRide).child("rideID").child("pendingJoinRequests").child(bookingID);
+        ridependingnode.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map booking = (Map) dataSnapshot.getValue();
+                Firebase ridebookingnode = mFirebaseRef.child(type).child("rideID").child("bookings").child(bookingID);
+                ridebookingnode.updateChildren(booking);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    private void refuseRequest(final String bookingID, String passengerID, Boolean isGoingTo, String rideID){
+        Map<String, Object> refuseRequest = new HashMap<>();
+        refuseRequest.put(bookingID, null);
+        Firebase userbookingsmadenode = mFirebaseRef.child("users").child(passengerID).child("bookingsMade");
+        userbookingsmadenode.updateChildren(refuseRequest);
+        Map<String, Object> notPendingRequestAnymore = new HashMap<>();
+        notPendingRequestAnymore.put(bookingID, null);
+        String typeRide = "";
+        if (isGoingTo) {
+            typeRide = "goingtorides";
+        }
+        else{
+            typeRide = "leavingfromrides";
+        }
+        final String type = typeRide;
+        Firebase ridependingnode = mFirebaseRef.child(typeRide).child("rideID").child("pendingJoinRequests").child(bookingID);
+        ridependingnode.updateChildren(notPendingRequestAnymore);
     }
 
     class OfferedRide {
