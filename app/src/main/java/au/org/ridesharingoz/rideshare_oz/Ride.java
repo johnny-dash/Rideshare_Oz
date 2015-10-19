@@ -13,7 +13,7 @@ import java.util.Map;
 public class Ride {
     private Timestamp timestamp;
     private String driverID;
-    private List<Map<String,Boolean>> pins;
+    private Map<String,String> pins;
     private Map<String,Boolean> pendingJoinRequests;
     private int seatNum;
     private String groupEventID ;
@@ -23,7 +23,7 @@ public class Ride {
 
     public Ride(){}
 
-    public Ride(String driverID, int seatNum, Timestamp timestamp,List<Map<String,Boolean>> pins,String groupEventID , Boolean isEvent, String type){
+    public Ride(String driverID, int seatNum, Timestamp timestamp, Map<String,String> pins, String groupEventID , Boolean isEvent, String type){
         this.driverID = driverID;
         this.seatNum = seatNum;
         this.timestamp = timestamp;
@@ -34,7 +34,7 @@ public class Ride {
     }
     public  Timestamp getTimestamp(){return timestamp;}
 
-    public String getdriverID(){return driverID;}
+    public String getDriverID(){return driverID;}
 
     public int getSeatNum(){return seatNum;}
 
@@ -44,7 +44,7 @@ public class Ride {
 
     public String getType(){return type;}
 
-    public List<Map<String,Boolean>> getPins(){return pins;}
+    public Map<String,String> getPins(){return pins;}
 
     public Map<String,Boolean> getPendingJoinRequests(){return pendingJoinRequests;}
 
